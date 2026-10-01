@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="apple-touch-icon" href="/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#147927" />
+    <title>FarmGuide</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Google Translate Floating Multi-Language Toggle -->
+    <div id="google_translate_element" style="position: fixed; top: 24px; right: 24px; z-index: 9999; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5);"></div>
+    
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+          pageLanguage: 'en',
+          includedLanguages: 'en,hi,mr,pa,gu,ta,te,kn,ml,bn,or,ur',
+          autoDisplay: false
+        }, 'google_translate_element');
+      }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    
+    <style>
+      /* 1. COMPLETELY DESTROY THE TOP BANNER */
+      .goog-te-banner-frame, iframe.goog-te-banner-frame, iframe[name="goog_te_banner"] { display: none !important; visibility: hidden !important; }
+      html { top: 0 !important; margin-top: 0 !important; }
+      body { top: 0px !important; margin-top: 0 !important; position: static !important; }
+      
+      /* 2. HIDE GOOGLE LOGOS AND SPANS */
+      .goog-logo-link { display: none !important; }
+      .goog-te-gadget { color: transparent !important; font-size: 0px !important; background: transparent !important; padding: 0 !important; }
+      .goog-te-gadget span { display: none !important; }
+      
+      /* 3. MODERN GREEN DROPDOWN STYLE */
+      .goog-te-combo {
+        background: linear-gradient(to right, #78dc77, #127f27) !important;
+        color: #00390a !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 8px 30px 8px 16px !important;
+        font-family: inherit !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 15px rgba(120, 220, 119, 0.2) !important;
+        transition: transform 0.3s ease !important;
+        outline: none !important;
+        cursor: pointer !important;
+        margin: 0 !important;
+        width: auto !important;
+        min-width: 160px !important;
+        appearance: none !important;
+        /* Custom dropdown arrow */
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2300390a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 12px center !important;
+        background-size: 10px auto !important;
+      }
+      
+      .goog-te-combo:hover {
+        transform: scale(1.02) !important;
+      }
+      
+      .goog-te-combo option {
+        background-color: #10150f !important;
+        color: #dfe4db !important;
+        font-weight: 500 !important;
+      }
+      
+      /* 4. HIDE THE WEIRD HOVER TOOLTIPS OVER TEXT */
+      #goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
+      .goog-text-highlight { background: none !important; box-shadow: none !important; }
+    </style>
+  </body>
+</html>

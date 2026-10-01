@@ -1,0 +1,24 @@
+# FarmGuide .gitignore
+
+# Dependencies
+node_modules/
+dist/
+build/
+.env
+.env.local
+.DS_Store
+
+# Virtual Environments
+venv/
+__pycache__/
+*.pyc
+
+# Archives
+*.zip
+archive (4).zip
+
+# Temporary files
+tmp/
+
+# Large Datasets
+ml/dataset/plantvillage dataset/

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64">
+  <!-- Rounded Background similar to provided image -->
+  <rect x="0" y="0" width="24" height="24" rx="6" fill="#0c6b12" />
+  
+  <!-- Sprout Icon -->
+  <g transform="translate(4, 4)">
+    <path d="M8 12V16" stroke="#87ff8c" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M4 16H12" stroke="#87ff8c" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M8 12C11 10 12 7 12 4C8 4 6 6 5 9" stroke="#87ff8c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M8 12C5 10 4 7 4 4C8 4 10 6 11 9" stroke="#87ff8c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+</svg>
