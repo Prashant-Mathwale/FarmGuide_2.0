@@ -20,4 +20,19 @@ app.use('/api/market', require('./routes/marketRoutes'));
 app.use('/api/weather', require('./routes/weatherRoutes'));
 app.use('/api/chat', require('./routes/chatRoutes'));
 
+// 404 Route Handler
+app.use((req, res) => {
+    res.status(404).json({ success: false, message: `Route not found: ${req.originalUrl}` });
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+    console.error('[Unhandled Request Error]:', err.stack || err);
+    res.status(err.status || 500).json({
+        success: false,
+        message: err.message || 'Internal Server Error'
+    });
+});
+
 module.exports = app;
+
