@@ -68,12 +68,6 @@ try:
 except Exception:
     print("Warning: models/crop_model.pkl not found.")
 
-irrigation_model = None
-try:
-    with open('models/irrigation_model.pkl', 'rb') as f:
-        irrigation_model = pickle.load(f)
-except Exception:
-    print("Warning: irrigation_model.pkl not found.")
 
 pest_classifier = None
 pest_regressor = None
@@ -124,27 +118,6 @@ async def predict_crop(data: SoilData):
     recommendations = [{"name": str(classes[idx]), "confidence": float(probabilities[idx] * 100)} for idx in top_indices]
     return {"success": True, "recommendations": recommendations}
 
-class IrrigationData(BaseModel):
-    cropType: str
-    cropDays: int
-    soilMoisture: float
-    temperature: float
-    humidity: float
-
-@app.post("/predict_irrigation")
-async def predict_irrigation(data: IrrigationData):
-    if irrigation_model is None:
-        return {"success": False, "message": "Irrigation model not loaded."}
-    try:
-        input_data = pd.DataFrame([{
-            'CropType': data.cropType, 'CropDays': data.cropDays,
-            'SoilMoisture': data.soilMoisture, 'temperature': data.temperature, 'Humidity': data.humidity
-        }])
-        prediction = irrigation_model.predict(input_data)[0]
-        probability = irrigation_model.predict_proba(input_data)[0][1]
-        return {"success": True, "irrigation_needed": bool(prediction == 1), "confidence": float(probability * 100)}
-    except Exception as e:
-        return {"success": False, "message": str(e)}
 
 class PestData(BaseModel):
     Temperature_C: float

@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home as House, Sprout, Bug, TrendingUp, CloudRain, LogOut, Droplets, Landmark, Activity, AlertTriangle } from 'lucide-react';
+import { Home as House, Sprout, Bug, TrendingUp, CloudRain, LogOut, Landmark, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Sidebar = ({ user, setUser }) => {
@@ -17,9 +17,7 @@ const Sidebar = ({ user, setUser }) => {
         { name: 'Disease Detect', icon: Bug, path: '/disease-detect' },
         { name: 'Market Prices', icon: TrendingUp, path: '/market-prices' },
         { name: 'Weather', icon: CloudRain, path: '/weather' },
-        { name: 'Irrigation', icon: Droplets, path: '/irrigation' },
         { name: 'Schemes', icon: Landmark, path: '/schemes' },
-        { name: 'Nutrients', icon: Activity, path: '/fertilizer' },
         { name: 'Pest Predict', icon: AlertTriangle, path: '/pest-predict' },
     ];
 

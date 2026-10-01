@@ -8,8 +8,7 @@ FarmGuide is an all-in-one smart agricultural platform designed to empower farme
 
 - 🌱 **Crop Recommendation:** AI-powered suggestions for the best crops to plant based on soil metrics and weather.
 - 💊 **Disease Detection:** Upload images of crop leaves to automatically detect diseases and receive actionable cures.
-- 🧪 **Fertilizer Recommendation:** Get precise fertilizer (N-P-K) usage estimates for optimal yield.
-- 💧 **Irrigation & Pest Prediction:** Stay ahead with predictive modeling for irrigation cycles and pest outbreaks.
+- 🐛 **Pest Prediction:** Stay ahead with predictive modeling for pest outbreaks.
 - 🌤️ **Real-time Weather:** Contextual weather forecasts to plan farming activities securely.
 - 📈 **Market Prices:** Live analytics and visualizations for current market prices of various crops.
 - 🏛️ **Government Schemes:** Access curated list of government schemes, subsidies, and grants for agriculture.

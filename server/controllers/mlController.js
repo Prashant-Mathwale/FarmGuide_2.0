@@ -156,22 +156,6 @@ const predictPest = async (req, res) => {
     }
 };
 
-const predictIrrigation = async (req, res) => {
-    try {
-        const mlUrl = process.env.ML_SERVICE_URL || 'http://127.0.0.1:8000';
-        const pythonApiRes = await axios.post(`${mlUrl}/predict_irrigation`, req.body, { timeout: 120000 });
-
-        if (!pythonApiRes.data.success) {
-            throw new Error(pythonApiRes.data.message || 'Failed to get irrigation prediction');
-        }
-
-        res.json(pythonApiRes.data);
-    } catch (error) {
-        console.error("Irrigation Prediction Error:", error.message);
-        res.status(500).json({ success: false, message: 'Irrigation prediction failed. ' + error.message });
-    }
-};
-
 const predictYield = async (req, res) => {
     try {
         const mlUrl = process.env.ML_SERVICE_URL || 'http://127.0.0.1:8000';
@@ -188,4 +172,4 @@ const predictYield = async (req, res) => {
     }
 };
 
-module.exports = { getCropRecommendation, detectDisease, predictPest, predictIrrigation, predictYield };
+module.exports = { getCropRecommendation, detectDisease, predictPest, predictYield };

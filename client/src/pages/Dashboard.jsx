@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sprout, Bug, TrendingUp, CloudRain, ChevronRight, Activity, Droplets, Landmark, AlertTriangle } from 'lucide-react';
+import { Sprout, Bug, TrendingUp, CloudRain, ChevronRight, Landmark, AlertTriangle } from 'lucide-react';
 import api from '../services/api';
 
 function Dashboard() {
@@ -54,7 +54,7 @@ function Dashboard() {
                 variants={containerVariants}
                 initial="hidden"
                 animate="show"
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10"
             >
                 {/* Feature Cards Loop */}
                 {[
@@ -62,10 +62,8 @@ function Dashboard() {
                     { to: "/disease-detect", icon: Bug, color: "error", title: "Disease Detect", desc: "AI foliage scanning" },
                     { to: "/market-prices", icon: TrendingUp, color: "secondary", title: "Market Insights", desc: "Real-time tracking" },
                     { to: "/weather", icon: CloudRain, color: "primary", title: "Weather", desc: "Local micro-climatics" },
-                    { to: "/irrigation", icon: Droplets, color: "blue-400", title: "Irrigation", desc: "Smart valve control" },
                     { to: "/schemes", icon: Landmark, color: "primary", title: "Govt Schemes", desc: "Financial aid tracking" },
-                    { to: "/pest-predict", icon: AlertTriangle, color: "orange-400", title: "Pest Predict", desc: "Outbreak risk assessment" },
-                    { to: "/fertilizer", icon: Activity, color: "secondary", title: "Nutrient Calc", desc: "NPK ratio mapping" }
+                    { to: "/pest-predict", icon: AlertTriangle, color: "orange-400", title: "Pest Predict", desc: "Outbreak risk assessment" }
                 ].map((item, idx) => (
                     <Link key={idx} to={item.to} className="lg:col-span-1">
                         <motion.div variants={itemVariants} className="glass-panel glass-card-hover rounded-3xl p-6 transition-all duration-300 flex flex-col justify-between group h-48">
