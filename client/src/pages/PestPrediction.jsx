@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertTriangle, Leaf, Thermometer, Droplets, CloudRain, Wind, FlaskConical, CheckCircle2, XCircle, ChevronDown, ShieldAlert } from 'lucide-react';
+import { AlertTriangle, Leaf, Thermometer, Droplets, CloudRain, Wind, FlaskConical, CheckCircle2, XCircle, ChevronDown, ShieldAlert, Navigation, Search } from 'lucide-react';
 import api from '../services/api';
 
 const PEST_DATA = {
@@ -99,6 +99,66 @@ export default function PestPrediction() {
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(null);
 
+  const [searchCity, setSearchCity] = useState('');
+  const [locationLoading, setLocationLoading] = useState(false);
+
+  const fetchWeatherData = async (lat, lon) => {
+    try {
+      setLocationLoading(true);
+      const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation&timezone=auto`);
+      const data = await res.json();
+      setForm(prev => ({
+        ...prev,
+        temperature: data.current?.temperature_2m ?? '',
+        humidity: data.current?.relative_humidity_2m ?? '',
+        windSpeed: data.current?.wind_speed_10m ?? '',
+        rainfall: data.current?.precipitation ?? ''
+      }));
+    } catch (err) {
+      console.error(err);
+      alert("Failed to fetch weather data.");
+    } finally {
+      setLocationLoading(false);
+    }
+  };
+
+  const fetchUserLocation = () => {
+    if ("geolocation" in navigator) {
+      setLocationLoading(true);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          fetchWeatherData(position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+          console.error(error);
+          alert("Location access denied.");
+          setLocationLoading(false);
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  };
+
+  const fetchCityLocation = async () => {
+    if (!searchCity) return;
+    try {
+      setLocationLoading(true);
+      const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${searchCity}&count=1&language=en&format=json`);
+      const data = await res.json();
+      if (data.results && data.results.length > 0) {
+        fetchWeatherData(data.results[0].latitude, data.results[0].longitude);
+      } else {
+        alert("City not found.");
+        setLocationLoading(false);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Search failed.");
+      setLocationLoading(false);
+    }
+  };
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -185,6 +245,38 @@ export default function PestPrediction() {
           <h3 className="font-headline text-lg font-bold text-on-surface flex items-center gap-2">
             <FlaskConical size={18} className="text-orange-400" /> Field Parameters
           </h3>
+
+          {/* Auto Fill Section */}
+          <div className="flex flex-col gap-2 p-3 bg-white/5 border border-white/10 rounded-xl">
+            <div className="flex gap-2">
+              <button 
+                type="button" 
+                onClick={fetchUserLocation} 
+                disabled={locationLoading} 
+                className="flex-1 bg-sky-600/20 hover:bg-sky-600/40 text-sky-400 transition-colors py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2"
+              >
+                <Navigation size={14} /> {locationLoading ? 'Loading...' : 'Auto-fill from My Location'}
+              </button>
+            </div>
+            <div className="flex gap-2 relative">
+              <input 
+                type="text" 
+                placeholder="Or search city..." 
+                value={searchCity} 
+                onChange={(e) => setSearchCity(e.target.value)} 
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); fetchCityLocation(); } }}
+                className="flex-1 bg-black/20 border border-white/5 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500/50" 
+              />
+              <button 
+                type="button" 
+                onClick={fetchCityLocation} 
+                disabled={locationLoading} 
+                className="bg-sky-600 hover:bg-sky-500 transition-colors px-4 py-2 rounded-lg text-white"
+              >
+                <Search size={14} />
+              </button>
+            </div>
+          </div>
 
           {/* Crop Select */}
           <div className="flex flex-col gap-1">
