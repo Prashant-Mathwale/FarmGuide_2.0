@@ -6,3 +6,4 @@ numpy
 tensorflow
 Pillow
 python-multipart
+opencv-python-headless

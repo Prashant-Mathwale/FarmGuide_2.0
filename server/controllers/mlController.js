@@ -79,20 +79,22 @@ const detectDisease = async (req, res) => {
                 ...formHeaders,
                 'Content-Length': contentLength
             },
-            timeout: 120000
+            timeout: 120000,
+            maxContentLength: 50 * 1024 * 1024,
+            maxBodyLength: 50 * 1024 * 1024,
         });
 
         if (!pythonApiRes.data.success) {
             throw new Error(pythonApiRes.data.message || 'Failed to detect disease from ML server');
         }
 
-        let suggestedAction = pythonApiRes.data.treatment;
-        const detectedDisease = pythonApiRes.data.disease;
+        const mlData = pythonApiRes.data;
+        const detectedDisease = mlData.disease || null;
+        const guardStatus = mlData.status || 'ok';
+        let suggestedAction = mlData.treatment || null;
 
-        // Use Gemini for dynamic treatment if it's an actual disease
-        const isHealthy = detectedDisease && detectedDisease.toLowerCase().includes('healthy');
-
-        if (!isHealthy) {
+        // Use Gemini for dynamic treatment only when we have an actual disease result
+        if (detectedDisease && !detectedDisease.toLowerCase().includes('healthy') && guardStatus !== 'uncertain') {
             try {
                 if (process.env.GEMINI_API_KEY) {
                     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -114,7 +116,6 @@ const detectDisease = async (req, res) => {
                     }
                 } else {
                     console.warn("GEMINI_API_KEY is missing, falling back to static treatment.");
-                    // Keep suggestedAction from Python as the static treatment
                 }
             } catch (geminiError) {
                 console.error("Gemini Treatment Generation Error Details:", geminiError.message || geminiError);
@@ -123,11 +124,21 @@ const detectDisease = async (req, res) => {
             }
         }
 
+        // Forward all fields — old and new — to the client
         res.json({
             success: true,
             detectedDisease: detectedDisease,
-            confidenceScore: pythonApiRes.data.confidence,
-            suggestedAction: suggestedAction
+            confidenceScore: mlData.confidence,
+            suggestedAction: suggestedAction,
+            heatmap: mlData.heatmap || null,
+            // New guard fields (forwarded unchanged)
+            status: guardStatus,
+            guardMessage: mlData.message || null,
+            reasons: mlData.reasons || [],
+            topPredictions: mlData.top_predictions || [],
+            quality: mlData.quality || {},
+            confidenceMetrics: mlData.confidence_metrics || {},
+            warnings: mlData.warnings || [],
         });
     } catch (error) {
         console.error("Disease Detection Error:", error.message);

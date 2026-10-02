@@ -228,6 +228,7 @@ npm run dev
 
 ---
 
+<<<<<<< HEAD
 ## 🚧 Known Issues & Development Roadmap
 
 As part of the continuous improvement of the codebase, the following items are on the immediate development roadmap:
@@ -237,6 +238,47 @@ As part of the continuous improvement of the codebase, the following items are o
 3. **Database Performance:** Addition of Compound Indexes to the `MarketData` schema to handle growing cache sizes efficiently.
 4. **Missing UI:** The Python ML server contains fully working models for "Cost of Cultivation" and "Risk Analysis", but the React Frontend UI for these endpoints needs to be built.
 5. **Input Validation:** Integration of `express-validator` to sanitize all incoming API requests.
+=======
+---
+
+### 📱 Testing Camera Capture on Mobile (Over HTTPS)
+
+Modern mobile browsers (Chrome on Android, Safari on iOS) require a **secure context (HTTPS)** to grant access to the camera (`navigator.mediaDevices.getUserMedia`). You have two easy ways to test on a physical phone:
+
+#### Option A: Local Wi-Fi with Vite Basic SSL (Built-in)
+Make sure your phone and development computer are connected to the same Wi-Fi network.
+
+```bash
+cd client
+npm run dev:https
+```
+
+1. Vite will start with `@vitejs/plugin-basic-ssl` enabled and show your local network URL:
+   ```text
+   ➜  Local:   https://localhost:5173/
+   ➜  Network: https://192.168.x.x:5173/
+   ```
+2. Open the `https://192.168.x.x:5173/` URL on your phone's browser.
+3. Because the SSL certificate is auto-generated locally:
+   - **Chrome (Android):** Tap **Advanced** → **Proceed to site (unsafe)**.
+   - **Safari (iOS):** Tap **Show Details** → **visit this website** → Confirm.
+4. Navigate to **Disease Detection** → tap **Take photo**. Your camera viewfinder and torch toggle are now active!
+
+#### Option B: Tunnel via ngrok or cloudflared
+If you prefer not to bypass self-signed SSL warnings or are on different networks:
+
+- **Using ngrok:**
+  ```bash
+  ngrok http 5173
+  ```
+  Open the provided `https://<id>.ngrok-free.app` URL on your mobile device.
+
+- **Using cloudflared:**
+  ```bash
+  cloudflared tunnel --url http://localhost:5173
+  ```
+  Open the provided `https://<id>.trycloudflare.com` URL on your mobile device.
+>>>>>>> 0d29e2a5ec70a33e01922dd661b0920e3df7e652
 
 ---
 
