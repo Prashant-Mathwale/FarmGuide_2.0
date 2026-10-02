@@ -142,7 +142,7 @@ const detectDisease = async (req, res) => {
         });
     } catch (error) {
         console.error("Disease Detection Error:", error.message);
-        res.status(500).json({ success: false, message: 'Disease detection failed. Is the Python ML server running?' });
+        res.status(500).json({ success: false, message: 'Disease detection failed: ' + error.message });
     }
 };
 
