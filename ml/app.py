@@ -7,12 +7,35 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+import logging
+
 try:
     import tensorflow as tf
     from PIL import Image
-except ImportError:
+    import cv2
+    from gradcam import make_gradcam_heatmap, overlay_heatmap, to_base64_jpg
+except ImportError as e:
     tf = None
     Image = None
+    cv2 = None
+    make_gradcam_heatmap = None
+    overlay_heatmap = None
+    to_base64_jpg = None
+    print(f"Warning: Missing optional ML/vision dependency: {e}")
+
+# Input guard (fail-open: if import fails, guards are disabled)
+try:
+    from input_guard import run_gate_a, run_gate_b, run_gate_c, run_gate_d
+    from guard_config import GUARD_CONFIG
+except ImportError as e:
+    run_gate_a = None
+    run_gate_b = None
+    run_gate_c = None
+    run_gate_d = None
+    GUARD_CONFIG = {}
+    print(f"Warning: input_guard not available, guards disabled: {e}")
+
+guard_logger = logging.getLogger("input_guard")
 
 app = FastAPI()
 
@@ -283,18 +306,151 @@ if tf is not None:
     except Exception as e:
         print(f"Warning: Could not load disease model. Error: {e}")
 
+def preprocess_image(contents: bytes):
+    """
+    Standard preprocessing for leaf images: converts to RGB, resizes to (224, 224),
+    and scales pixel values to [0, 1].
+    """
+    img = Image.open(io.BytesIO(contents)).convert("RGB").resize((224, 224))
+    img_array = np.expand_dims(np.array(img) / 255.0, axis=0)
+    return img, img_array
+
+def _format_label(raw_label):
+    """Convert class name like 'Apple___Apple_scab' to 'Apple - Apple scab'."""
+    return raw_label.replace("___", " - ").replace("__", " - ").replace("_", " ")
+
+
+def _build_top_predictions(probs, top_indices):
+    """Build top-3 prediction list from probability vector and sorted indices."""
+    preds = []
+    for i in top_indices[:3]:
+        if i < len(disease_classes):
+            preds.append({
+                "label": _format_label(disease_classes[i]),
+                "confidence": round(float(probs[i] * 100), 2)
+            })
+    return preds
+
+
 @app.post("/predict_disease")
 async def predict_disease(file: UploadFile = File(...)):
+    # Base response fields — always present for backward compatibility
+    base = {
+        "success": True,
+        "disease": None,
+        "confidence": None,
+        "treatment": None,
+        "heatmap": None,
+        # New guard fields
+        "status": "ok",
+        "message": "Diagnosis complete.",
+        "reasons": [],
+        "top_predictions": [],
+        "quality": {"blur_score": None, "brightness": None, "plant_ratio": None},
+        "confidence_metrics": {"top1": None, "margin": None, "entropy": None},
+        "warnings": [],
+    }
     try:
         if not tf or not disease_model:
             return {"success": False, "message": "Disease model is offline."}
+
         contents = await file.read()
-        img = Image.open(io.BytesIO(contents)).convert("RGB").resize((224, 224))
-        img_array = np.expand_dims(np.array(img) / 255.0, axis=0)
+
+        # ── Gate A: Image quality ───────────────────────────────────────
+        gate_b_result = None
+        if run_gate_a is not None:
+            try:
+                gate_a = run_gate_a(contents)
+                base["quality"]["blur_score"] = gate_a["quality"]["blur_score"]
+                base["quality"]["brightness"] = gate_a["quality"]["brightness"]
+                if not gate_a["passed"]:
+                    base["status"] = gate_a["status"]
+                    base["message"] = gate_a["message"]
+                    base["reasons"] = gate_a["reasons"]
+                    return base
+                img_bgr = gate_a["img_bgr"]
+            except Exception as e:
+                guard_logger.error(f"Gate A crashed (fail-open): {e}")
+                base["warnings"].append(f"Quality check skipped: {e}")
+                img_bgr = None
+        else:
+            img_bgr = None
+
+        # ── Gate B: Leaf plausibility ───────────────────────────────────
+        gate_b_borderline = False
+        if run_gate_b is not None and img_bgr is not None:
+            try:
+                gate_b_result = run_gate_b(img_bgr)
+                base["quality"]["plant_ratio"] = gate_b_result["plant_ratio"]
+                if not gate_b_result["passed"]:
+                    base["status"] = gate_b_result["status"]
+                    base["message"] = gate_b_result["message"]
+                    base["reasons"] = gate_b_result["reasons"]
+                    return base
+                gate_b_borderline = gate_b_result.get("borderline", False)
+            except Exception as e:
+                guard_logger.error(f"Gate B crashed (fail-open): {e}")
+                base["warnings"].append(f"Leaf check skipped: {e}")
+
+        # ── Gate D: Optional CLIP check ─────────────────────────────────
+        if run_gate_d is not None and img_bgr is not None:
+            try:
+                gate_d = run_gate_d(img_bgr)
+                if not gate_d["passed"]:
+                    base["status"] = "not_a_leaf"
+                    base["message"] = "This doesn't look like a plant leaf. Please upload a clear photo of a single leaf."
+                    base["reasons"] = ["CLIP zero-shot check failed"]
+                    return base
+            except Exception as e:
+                guard_logger.error(f"Gate D crashed (fail-open): {e}")
+                base["warnings"].append(f"CLIP check skipped: {e}")
+
+        # ── Run existing prediction (unchanged) ─────────────────────────
+        img, img_array = preprocess_image(contents)
         predictions = disease_model.predict(img_array)
-        idx = np.argmax(predictions[0])
-        result = disease_classes[idx]
-        return {"success": True, "disease": result.replace("___", " - ").replace("__", " - ").replace("_", " "), "confidence": float(predictions[0][idx] * 100), "treatment": get_treatment(result)}
+        probs = predictions[0]
+        idx = int(np.argmax(probs))
+        result_label = disease_classes[idx]
+
+        # ── Gate C: Confidence checks ───────────────────────────────────
+        if run_gate_c is not None:
+            try:
+                gate_c = run_gate_c(probs, gate_b_borderline=gate_b_borderline)
+                base["status"] = gate_c["status"]
+                base["message"] = gate_c["message"]
+                base["reasons"] = gate_c["reasons"]
+                base["confidence_metrics"] = gate_c["confidence_metrics"]
+                base["top_predictions"] = _build_top_predictions(probs, gate_c["top_indices"])
+            except Exception as e:
+                guard_logger.error(f"Gate C crashed (fail-open): {e}")
+                base["warnings"].append(f"Confidence check skipped: {e}")
+                base["status"] = "ok"
+
+        # ── Populate legacy fields based on status ──────────────────────
+        if base["status"] == "ok" or base["status"] == "possible":
+            base["disease"] = _format_label(result_label)
+            base["confidence"] = round(float(probs[idx] * 100), 2)
+            base["treatment"] = get_treatment(result_label)
+        elif base["status"] == "uncertain":
+            # Don't present a disease name as the answer; top-3 available in top_predictions
+            base["disease"] = None
+            base["confidence"] = None
+            base["treatment"] = None
+
+        # ── Grad-CAM heatmap (only for ok / possible) ───────────────────
+        if base["status"] in ("ok", "possible"):
+            if cv2 is not None and make_gradcam_heatmap is not None:
+                try:
+                    heatmap, _ = make_gradcam_heatmap(disease_model, img_array, class_index=idx)
+                    original_bgr = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+                    overlay = overlay_heatmap(original_bgr, heatmap, alpha=0.4)
+                    base["heatmap"] = to_base64_jpg(overlay)
+                except Exception as gradcam_err:
+                    guard_logger.error(f"Grad-CAM failed: {gradcam_err}")
+                    base["warnings"].append(f"Heatmap generation failed: {gradcam_err}")
+
+        return base
+
     except Exception as e:
         return {"success": False, "message": str(e)}
 

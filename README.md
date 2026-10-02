@@ -140,7 +140,45 @@ npm run dev
 
 The application should now be running on `http://localhost:5173`.
 
+---
 
+### 📱 Testing Camera Capture on Mobile (Over HTTPS)
+
+Modern mobile browsers (Chrome on Android, Safari on iOS) require a **secure context (HTTPS)** to grant access to the camera (`navigator.mediaDevices.getUserMedia`). You have two easy ways to test on a physical phone:
+
+#### Option A: Local Wi-Fi with Vite Basic SSL (Built-in)
+Make sure your phone and development computer are connected to the same Wi-Fi network.
+
+```bash
+cd client
+npm run dev:https
+```
+
+1. Vite will start with `@vitejs/plugin-basic-ssl` enabled and show your local network URL:
+   ```text
+   ➜  Local:   https://localhost:5173/
+   ➜  Network: https://192.168.x.x:5173/
+   ```
+2. Open the `https://192.168.x.x:5173/` URL on your phone's browser.
+3. Because the SSL certificate is auto-generated locally:
+   - **Chrome (Android):** Tap **Advanced** → **Proceed to site (unsafe)**.
+   - **Safari (iOS):** Tap **Show Details** → **visit this website** → Confirm.
+4. Navigate to **Disease Detection** → tap **Take photo**. Your camera viewfinder and torch toggle are now active!
+
+#### Option B: Tunnel via ngrok or cloudflared
+If you prefer not to bypass self-signed SSL warnings or are on different networks:
+
+- **Using ngrok:**
+  ```bash
+  ngrok http 5173
+  ```
+  Open the provided `https://<id>.ngrok-free.app` URL on your mobile device.
+
+- **Using cloudflared:**
+  ```bash
+  cloudflared tunnel --url http://localhost:5173
+  ```
+  Open the provided `https://<id>.trycloudflare.com` URL on your mobile device.
 
 ---
 
