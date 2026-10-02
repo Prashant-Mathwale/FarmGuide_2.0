@@ -11,7 +11,7 @@ const getCropRecommendation = async (req, res) => {
         let soilDataId = null;
         if (req.user && req.user._id) {
             const soilData = await SoilData.create({
-                userId: req.user._id,
+                userId: req.user._id, 
                 N_level, P_level, K_level, pH_value, moisture
             });
             soilDataId = soilData._id;
@@ -156,10 +156,40 @@ const predictPest = async (req, res) => {
             throw new Error(pythonApiRes.data.message || 'Failed to get pest prediction from ML server');
         }
 
+        const predictedPest = pythonApiRes.data.pest;
+        const outbreakProb = pythonApiRes.data.probability;
+        let actionPlan = "Monitor crop closely and maintain good agricultural practices.";
+
+        // Integrate Gemini Action Plan if probability is high enough
+        if (outbreakProb > 50 && process.env.GEMINI_API_KEY) {
+            try {
+                const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+                const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+                const prompt = `A predictive ML model has flagged a ${outbreakProb.toFixed(1)}% probability of an outbreak of ${predictedPest} in a ${payload.Crop_Type} field located in ${payload.Location}. Provide a highly concise, practical, and immediate preventative action plan for the farmer. Maximum 2 sentences. Format: "Action: [What to do]."`;
+                
+                const result = await model.generateContent(prompt);
+                const responseText = result.response.text();
+                if (responseText) {
+                    actionPlan = responseText.trim();
+                }
+            } catch (geminiError) {
+                console.error("Gemini Pest Action Plan Error:", geminiError.message);
+                try {
+                    // Fallback to flash-latest if 2.0 fails
+                    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+                    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+                    const prompt = `A predictive ML model has flagged a ${outbreakProb.toFixed(1)}% probability of an outbreak of ${predictedPest} in a ${payload.Crop_Type} field located in ${payload.Location}. Provide a highly concise, practical, and immediate preventative action plan for the farmer. Maximum 2 sentences. Format: "Action: [What to do]."`;
+                    const result = await model.generateContent(prompt);
+                    actionPlan = result.response.text().trim();
+                } catch(e) {}
+            }
+        }
+
         res.json({
             success: true,
-            pest: pythonApiRes.data.pest,
-            probability: pythonApiRes.data.probability
+            pest: predictedPest,
+            probability: outbreakProb,
+            actionPlan: actionPlan
         });
     } catch (error) {
         console.error("Pest Prediction Error:", error.message);
@@ -183,4 +213,36 @@ const predictYield = async (req, res) => {
     }
 };
 
-module.exports = { getCropRecommendation, detectDisease, predictPest, predictYield };
+const searchSchemes = async (req, res) => {
+    try {
+        const mlUrl = process.env.ML_SERVICE_URL || 'http://127.0.0.1:8000';
+        const pythonApiRes = await axios.post(`${mlUrl}/schemes/search`, req.body, { timeout: 120000 });
+
+        if (!pythonApiRes.data.success) {
+            throw new Error(pythonApiRes.data.message || 'Failed to search schemes');
+        }
+
+        res.json(pythonApiRes.data);
+    } catch (error) {
+        console.error("Schemes Search Error:", error.message);
+        res.status(500).json({ success: false, message: 'Schemes search failed. ' + error.message });
+    }
+};
+
+const predictRisk = async (req, res) => {
+    try {
+        const mlUrl = process.env.ML_SERVICE_URL || 'http://127.0.0.1:8000';
+        const pythonApiRes = await axios.post(`${mlUrl}/predict_risk`, req.body, { timeout: 120000 });
+
+        if (!pythonApiRes.data.success) {
+            throw new Error(pythonApiRes.data.message || 'Failed to predict risk');
+        }
+
+        res.json(pythonApiRes.data);
+    } catch (error) {
+        console.error("Risk Prediction Error:", error.message);
+        res.status(500).json({ success: false, message: 'Risk prediction failed. ' + error.message });
+    }
+};
+
+module.exports = { getCropRecommendation, detectDisease, predictPest, predictYield, searchSchemes, predictRisk };

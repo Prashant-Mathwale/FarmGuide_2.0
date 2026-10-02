@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Landmark, MapPin, Search, ChevronRight, ExternalLink, Loader2 } from 'lucide-react';
-import axios from 'axios';
+import api from '../services/api';
 
 function Schemes() {
     const [searchParams, setSearchParams] = useState({
@@ -24,7 +24,7 @@ function Schemes() {
         setLoading(true);
         setError('');
         try {
-            const res = await axios.post('http://127.0.0.1:8000/schemes/search', params);
+            const res = await api.post('/ml/schemes-search', params);
 
             if (res.data.success) {
                 setSchemes(res.data.data);
