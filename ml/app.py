@@ -93,11 +93,23 @@ except Exception:
 
 
 import joblib
-pest_forecaster = None
+pest_classifier = None
+pest_regressor = None
+pest_crop_encoder = None
+pest_location_encoder = None
+
 try:
-    pest_forecaster = joblib.load('models/pest_forecaster/model.pkl')
-except Exception:
-    print("Warning: Pest forecaster model not found.")
+    with open('models/pest_classifier.pkl', 'rb') as f:
+        pest_classifier = pickle.load(f)
+    with open('models/pest_regressor.pkl', 'rb') as f:
+        pest_regressor = pickle.load(f)
+    with open('models/pest_crop_encoder.pkl', 'rb') as f:
+        pest_crop_encoder = pickle.load(f)
+    with open('models/pest_location_encoder.pkl', 'rb') as f:
+        pest_location_encoder = pickle.load(f)
+    print("Pest prediction models loaded successfully.")
+except Exception as e:
+    print(f"Warning: Pest prediction models not loaded: {e}")
 
 yield_model = None
 area_encoder = None
@@ -150,39 +162,94 @@ class PestData(BaseModel):
 
 @app.post("/predict_pest")
 async def predict_pest(data: PestData):
-    if pest_forecaster is None:
+    if pest_classifier is None and pest_regressor is None:
         return {"success": False, "message": "Pest prediction model not loaded."}
     try:
-        # Create a DataFrame since the Pipeline expects pandas with column names
-        features_df = pd.DataFrame([{
-            'crop': data.Crop_Type,
-            'avg_temperature_c': data.Temperature_C,
-            'annual_rainfall_mm': data.Rainfall_mm,
-            'soil_moisture_percent': data.Soil_Moisture
-        }])
-        
-        # Predict pressure
-        pest_pressure = pest_forecaster.predict(features_df)[0]
-        
-        # Determine risk level
-        if pest_pressure > 70:
+        # Encode Crop_Type
+        crop_val = data.Crop_Type
+        if pest_crop_encoder is not None:
+            try:
+                crop_encoded = pest_crop_encoder.transform([crop_val])[0]
+            except Exception:
+                crop_encoded = 0
+        else:
+            crop_encoded = 0
+
+        # Encode Location
+        loc_val = data.Location if data.Location else "Maharashtra"
+        if pest_location_encoder is not None:
+            try:
+                loc_encoded = pest_location_encoder.transform([loc_val])[0]
+            except Exception:
+                loc_encoded = 0
+        else:
+            loc_encoded = 0
+
+        # Feature vector for Random Forest Regressor & Classifier
+        # Order: ['Temperature_C', 'Humidity_percent', 'Rainfall_mm', 'Soil_pH', 'Nitrogen_N', 'Phosphorus_P', 'Potassium_K', 'Crop_Type_Encoded', 'Location_Encoded']
+        features = np.array([[
+            data.Temperature_C,
+            data.Humidity_percent,
+            data.Rainfall_mm,
+            data.Soil_pH if data.Soil_pH else 6.5,
+            data.Nitrogen_N if data.Nitrogen_N else 40.0,
+            data.Phosphorus_P if data.Phosphorus_P else 40.0,
+            data.Potassium_K if data.Potassium_K else 40.0,
+            crop_encoded,
+            loc_encoded
+        ]])
+
+        # Predict outbreak probability via Regressor & Agronomic Weather Index
+        # Agronomic environmental risk adjustment: High humidity (>80%) + Warm Temp (>25°C) + Rain creates high pest risk
+        weather_risk_score = 0
+        if data.Humidity_percent >= 80 and data.Temperature_C >= 25:
+            weather_risk_score += 45
+        elif data.Humidity_percent >= 65 and data.Temperature_C >= 20:
+            weather_risk_score += 25
+
+        if data.Rainfall_mm >= 30:
+            weather_risk_score += 20
+        elif data.Rainfall_mm >= 15:
+            weather_risk_score += 10
+
+        if pest_regressor is not None:
+            ml_score = float(pest_regressor.predict(features)[0])
+            # Blend ML model score with physical weather risk factors
+            pest_pressure = max(ml_score, weather_risk_score + (ml_score * 0.4))
+        else:
+            pest_pressure = float(weather_risk_score + 20)
+
+        pest_pressure = float(max(10.0, min(98.5, pest_pressure)))
+
+        # Predict likely pest / disease name via Classifier
+        likely_pest = "Aphids / Leaf Blight"
+        if pest_classifier is not None:
+            try:
+                likely_pest = str(pest_classifier.predict(features)[0])
+            except Exception:
+                pass
+
+        # Risk level determination based on blended pest pressure
+        if pest_pressure >= 60.0:
             risk_level = "HIGH"
-        elif pest_pressure > 40:
+        elif pest_pressure >= 35.0:
             risk_level = "MEDIUM"
         else:
             risk_level = "LOW"
-            
+
         risk_probability = float(max(0, min(100, pest_pressure)))
-        
+
         return {
             "success": True, 
-            "risk_probability": risk_probability,
+            "risk_probability": round(risk_probability, 1),
             "risk_level": risk_level,
+            "likely_pest": likely_pest,
             "risk_window": "Next 5-7 days",
-            "key_factors": ["Temperature", "Humidity", "Rainfall", "Crop Type", "Growth Stage"],
-            "recommendation": "Inspect the field regularly and follow locally appropriate integrated pest-management guidance."
+            "key_factors": ["High Temperature", "High Humidity", "Rainfall", "Crop Stage"],
+            "recommendation": f"High humidity ({data.Humidity_percent}%) and warm temperature ({data.Temperature_C}°C) increase outbreak risk for {likely_pest}. Apply preventive bio-fungicide/insecticide spray immediately." if risk_level == "HIGH" else f"Monitor crop for signs of {likely_pest}. Use integrated pest management practices."
         }
     except Exception as e:
+        print("Pest prediction error:", e)
         return {"success": False, "message": str(e)}
 
 class RiskData(BaseModel):
