@@ -282,6 +282,41 @@ If you prefer not to bypass self-signed SSL warnings or are on different network
 
 ---
 
+## 👥 Farmer Community & Registration
+
+FarmGuide features a localized peer community and structured profile management:
+- **Registration & Locations:** Dependent dropdowns based on `server/data/locations.json`, 10-digit Indian phone validation, and multi-select crops from active database records.
+- **Farmer Community:** Ask questions, upload up to 3 photos (processed via `sharp` with EXIF/GPS stripped), mark solutions as helpful, and automatic safety moderation.
+- **Scan-to-Community Sharing:** Seamlessly share disease detection scans into the community with one click.
+- **Privacy First:** Phone numbers, land sizes, and private credentials are never exposed in public profiles or APIs.
+
+### 🌾 Crop Seeding (`seed:crops`)
+Crops are generated programmatically from the ML model's disease classes:
+
+```bash
+cd server
+npm run seed:crops
+```
+This inspects `ml/models/disease_classes.json`, extracts unique crop categories, maps localized multilingual names (English, Hindi, Marathi), and upserts them into MongoDB.
+
+### ⚙️ Environment Variables
+Copy `server/.env.example` to `server/.env.local` or `server/.env`:
+- `MONGODB_URI`: MongoDB connection string.
+- `JWT_SECRET`: Secret key for signing user tokens.
+- `STORAGE_DRIVER`: `local` (serves from `server/uploads/community`) or `cloudinary`.
+- `COMMUNITY_POSTS_PER_HOUR` / `COMMUNITY_COMMENTS_PER_HOUR`: Express rate limits per user.
+- `COMMUNITY_REPORT_HIDE_THRESHOLD`: Number of reports before content is automatically hidden for moderation review.
+
+### 🧪 Running Tests
+```bash
+cd server
+npm test               # Runs complete test suite (Stage 1, Stage 2, and Disease Knowledge)
+npm run test:stage1    # Registration, profile validation, phone immutability, whitelist
+npm run test:stage2    # Community posts, comments, helpful toggle, moderation, rate limits
+```
+
+---
+
 ## 🤝 Contributing
 
 Contributions are always welcome!

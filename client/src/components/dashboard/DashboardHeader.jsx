@@ -1,0 +1,167 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { 
+  MapPin, Calendar, Globe, Bell, User as UserIcon,
+  Sun, CloudSun, Droplets, CloudRain, Wind 
+} from 'lucide-react';
+
+export default function DashboardHeader({ user, weatherData, selectedLang, onLangChange }) {
+  const [showLangMenu, setShowLangMenu] = useState(false);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
+
+  const username = user?.fullName?.split(' ')[0] || user?.fullName || 'Farmer';
+  const location = user?.district && user?.state 
+    ? `${user.district}, ${user.state}` 
+    : user?.district || 'Pune, Maharashtra';
+
+  // Format today's date: e.g. "Tue, 30 Sep 2026"
+  const formattedDate = new Date().toLocaleDateString('en-US', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  });
+
+  const temp = weatherData?.current?.temp ? Math.round(weatherData.current.temp) : 28;
+  const condition = weatherData?.current?.description || 'Partly Cloudy';
+  const humidity = weatherData?.current?.humidity ?? 62;
+  const rainChance = weatherData?.current?.rainChance ?? 20;
+  const windSpeed = weatherData?.current?.windSpeed 
+    ? `${Math.round(weatherData.current.windSpeed * 3.6)} km/h` 
+    : '12 km/h';
+
+  const languages = [
+    { code: 'en', label: 'English' },
+    { code: 'hi', label: 'हिंदी (Hindi)' },
+    { code: 'mr', label: 'मराठी (Marathi)' }
+  ];
+
+  return (
+    <header className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 mb-8 text-left">
+      {/* ── Left Side: Greeting & Meta ── */}
+      <div>
+        <h1 className="text-3xl sm:text-4xl lg:text-[2.65rem] font-extrabold text-white tracking-tight leading-tight">
+          {getGreeting()}, <span className="text-emerald-400 glow-text">{username}</span> 👋
+        </h1>
+        <p className="text-sm sm:text-base text-white/70 font-medium mt-1">
+          Here's what's happening with your farm today.
+        </p>
+
+        <div className="flex flex-wrap items-center gap-4 mt-3 text-xs sm:text-sm text-white/60 font-medium">
+          <div className="flex items-center gap-1.5 bg-white/[0.04] px-3 py-1.5 rounded-full border border-white/10">
+            <MapPin size={15} className="text-emerald-400" />
+            <span>{location}</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 bg-white/[0.04] px-3 py-1.5 rounded-full border border-white/10">
+            <Calendar size={15} className="text-emerald-400" />
+            <span>{formattedDate}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Right Side: Top Action Controls & Weather Summary ── */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 lg:self-start">
+        {/* Top Controls: Language, Notifications, Profile */}
+        <div className="flex items-center justify-end gap-2.5 sm:self-start lg:absolute lg:top-8 lg:right-8">
+          {/* Language Selector */}
+          <div className="relative">
+            <button
+              onClick={() => setShowLangMenu(!showLangMenu)}
+              className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-[#0d1c13]/80 hover:bg-[#14281b] border border-white/15 text-xs font-semibold text-white/90 hover:text-white transition-all shadow-md cursor-pointer"
+            >
+              <Globe size={15} className="text-emerald-400" />
+              <span>{languages.find(l => l.code === selectedLang)?.label.split(' ')[0] || 'Select Language'}</span>
+              <span className="text-[10px] text-white/40">▼</span>
+            </button>
+
+            {showLangMenu && (
+              <div className="absolute right-0 mt-2 w-44 rounded-2xl bg-[#09150d] border border-white/15 p-1.5 shadow-2xl z-50 text-left">
+                {languages.map(lang => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      onLangChange(lang.code);
+                      setShowLangMenu(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
+                      selectedLang === lang.code 
+                        ? 'bg-emerald-500/20 text-emerald-300 font-bold' 
+                        : 'text-white/80 hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    {lang.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Notification Icon */}
+          <button 
+            className="w-10 h-10 rounded-2xl bg-[#0d1c13]/80 hover:bg-[#14281b] border border-white/15 flex items-center justify-center text-white/80 hover:text-white transition-all shadow-md cursor-pointer relative"
+            title="Notifications"
+          >
+            <Bell size={17} />
+            <span className="w-2 h-2 rounded-full bg-emerald-400 absolute top-2.5 right-2.5 shadow-[0_0_8px_rgba(74,222,128,0.8)]" />
+          </button>
+
+          {/* Profile Button */}
+          <Link
+            to="/profile"
+            className="w-10 h-10 rounded-2xl bg-[#0d1c13]/80 hover:bg-[#14281b] border border-white/15 flex items-center justify-center text-white/80 hover:text-emerald-400 transition-all shadow-md cursor-pointer"
+            title="My Profile"
+          >
+            <UserIcon size={18} />
+          </Link>
+        </div>
+
+        {/* ── Weather Summary Card (Top Right in Reference Image) ── */}
+        <div className="lg:mt-14 w-full sm:w-auto bg-[#0b1810]/80 backdrop-blur-xl border border-white/15 rounded-3xl p-4 sm:px-6 sm:py-3.5 flex items-center gap-5 shadow-[0_8px_30px_rgba(0,0,0,0.5)]">
+          {/* Main Temp & Condition */}
+          <div className="flex items-center gap-3 pr-4 border-r border-white/10">
+            <div className="text-amber-400 drop-shadow-[0_0_12px_rgba(251,191,36,0.5)]">
+              <CloudSun size={38} className="stroke-[1.75]" />
+            </div>
+            <div>
+              <p className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-none">
+                {temp}°C
+              </p>
+              <p className="text-xs text-white/70 font-semibold mt-1 capitalize whitespace-nowrap">
+                {condition}
+              </p>
+            </div>
+          </div>
+
+          {/* Weather Secondary Stats */}
+          <div className="space-y-1 text-xs">
+            <div className="flex items-center justify-between gap-3 text-white/60">
+              <span className="flex items-center gap-1.5">
+                <Droplets size={13} className="text-blue-400" /> Humidity
+              </span>
+              <span className="font-bold text-white font-mono">{humidity}%</span>
+            </div>
+            <div className="flex items-center justify-between gap-3 text-white/60">
+              <span className="flex items-center gap-1.5">
+                <CloudRain size={13} className="text-sky-400" /> Rain Chance
+              </span>
+              <span className="font-bold text-white font-mono">{rainChance}%</span>
+            </div>
+            <div className="flex items-center justify-between gap-3 text-white/60">
+              <span className="flex items-center gap-1.5">
+                <Wind size={13} className="text-teal-400" /> Wind
+              </span>
+              <span className="font-bold text-white font-mono">{windSpeed}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}

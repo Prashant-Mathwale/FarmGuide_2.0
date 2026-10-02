@@ -1,0 +1,16 @@
+{
+  "apple": { "en": "Apple", "hi": "सेब", "mr": "सफरचंद" },
+  "blueberry": { "en": "Blueberry", "hi": "ब्लूबेरी", "mr": "ब्लूबेरी" },
+  "cherry-including-sour": { "en": "Cherry", "hi": "चेरी", "mr": "चेरी" },
+  "corn-maize": { "en": "Corn (Maize)", "hi": "मक्का", "mr": "मका" },
+  "grape": { "en": "Grape", "hi": "अंगूर", "mr": "द्राक्ष" },
+  "orange": { "en": "Orange", "hi": "संतरा", "mr": "संत्रे" },
+  "peach": { "en": "Peach", "hi": "आड़ू", "mr": "सफरचंद/पीच" },
+  "pepper-bell": { "en": "Bell Pepper", "hi": "शिमला मिर्च", "mr": "ढोबळी मिरची" },
+  "potato": { "en": "Potato", "hi": "आलू", "mr": "बटाटा" },
+  "raspberry": { "en": "Raspberry", "hi": "रसभरी", "mr": "रासबेरी" },
+  "soybean": { "en": "Soybean", "hi": "सोयाबीन", "mr": "सोयाबीन" },
+  "squash": { "en": "Squash", "hi": "कद्दू", "mr": "भोपळा" },
+  "strawberry": { "en": "Strawberry", "hi": "स्ट्रॉबेरी", "mr": "स्ट्रॉबेरी" },
+  "tomato": { "en": "Tomato", "hi": "टमाटर", "mr": "टोमॅटो" }
+}

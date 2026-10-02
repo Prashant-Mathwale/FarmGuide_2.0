@@ -154,14 +154,14 @@ async def predict_pest(data: PestData):
         return {"success": False, "message": "Pest prediction model not loaded."}
     try:
         # Create a DataFrame since the Pipeline expects pandas with column names
+        # We simulate the 7-day and 14-day rolling averages using the current snapshot data 
+        # (Assuming the past week was similar to today's conditions for demonstration)
         features_df = pd.DataFrame([{
             'crop': data.Crop_Type,
-            'avg_temperature_c': data.Temperature_C,
-            'annual_rainfall_mm': data.Rainfall_mm,
-            'soil_moisture_percent': data.Soil_Moisture
+            'temp_7d_avg': data.Temperature_C, # Simulated 7-day average
+            'hum_7d_avg': data.Humidity_percent, # Simulated 7-day average
+            'rain_14d_sum': data.Rainfall_mm * 14 # Extrapolated 14-day sum assuming constant rain
         }])
-        
-        # Predict pressure
         pest_pressure = pest_forecaster.predict(features_df)[0]
         
         # Determine risk level
