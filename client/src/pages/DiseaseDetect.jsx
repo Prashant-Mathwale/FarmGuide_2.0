@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import api from '../services/api';
 import CameraCapture from '../components/CameraCapture';
+import RecommendationCard from '../components/RecommendationCard';
 
 function DiseaseDetect() {
     const [selectedImage, setSelectedImage] = useState(null);
@@ -200,7 +201,7 @@ function DiseaseDetect() {
                         />
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
                         {/* Left panel: Image / Heatmap */}
                         <div className={`relative rounded-3xl overflow-hidden glass-card ${result?.heatmap ? 'p-6' : 'aspect-square p-2'} border-2 border-green-500/20 shadow-[0_0_40px_rgba(0,0,0,0.5)] group flex flex-col justify-center`}>
                             {result && result.heatmap ? (
@@ -252,7 +253,7 @@ function DiseaseDetect() {
                         </div>
 
                         {/* Right panel: Results */}
-                        <div className="flex flex-col justify-center h-full">
+                        <div className="flex flex-col justify-start">
                             {!result && !loading && (
                                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
                                     <h3 className="text-3xl font-bold text-white mb-3 flex items-center gap-3">
@@ -273,57 +274,15 @@ function DiseaseDetect() {
                                         animate={{ opacity: 1, y: 0 }}
                                         className="glass-card p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-green-500/20 relative overflow-hidden"
                                     >
-                                        {/* ── STATUS: OK ── */}
-                                        {guardStatus === 'ok' && result.detectedDisease && (() => {
-                                            const isHealthy = result.detectedDisease.toLowerCase().includes('healthy');
-                                            return (
-                                                <>
-                                                    <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-[50px] pointer-events-none ${isHealthy ? 'bg-green-500/10' : 'bg-red-500/10'}`} />
-
-                                                    <div className="mb-8 pb-8 border-b border-white/10 relative z-10">
-                                                        <p className="text-white/50 text-xs font-bold uppercase tracking-widest mb-2">
-                                                            {isHealthy ? 'Plant Status' : 'Detected Pathogen'}
-                                                        </p>
-                                                        <h4 className={`text-3xl font-bold flex items-center ${isHealthy ? 'text-green-400 drop-shadow-[0_0_10px_rgba(74,222,128,0.3)]' : 'text-red-400 drop-shadow-[0_0_10px_rgba(248,113,113,0.3)]'}`}>
-                                                            {isHealthy ? <CheckCircle2 className="mr-3 text-green-500" size={32} /> : <AlertTriangle className="mr-3 text-red-500" size={32} />}
-                                                            <span className="capitalize">{result.detectedDisease}</span>
-                                                        </h4>
-                                                    </div>
-
-                                                    <div className="mb-10 relative z-10">
-                                                        <p className="text-green-400 text-xs font-bold uppercase tracking-widest mb-3">Recommended Protocol</p>
-                                                        <p className="text-white/90 text-[1.1rem] leading-relaxed">{result.suggestedAction}</p>
-                                                    </div>
-
-                                                    <button onClick={handleReset} className="w-full btn-secondary py-4 text-lg border-white/20 hover:bg-white/10 hover:border-white/40">
-                                                        Scan Another Image
-                                                    </button>
-                                                </>
-                                            );
-                                        })()}
-
-                                        {/* ── STATUS: POSSIBLE ── */}
-                                        {guardStatus === 'possible' && result.detectedDisease && (
+                                        {/* ── STATUS: OK OR POSSIBLE (RECOMMENDATION CARD) ── */}
+                                        {(guardStatus === 'ok' || guardStatus === 'possible') && result.detectedDisease && (
                                             <>
-                                                <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-[50px] pointer-events-none bg-yellow-500/10" />
-
-                                                <div className="mb-6 pb-6 border-b border-white/10 relative z-10">
-                                                    <div className="flex items-center gap-3 mb-3">
-                                                        <span className="px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 text-xs font-bold uppercase tracking-wider border border-yellow-500/30">
-                                                            Possible Match — Please Verify
-                                                        </span>
-                                                    </div>
-                                                    <p className="text-white/50 text-xs font-bold uppercase tracking-widest mb-2">Most Likely Pathogen</p>
-                                                    <h4 className="text-2xl font-bold text-yellow-400 flex items-center drop-shadow-[0_0_10px_rgba(250,204,21,0.3)]">
-                                                        <HelpCircle className="mr-3 text-yellow-500" size={28} />
-                                                        <span className="capitalize">{result.detectedDisease}</span>
-                                                    </h4>
-                                                </div>
-
-                                                {/* Top-3 alternatives */}
-                                                {result.topPredictions?.length > 0 && (
-                                                    <div className="mb-6 relative z-10">
-                                                        <p className="text-yellow-400 text-xs font-bold uppercase tracking-widest mb-3">Top Possibilities</p>
+                                                {/* Top-3 Alternative Possibilities (shown for possible matches) */}
+                                                {guardStatus === 'possible' && result.topPredictions?.length > 0 && (
+                                                    <div className="mb-6 pb-6 border-b border-white/10 relative z-10">
+                                                        <p className="text-yellow-400 text-xs font-bold uppercase tracking-widest mb-3">
+                                                            Top Alternative Possibilities
+                                                        </p>
                                                         <div className="space-y-2">
                                                             {result.topPredictions.map((pred, i) => (
                                                                 <div key={i} className="flex items-center justify-between glass-panel px-4 py-2.5 rounded-xl">
@@ -335,15 +294,30 @@ function DiseaseDetect() {
                                                     </div>
                                                 )}
 
-                                                {result.suggestedAction && (
+                                                {/* Structured Curated Recommendation Card */}
+                                                {result.recommendation ? (
                                                     <div className="mb-8 relative z-10">
-                                                        <p className="text-green-400 text-xs font-bold uppercase tracking-widest mb-3">Recommended Protocol</p>
-                                                        <p className="text-white/90 text-[1.1rem] leading-relaxed">{result.suggestedAction}</p>
+                                                        <RecommendationCard
+                                                            recommendation={result.recommendation}
+                                                            confidence={result.confidenceScore}
+                                                            status={guardStatus}
+                                                            diseaseLabel={result.detectedDisease}
+                                                        />
                                                     </div>
+                                                ) : (
+                                                    result.suggestedAction && (
+                                                        <div className="mb-8 relative z-10">
+                                                            <p className="text-green-400 text-xs font-bold uppercase tracking-widest mb-3">Recommended Protocol</p>
+                                                            <p className="text-white/90 text-[1.1rem] leading-relaxed">{result.suggestedAction}</p>
+                                                        </div>
+                                                    )
                                                 )}
 
-                                                <button onClick={handleReset} className="w-full btn-secondary py-4 text-lg border-white/20 hover:bg-white/10 hover:border-white/40 flex items-center justify-center gap-2">
-                                                    <RefreshCw size={18} /> Retake / Upload Another
+                                                <button 
+                                                    onClick={handleReset} 
+                                                    className="w-full btn-secondary py-4 text-lg border-white/20 hover:bg-white/10 hover:border-white/40 flex items-center justify-center gap-2"
+                                                >
+                                                    <RefreshCw size={18} /> {guardStatus === 'possible' ? 'Retake / Upload Another' : 'Scan Another Image'}
                                                 </button>
                                             </>
                                         )}
