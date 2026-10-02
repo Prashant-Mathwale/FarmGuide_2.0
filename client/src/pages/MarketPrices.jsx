@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, MapPin, Tag, TrendingUp, Store } from 'lucide-react';
 import api from '../services/api';
+import { addRecentActivity } from '../utils/activityTracker';
 
 function MarketPrices() {
     const [prices, setPrices] = useState([]);
@@ -60,6 +61,14 @@ function MarketPrices() {
                 setErrorMessage('');
                 // Show the actual data date in the footer
                 if (latestDate) setLastUpdated(`Data from ${latestDate}`);
+
+                const cropLabel = overrideFilters.cropName ? overrideFilters.cropName : 'commodities';
+                addRecentActivity({
+                    type: 'market',
+                    title: 'Market Prices',
+                    subtitle: `Checked ${cropLabel} prices`,
+                    to: '/market-prices'
+                });
             } else {
                 setPrices([]);
                 setErrorMessage(json.error?.message || 'No aggregate data found for the specified query.');

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, Loader2, Sparkles, Navigation, HelpCircle } from 'lucide-react';
 import api from '../services/api';
+import { addRecentActivity } from '../utils/activityTracker';
 
 function CropRec() {
     const [formData, setFormData] = useState({ N_level: '', P_level: '', K_level: '', pH_value: '', moisture: '', temperature: '', rainfall: '' });
@@ -56,6 +57,17 @@ function CropRec() {
             setTimeout(() => {
                 setRecommendations(res.data.recommendedCrops);
                 setLoading(false);
+
+                if (res.data?.recommendedCrops && res.data.recommendedCrops.length > 0) {
+                    const topCrop = res.data.recommendedCrops[0];
+                    const cropName = typeof topCrop === 'string' ? topCrop : topCrop.crop || topCrop.name || 'Crop';
+                    addRecentActivity({
+                        type: 'crop',
+                        title: 'Crop Recommendation',
+                        subtitle: `Recommended: ${cropName.charAt(0).toUpperCase() + cropName.slice(1)}`,
+                        to: '/crop-rec'
+                    });
+                }
             }, 1200);
         } catch (err) {
             const errorMsg = err.response && err.response.data && err.response.data.message 

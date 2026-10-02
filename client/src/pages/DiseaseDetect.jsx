@@ -8,6 +8,7 @@ import {
 import api from '../services/api';
 import CameraCapture from '../components/CameraCapture';
 import RecommendationCard from '../components/RecommendationCard';
+import { addRecentActivity } from '../utils/activityTracker';
 
 function DiseaseDetect() {
     const navigate = useNavigate();
@@ -102,6 +103,33 @@ function DiseaseDetect() {
             setTimeout(() => {
                 setResult(res.data);
                 setLoading(false);
+
+                // Record real activity & save recent scan
+                if (res.data?.detectedDisease && (res.data.status === 'ok' || res.data.status === 'possible')) {
+                    const rawLabel = res.data.detectedDisease.replace(/___/g, ' - ').replace(/_/g, ' ');
+                    const parts = rawLabel.split(' - ');
+                    const crop = parts[0] || 'Plant';
+                    const disease = parts[1] || parts[0];
+                    const conf = res.data.confidenceScore ? Math.round(res.data.confidenceScore) : 90;
+
+                    addRecentActivity({
+                        type: 'disease',
+                        title: 'Disease Detection',
+                        subtitle: `${crop} → ${disease} (${conf}%)`,
+                        to: '/disease-detect'
+                    });
+
+                    try {
+                        localStorage.setItem('farmguide_recent_scan', JSON.stringify({
+                            crop,
+                            disease,
+                            confidence: conf,
+                            imageUrl: previewUrl
+                        }));
+                    } catch (e) {
+                        // ignore storage errors
+                    }
+                }
             }, 1200);
         } catch (err) {
             console.error('Detection Error:', err);

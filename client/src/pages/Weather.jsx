@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, MapPin, Wind, Droplets, CloudRain, Sun, Cloud, Thermometer, Navigation } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { addRecentActivity } from '../utils/activityTracker';
 
 // WMO Weather codes mapping
 const getWeatherDescription = (code) => {
@@ -44,6 +45,13 @@ function Weather() {
             
             setWeatherData(formattedData);
             setLoading(false);
+
+            addRecentActivity({
+                type: 'weather',
+                title: 'Weather',
+                subtitle: `Viewed forecast for ${locationName}`,
+                to: '/weather'
+            });
         } catch (err) {
             console.error(err);
             setErrorMsg("Failed to fetch weather data.");
