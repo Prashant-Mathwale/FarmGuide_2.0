@@ -22,3 +22,16 @@ tmp/
 
 # Large Datasets
 ml/dataset/plantvillage dataset/
+
+# ML datasets
+ml/dataset/
+
+# Trained ML models
+ml/models/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
