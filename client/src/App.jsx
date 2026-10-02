@@ -11,7 +11,7 @@ import MarketPrices from './pages/MarketPrices';
 import Weather from './pages/Weather';
 import Schemes from './pages/Schemes';
 import PestPrediction from './pages/PestPrediction';
-import News from './pages/News';
+
 import Profile from './pages/Profile';
 import CommunityFeed from './pages/CommunityFeed';
 import CreatePost from './pages/CreatePost';
@@ -55,7 +55,7 @@ function App() {
           <Route path="/weather" element={user ? <Layout user={user} setUser={setUser}><Weather /></Layout> : <Navigate to="/login" replace />} />
           <Route path="/schemes" element={user ? <Layout user={user} setUser={setUser}><Schemes /></Layout> : <Navigate to="/login" replace />} />
           <Route path="/pest-predict" element={user ? <Layout user={user} setUser={setUser}><PestPrediction /></Layout> : <Navigate to="/login" replace />} />
-<Route path="/news" element={user ? <Layout user={user} setUser={setUser}><News /></Layout> : <Navigate to="/login" replace />} />
+
           <Route path="/community" element={user ? <Layout user={user} setUser={setUser}><CommunityFeed user={user} /></Layout> : <Navigate to="/login" replace />} />
           <Route path="/community/new" element={user ? <Layout user={user} setUser={setUser}><CreatePost user={user} /></Layout> : <Navigate to="/login" replace />} />
           <Route path="/community/:id" element={user ? <Layout user={user} setUser={setUser}><PostDetail user={user} /></Layout> : <Navigate to="/login" replace />} />

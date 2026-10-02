@@ -20,7 +20,7 @@ const Sidebar = ({ user, setUser, isOpen, onClose }) => {
         { name: 'Crop Recs', icon: Sprout, path: '/crop-rec' },
         { name: 'Disease Detect', icon: Bug, path: '/disease-detect' },
         { name: 'Pest Predict', icon: AlertTriangle, path: '/pest-predict' },
-	{ name: 'News', icon: Newspaper, path: '/news' },
+
         { name: 'Market Prices', icon: TrendingUp, path: '/market-prices' },
         { name: 'Weather', icon: Cloud, path: '/weather' },
         { name: 'Govt Schemes', icon: Landmark, path: '/schemes' },
