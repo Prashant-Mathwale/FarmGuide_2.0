@@ -17,7 +17,7 @@ export default function CreatePost({ user }) {
   const scanData = location.state || null;
 
   const [crops, setCrops] = useState([]);
-  const [selectedCrop, setSelectedCrop] = useState('');
+  const [cropName, setCropName] = useState('');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [photos, setPhotos] = useState([]); // array of File objects
@@ -36,41 +36,25 @@ export default function CreatePost({ user }) {
   const BODY_MAX = 2000;
   const MAX_PHOTOS = 3;
 
-  // Fetch available crops
+  // Initialize crop from scan data or user profile
   useEffect(() => {
     let isMounted = true;
-    const fetchCrops = async () => {
-      try {
-        const res = await api.get('/meta/crops');
-        if (isMounted && res.data?.crops) {
-          setCrops(res.data.crops);
+    const initCrop = async () => {
+      // Priority 1: From diagnostic scan share
+      if (scanData?.cropName) {
+        setCropName(scanData.cropName);
+        return;
+      }
 
-          // Priority 1: Match crop from incoming scanData (if shared from disease detection)
-          if (scanData?.cropKey || scanData?.cropName) {
-            const matched = res.data.crops.find(c => 
-              c.key === scanData.cropKey || 
-              c.name.toLowerCase().includes((scanData.cropName || '').toLowerCase())
-            );
-            if (matched) {
-              setSelectedCrop(matched._id);
-              return;
-            }
-          }
-
-          // Priority 2: User's first crop from profile
-          if (user?.crops && user.crops.length > 0) {
-            const firstUserCropId = typeof user.crops[0] === 'object' ? user.crops[0]._id : user.crops[0];
-            setSelectedCrop(firstUserCropId);
-          } else if (res.data.crops.length > 0) {
-            setSelectedCrop(res.data.crops[0]._id);
-          }
-        }
-      } catch (e) {
-        console.error('Failed to load crops', e);
+      // Priority 2: From user profile crops
+      if (user?.crops && user.crops.length > 0) {
+        const first = user.crops[0];
+        const name = typeof first === 'object' ? (first.name || '') : '';
+        if (name && isMounted) setCropName(name);
       }
     };
 
-    fetchCrops();
+    initCrop();
 
     // If pre-filled scan data exists (Stage 4)
     if (scanData) {
@@ -129,8 +113,8 @@ export default function CreatePost({ user }) {
     e.preventDefault();
     setError('');
 
-    if (!selectedCrop) {
-      setError('Please select a crop');
+    if (!cropName.trim()) {
+      setError('Please type your crop name');
       return;
     }
 
@@ -148,7 +132,8 @@ export default function CreatePost({ user }) {
 
     try {
       const formData = new FormData();
-      formData.append('crop', selectedCrop);
+      formData.append('crop', cropName.trim());
+      formData.append('cropName', cropName.trim());
       formData.append('title', title.trim());
       formData.append('body', body.trim());
 
@@ -229,24 +214,25 @@ export default function CreatePost({ user }) {
 
       {/* ── POST CREATION FORM ── */}
       <form onSubmit={handleSubmit} className="glass-card p-6 sm:p-8 rounded-3xl border border-white/10 space-y-6 shadow-[0_15px_40px_rgba(0,0,0,0.5)]">
-        {/* Crop Selection */}
+        {/* Crop Name Input */}
         <div>
           <label className="block text-xs font-bold text-primary uppercase tracking-widest mb-1.5 ml-1">
-            {t('community_crop_select', userLang)} *
+            Crop Name *
           </label>
-          <select
-            value={selectedCrop}
-            onChange={(e) => setSelectedCrop(e.target.value)}
-            required
-            className="input-field w-full bg-neutral-900 cursor-pointer"
-          >
-            <option value="">Select Crop</option>
-            {crops.map(crop => (
-              <option key={crop._id} value={crop._id} className="bg-neutral-900 text-white">
-                {crop.names?.[userLang] || crop.name}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <Sprout size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/70 pointer-events-none" />
+            <input
+              type="text"
+              value={cropName}
+              onChange={(e) => setCropName(e.target.value)}
+              placeholder="Type your crop name (e.g. Grape, Tomato, Cotton, Wheat, Sugarcane)..."
+              required
+              className="w-full pl-11 pr-4 py-3 rounded-2xl bg-black/40 border border-white/15 text-white text-sm focus:border-primary focus:outline-none transition-colors placeholder:text-white/40"
+            />
+          </div>
+          <p className="text-[11px] text-white/50 mt-1.5 ml-1">
+            You can type any crop you are cultivating.
+          </p>
         </div>
 
         {/* Title & Counter */}

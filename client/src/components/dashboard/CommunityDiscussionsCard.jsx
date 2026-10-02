@@ -32,8 +32,8 @@ const CommunityDiscussionsCard = () => {
                 const res = await api.get('/community/posts?limit=2');
                 if (res.data?.posts && Array.isArray(res.data.posts) && res.data.posts.length > 0 && isMounted) {
                     const mapped = res.data.posts.slice(0, 2).map((post, idx) => {
-                        const fallback = DEFAULT_POSTS[idx] || DEFAULT_POSTS[0];
-                        const img = post.images && post.images.length > 0 ? post.images[0] : fallback.image;
+                        const rawImg = post.images && post.images.length > 0 ? post.images[0] : null;
+                        const imgUrl = rawImg ? (rawImg.url || (typeof rawImg === 'string' ? rawImg : fallback.image)) : fallback.image;
                         const author = post.author?.fullName || post.author?.district || fallback.authorName;
                         
                         // Calculate simple relative time
@@ -55,7 +55,7 @@ const CommunityDiscussionsCard = () => {
                             authorName: author,
                             timeAgo,
                             commentCount: post.commentCount || 0,
-                            image: img,
+                            image: imgUrl,
                         };
                     });
                     setPosts(mapped);
@@ -104,8 +104,14 @@ const CommunityDiscussionsCard = () => {
                                     alt={post.title}
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                     onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = '/leaf-early-blight.jpg';
+                                        if (!e.currentTarget.dataset.retried && post.image && !post.image.startsWith('http')) {
+                                            e.currentTarget.dataset.retried = 'true';
+                                            const cleanUrl = post.image.startsWith('/') ? post.image : `/${post.image}`;
+                                            e.currentTarget.src = `http://localhost:5000${cleanUrl}`;
+                                        } else {
+                                            e.currentTarget.onerror = null;
+                                            e.currentTarget.src = '/leaf-early-blight.jpg';
+                                        }
                                     }}
                                 />
                             </div>

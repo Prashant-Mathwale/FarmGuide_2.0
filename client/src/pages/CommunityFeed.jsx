@@ -3,43 +3,25 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Search, Plus, CheckCircle, MessageSquare, Clock, 
-  MapPin, User, Sprout, Filter, AlertCircle, Sparkles, Image as ImageIcon
+  MapPin, User, Sprout, Filter, AlertCircle, Sparkles, Image as ImageIcon, X
 } from 'lucide-react';
 import api from '../services/api';
 import { t } from '../config/translations';
 
 export default function CommunityFeed({ user }) {
   const [posts, setPosts] = useState([]);
-  const [crops, setCrops] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
 
   // Filters & Pagination
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCrop, setSelectedCrop] = useState('');
+  const [cropFilter, setCropFilter] = useState('');
   const [selectedTab, setSelectedTab] = useState('all'); // 'all' | 'unanswered' | 'solved' | 'mine'
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [totalPosts, setTotalPosts] = useState(0);
 
   const userLang = user?.language || 'en';
-
-  // Fetch crops once
-  useEffect(() => {
-    let isMounted = true;
-    const fetchCrops = async () => {
-      try {
-        const res = await api.get('/meta/crops');
-        if (isMounted && res.data?.crops) {
-          setCrops(res.data.crops);
-        }
-      } catch (e) {
-        console.error('Failed to load crops', e);
-      }
-    };
-    fetchCrops();
-    return () => { isMounted = false; };
-  }, []);
 
   // Fetch posts on filter/query/tab changes
   useEffect(() => {
@@ -51,7 +33,7 @@ export default function CommunityFeed({ user }) {
         params.append('filter', selectedTab);
         params.append('page', '1');
         params.append('limit', '10');
-        if (selectedCrop) params.append('crop', selectedCrop);
+        if (cropFilter.trim()) params.append('crop', cropFilter.trim());
         if (searchQuery.trim()) params.append('q', searchQuery.trim());
 
         const res = await api.get(`/community/posts?${params.toString()}`);
@@ -76,7 +58,7 @@ export default function CommunityFeed({ user }) {
       clearTimeout(timer);
       isMounted = false;
     };
-  }, [selectedTab, selectedCrop, searchQuery]);
+  }, [selectedTab, cropFilter, searchQuery]);
 
   // Load more posts
   const handleLoadMore = async () => {
@@ -88,7 +70,7 @@ export default function CommunityFeed({ user }) {
       params.append('filter', selectedTab);
       params.append('page', nextPage.toString());
       params.append('limit', '10');
-      if (selectedCrop) params.append('crop', selectedCrop);
+      if (cropFilter.trim()) params.append('crop', cropFilter.trim());
       if (searchQuery.trim()) params.append('q', searchQuery.trim());
 
       const res = await api.get(`/community/posts?${params.toString()}`);
@@ -175,35 +157,25 @@ export default function CommunityFeed({ user }) {
           ))}
         </div>
 
-        {/* Crop Filter Chips */}
-        <div className="flex items-center gap-2 overflow-x-auto pt-1 pb-1 custom-scrollbar">
-          <button
-            onClick={() => setSelectedCrop('')}
-            className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-              selectedCrop === ''
-                ? 'bg-white/20 text-white border border-white/30'
-                : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/5'
-            }`}
-          >
-            All Crops
-          </button>
-          {crops.map(crop => {
-            const isSelected = selectedCrop === crop._id;
-            const displayName = crop.names?.[userLang] || crop.name;
-            return (
-              <button
-                key={crop._id}
-                onClick={() => setSelectedCrop(isSelected ? '' : crop._id)}
-                className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                  isSelected
-                    ? 'bg-primary/20 text-primary border border-primary/40 font-bold'
-                    : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/5'
-                }`}
-              >
-                {displayName}
-              </button>
-            );
-          })}
+        {/* Filter by Crop Name Input */}
+        <div className="relative">
+          <Sprout size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-primary" />
+          <input
+            type="text"
+            value={cropFilter}
+            onChange={(e) => setCropFilter(e.target.value)}
+            placeholder="Filter by crop name (e.g. Grape, Tomato, Cotton, Wheat)..."
+            className="w-full pl-10 pr-9 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white text-xs placeholder:text-white/40 focus:border-primary focus:outline-none transition-colors"
+          />
+          {cropFilter && (
+            <button
+              onClick={() => setCropFilter('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white p-1 cursor-pointer"
+              title="Clear crop filter"
+            >
+              <X size={14} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -249,7 +221,7 @@ export default function CommunityFeed({ user }) {
         <div className="space-y-4">
           {posts.map(post => {
             const hasThumbnail = post.images && post.images.length > 0;
-            const cropName = post.crop?.names?.[userLang] || post.crop?.name || 'Crop';
+            const cropName = post.cropName || post.crop?.names?.[userLang] || post.crop?.name || 'General Crop';
 
             return (
               <motion.div
@@ -267,6 +239,13 @@ export default function CommunityFeed({ user }) {
                         alt="Crop observation"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
+                        onError={(e) => {
+                          if (!e.currentTarget.dataset.retried) {
+                            e.currentTarget.dataset.retried = 'true';
+                            const cleanUrl = post.images[0].url.startsWith('/') ? post.images[0].url : `/${post.images[0].url}`;
+                            e.currentTarget.src = `http://localhost:5000${cleanUrl}`;
+                          }
+                        }}
                       />
                     </div>
                   )}

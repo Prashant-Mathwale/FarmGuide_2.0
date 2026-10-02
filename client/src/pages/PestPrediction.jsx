@@ -184,13 +184,15 @@ export default function PestPrediction() {
       const res = await api.post('/ml/pest-predict', payload);
       
       if (res.data.success) {
+          const prob = Number(res.data.riskProbability ?? res.data.probability ?? 0);
           setResults({ 
             success: true,
-            mlProbability: res.data.riskProbability,
-            riskLevel: res.data.riskLevel,
-            riskWindow: res.data.riskWindow,
-            actionPlan: res.data.actionPlan,
+            mlProbability: isNaN(prob) ? 0 : prob,
+            riskLevel: res.data.riskLevel || (prob > 70 ? 'HIGH' : prob > 40 ? 'MEDIUM' : 'LOW'),
+            riskWindow: res.data.riskWindow || 'Next 5-7 days',
+            actionPlan: res.data.actionPlan || 'Monitor crop regularly and maintain optimal field hygiene.',
             crop: form.crop,
+            pestName: res.data.pestName || res.data.pest || '',
           });
       } else {
           alert("Pest prediction failed: " + res.data.message);
@@ -450,14 +452,19 @@ export default function PestPrediction() {
                 <div className="glass-panel rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
                   <div className="flex-1">
                     <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">General Pest Risk Level</p>
-                    <p className={`text-2xl font-headline font-bold mt-1 ${results.riskLevel === 'HIGH' ? 'text-red-400' : results.riskLevel === 'MEDIUM' ? 'text-amber-400' : 'text-green-400'}`}>{results.riskLevel}</p>
-                    <p className="text-xs mt-1 text-on-surface-variant opacity-70">({results.riskWindow})</p>
+                    <p className={`text-2xl font-headline font-bold mt-1 ${results.riskLevel === 'HIGH' ? 'text-red-400' : results.riskLevel === 'MEDIUM' ? 'text-amber-400' : 'text-green-400'}`}>{results.riskLevel || 'LOW'}</p>
+                    <p className="text-xs mt-1 text-on-surface-variant opacity-70">({results.riskWindow || 'Next 5-7 days'})</p>
                   </div>
                   <div className="flex-1 text-center md:border-l md:border-r border-white/10">
                     <p className="text-xs text-on-surface-variant uppercase font-bold tracking-tighter">Outbreak Probability</p>
-                    <p className={`text-3xl font-black ${results.mlProbability > 50 ? 'text-red-400' : 'text-green-400'}`}>
-                      {results.mlProbability.toFixed(1)}%
+                    <p className={`text-3xl font-black ${(results.mlProbability ?? 0) > 50 ? 'text-red-400' : 'text-green-400'}`}>
+                      {(results.mlProbability ?? 0).toFixed(1)}%
                     </p>
+                    {results.pestName && (
+                      <p className="text-xs text-orange-300 font-semibold mt-1">
+                        Pest Identified: {results.pestName}
+                      </p>
+                    )}
                   </div>
                   <div className="flex-1 text-right">
                     <p className="text-xs text-on-surface-variant">Crop Vulnerability</p>
@@ -469,7 +476,7 @@ export default function PestPrediction() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`glass-panel rounded-2xl border overflow-hidden ${results.mlProbability > 50 ? 'bg-red-400/10 border-red-400/30' : 'bg-amber-400/10 border-amber-400/30'}`}
+                  className={`glass-panel rounded-2xl border overflow-hidden ${(results.mlProbability ?? 0) > 50 ? 'bg-red-400/10 border-red-400/30' : 'bg-amber-400/10 border-amber-400/30'}`}
                 >
                   <div className="px-6 py-5 flex flex-col gap-3">
                     <div className="flex items-center gap-2 mb-2">

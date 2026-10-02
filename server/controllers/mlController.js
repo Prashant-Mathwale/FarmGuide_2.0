@@ -197,18 +197,22 @@ const predictPest = async (req, res) => {
             throw new Error(pythonApiRes.data.message || 'Failed to get pest prediction from ML server');
         }
 
-        const riskLevel = pythonApiRes.data.risk_level;
-        const riskProbability = pythonApiRes.data.risk_probability;
-        const riskWindow = pythonApiRes.data.risk_window;
-        const keyFactors = pythonApiRes.data.key_factors;
-        let actionPlan = pythonApiRes.data.recommendation || "Monitor crop closely.";
+        const riskProbability = Number(pythonApiRes.data.risk_probability ?? pythonApiRes.data.probability ?? 0);
+        const pestName = pythonApiRes.data.pest || pythonApiRes.data.pest_name || '';
+        let riskLevel = pythonApiRes.data.risk_level;
+        if (!riskLevel) {
+            riskLevel = riskProbability > 70 ? 'HIGH' : riskProbability > 40 ? 'MEDIUM' : 'LOW';
+        }
+        const riskWindow = pythonApiRes.data.risk_window || 'Next 5-7 days';
+        const keyFactors = pythonApiRes.data.key_factors || ['Temperature', 'Humidity', 'Rainfall', 'Crop Type'];
+        let actionPlan = pythonApiRes.data.recommendation || (pestName ? `Monitor crop closely for ${pestName} symptoms and take preventative measures.` : 'Monitor crop closely.');
 
         // Integrate Gemini Action Plan if probability is high enough
         if (riskProbability > 50 && process.env.GEMINI_API_KEY) {
             try {
                 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
                 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-                const prompt = `A predictive ML model has flagged a ${riskProbability.toFixed(1)}% probability of a general pest outbreak (Risk Level: ${riskLevel}) in a ${payload.Crop_Type} field located in ${payload.Location}. Provide a highly concise, practical, and immediate preventative action plan for the farmer. Maximum 2 sentences. Format: "Action: [What to do]."`;
+                const prompt = `A predictive ML model has flagged a ${riskProbability.toFixed(1)}% probability of a general pest outbreak (Risk Level: ${riskLevel}${pestName ? `, Likely pest/disease: ${pestName}` : ''}) in a ${payload.Crop_Type} field located in ${payload.Location || 'India'}. Provide a highly concise, practical, and immediate preventative action plan for the farmer. Maximum 2 sentences. Format: "Action: [What to do]."`;
                 
                 const result = await model.generateContent(prompt);
                 const responseText = result.response.text();
@@ -221,7 +225,7 @@ const predictPest = async (req, res) => {
                     // Fallback to flash-latest if 2.0 fails
                     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
                     const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
-                    const prompt = `A predictive ML model has flagged a ${riskProbability.toFixed(1)}% probability of a general pest outbreak (Risk Level: ${riskLevel}) in a ${payload.Crop_Type} field located in ${payload.Location}. Provide a highly concise, practical, and immediate preventative action plan for the farmer. Maximum 2 sentences. Format: "Action: [What to do]."`;
+                    const prompt = `A predictive ML model has flagged a ${riskProbability.toFixed(1)}% probability of a general pest outbreak (Risk Level: ${riskLevel}${pestName ? `, Likely pest/disease: ${pestName}` : ''}) in a ${payload.Crop_Type} field located in ${payload.Location || 'India'}. Provide a highly concise, practical, and immediate preventative action plan for the farmer. Maximum 2 sentences. Format: "Action: [What to do]."`;
                     const result = await model.generateContent(prompt);
                     actionPlan = result.response.text().trim();
                 } catch(e) {}
@@ -232,6 +236,7 @@ const predictPest = async (req, res) => {
             success: true,
             riskLevel: riskLevel,
             riskProbability: riskProbability,
+            pestName: pestName,
             riskWindow: riskWindow,
             keyFactors: keyFactors,
             actionPlan: actionPlan

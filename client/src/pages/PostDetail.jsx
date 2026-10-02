@@ -176,7 +176,7 @@ export default function PostDetail({ user }) {
     );
   }
 
-  const cropName = post.crop?.names?.[userLang] || post.crop?.name || 'Crop';
+  const cropName = post.cropName || post.crop?.names?.[userLang] || post.crop?.name || 'General Crop';
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-16 text-white text-left">
@@ -308,6 +308,13 @@ export default function PostDetail({ user }) {
                   src={img.url}
                   alt={`Observation ${i + 1}`}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    if (!e.currentTarget.dataset.retried) {
+                      e.currentTarget.dataset.retried = 'true';
+                      const cleanUrl = img.url.startsWith('/') ? img.url : `/${img.url}`;
+                      e.currentTarget.src = `http://localhost:5000${cleanUrl}`;
+                    }
+                  }}
                 />
                 <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-xs font-semibold">
                   Click to enlarge

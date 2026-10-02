@@ -9,7 +9,12 @@ const postSchema = new mongoose.Schema({
     crop: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Crop',
-        required: true
+        required: false
+    },
+    cropName: {
+        type: String,
+        trim: true,
+        default: ''
     },
     title: {
         type: String,

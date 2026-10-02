@@ -17,9 +17,16 @@ const getPosts = async (req, res) => {
 
         const query = { status: 'active' };
 
-        // Crop filter
-        if (crop && mongoose.Types.ObjectId.isValid(crop)) {
-            query.crop = crop;
+        // Crop filter (supports either ObjectId or typed crop string)
+        if (crop && typeof crop === 'string' && crop.trim()) {
+            if (mongoose.Types.ObjectId.isValid(crop)) {
+                query.$or = [
+                    { crop: crop },
+                    { cropName: { $regex: crop.trim(), $options: 'i' } }
+                ];
+            } else {
+                query.cropName = { $regex: crop.trim(), $options: 'i' };
+            }
         }
 
         // Sub-filters
@@ -73,15 +80,34 @@ const getPosts = async (req, res) => {
  */
 const createPost = async (req, res) => {
     try {
-        const { crop, title, body, scanSummary } = req.body;
+        const { crop, cropName, title, body, scanSummary } = req.body;
 
-        // Validation: Crop
-        if (!crop || !mongoose.Types.ObjectId.isValid(crop)) {
-            return res.status(400).json({ success: false, message: 'Valid crop ID is required' });
+        // Validation: Crop (Farmer can type any crop name or pass an ID)
+        let resolvedCropId = null;
+        let resolvedCropName = (cropName || crop || '').trim();
+
+        if (crop && mongoose.Types.ObjectId.isValid(crop)) {
+            resolvedCropId = crop;
+            const existingCrop = await Crop.findById(crop);
+            if (existingCrop) {
+                resolvedCropName = existingCrop.name;
+            }
+        } else if (resolvedCropName) {
+            // Attempt to match with existing crop in DB if available
+            const matchedCrop = await Crop.findOne({
+                $or: [
+                    { name: { $regex: new RegExp(`^${resolvedCropName}$`, 'i') } },
+                    { key: resolvedCropName.toLowerCase().replace(/[^a-z0-9]+/g, '-') }
+                ]
+            });
+            if (matchedCrop) {
+                resolvedCropId = matchedCrop._id;
+                resolvedCropName = matchedCrop.name;
+            }
         }
-        const existingCrop = await Crop.findById(crop);
-        if (!existingCrop) {
-            return res.status(400).json({ success: false, message: 'Crop not found in system' });
+
+        if (!resolvedCropName) {
+            resolvedCropName = 'General Crop';
         }
 
         // Validation: Title
@@ -90,9 +116,9 @@ const createPost = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Title is required' });
         }
         if (cleanTitle.length > config.limits.postTitleMax) {
-            return res.status(400).json({ 
-                success: false, 
-                message: `Title cannot exceed ${config.limits.postTitleMax} characters` 
+            return res.status(400).json({
+                success: false,
+                message: `Title cannot exceed ${config.limits.postTitleMax} characters`
             });
         }
 
@@ -102,9 +128,9 @@ const createPost = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Description/body is required' });
         }
         if (cleanBody.length > config.limits.postBodyMax) {
-            return res.status(400).json({ 
-                success: false, 
-                message: `Body cannot exceed ${config.limits.postBodyMax} characters` 
+            return res.status(400).json({
+                success: false,
+                message: `Body cannot exceed ${config.limits.postBodyMax} characters`
             });
         }
 
@@ -112,9 +138,9 @@ const createPost = async (req, res) => {
         const processedImages = [];
         if (req.files && Array.isArray(req.files) && req.files.length > 0) {
             if (req.files.length > config.limits.maxImagesPerPost) {
-                return res.status(400).json({ 
-                    success: false, 
-                    message: `Maximum ${config.limits.maxImagesPerPost} images allowed` 
+                return res.status(400).json({
+                    success: false,
+                    message: `Maximum ${config.limits.maxImagesPerPost} images allowed`
                 });
             }
 
@@ -128,8 +154,8 @@ const createPost = async (req, res) => {
         let parsedScanSummary = undefined;
         if (scanSummary) {
             try {
-                parsedScanSummary = typeof scanSummary === 'string' 
-                    ? JSON.parse(scanSummary) 
+                parsedScanSummary = typeof scanSummary === 'string'
+                    ? JSON.parse(scanSummary)
                     : scanSummary;
             } catch (e) {
                 // Ignore parse error or keep raw
@@ -139,12 +165,13 @@ const createPost = async (req, res) => {
         // User data read ONLY from req.user (author, state, district, language in body are ignored)
         const post = await Post.create({
             author: req.user._id,
-            crop: existingCrop._id,
+            crop: resolvedCropId,
+            cropName: resolvedCropName,
             title: cleanTitle,
             body: cleanBody,
             images: processedImages,
-            state: req.user.state,
-            district: req.user.district,
+            state: req.user.state || 'Maharashtra',
+            district: req.user.district || 'General',
             language: req.user.language || 'en',
             scanSummary: parsedScanSummary,
             status: 'active'
@@ -228,9 +255,9 @@ const updatePost = async (req, res) => {
         if (title !== undefined) {
             const cleanTitle = sanitizeText(title);
             if (!cleanTitle || cleanTitle.length > config.limits.postTitleMax) {
-                return res.status(400).json({ 
-                    success: false, 
-                    message: `Title must be between 1 and ${config.limits.postTitleMax} characters` 
+                return res.status(400).json({
+                    success: false,
+                    message: `Title must be between 1 and ${config.limits.postTitleMax} characters`
                 });
             }
             post.title = cleanTitle;
@@ -239,9 +266,9 @@ const updatePost = async (req, res) => {
         if (body !== undefined) {
             const cleanBody = sanitizeText(body);
             if (!cleanBody || cleanBody.length > config.limits.postBodyMax) {
-                return res.status(400).json({ 
-                    success: false, 
-                    message: `Body must be between 1 and ${config.limits.postBodyMax} characters` 
+                return res.status(400).json({
+                    success: false,
+                    message: `Body must be between 1 and ${config.limits.postBodyMax} characters`
                 });
             }
             post.body = cleanBody;
@@ -315,9 +342,9 @@ const addComment = async (req, res) => {
         }
 
         if (cleanBody.length > config.limits.commentBodyMax) {
-            return res.status(400).json({ 
-                success: false, 
-                message: `Comment cannot exceed ${config.limits.commentBodyMax} characters` 
+            return res.status(400).json({
+                success: false,
+                message: `Comment cannot exceed ${config.limits.commentBodyMax} characters`
             });
         }
 
@@ -398,9 +425,9 @@ const toggleHelpful = async (req, res) => {
 
         // ONLY post author can mark helpful!
         if (post.author.toString() !== req.user._id.toString()) {
-            return res.status(403).json({ 
-                success: false, 
-                message: 'Only the author of the post can mark an answer as helpful' 
+            return res.status(403).json({
+                success: false,
+                message: 'Only the author of the post can mark an answer as helpful'
             });
         }
 
@@ -458,9 +485,9 @@ const reportContent = async (req, res) => {
         });
 
         if (existing) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'You have already reported this item' 
+            return res.status(400).json({
+                success: false,
+                message: 'You have already reported this item'
             });
         }
 
