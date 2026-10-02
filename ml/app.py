@@ -92,21 +92,12 @@ except Exception:
     print("Warning: models/crop_model.pkl not found.")
 
 
-pest_classifier = None
-pest_regressor = None
-pest_crop_encoder = None
-pest_location_encoder = None
+import joblib
+pest_forecaster = None
 try:
-    with open('models/pest_classifier.pkl', 'rb') as f:
-        pest_classifier = pickle.load(f)
-    with open('models/pest_regressor.pkl', 'rb') as f:
-        pest_regressor = pickle.load(f)
-    with open('models/pest_crop_encoder.pkl', 'rb') as f:
-        pest_crop_encoder = pickle.load(f)
-    with open('models/pest_location_encoder.pkl', 'rb') as f:
-        pest_location_encoder = pickle.load(f)
+    pest_forecaster = joblib.load('models/pest_forecaster/model.pkl')
 except Exception:
-    print("Warning: Pest prediction models not found.")
+    print("Warning: Pest forecaster model not found.")
 
 yield_model = None
 area_encoder = None
@@ -146,24 +137,51 @@ class PestData(BaseModel):
     Temperature_C: float
     Humidity_percent: float
     Rainfall_mm: float
-    Soil_pH: float
-    Nitrogen_N: float
-    Phosphorus_P: float
-    Potassium_K: float
+    Wind_Speed_kmh: float = 10.0
+    Soil_Moisture: float = 50.0
+    Soil_pH: float = 6.5
+    Nitrogen_N: float = 0.0
+    Phosphorus_P: float = 0.0
+    Potassium_K: float = 0.0
     Crop_Type: str
-    Location: str
+    Growth_Stage: str = '1'
+    Location: str = ""
+    Season: str = ""
 
 @app.post("/predict_pest")
 async def predict_pest(data: PestData):
-    if any(m is None for m in [pest_classifier, pest_regressor, pest_crop_encoder, pest_location_encoder]):
-        return {"success": False, "message": "Pest prediction models not loaded."}
+    if pest_forecaster is None:
+        return {"success": False, "message": "Pest prediction model not loaded."}
     try:
-        crop_encoded = pest_crop_encoder.transform([data.Crop_Type])[0] if data.Crop_Type in pest_crop_encoder.classes_ else 0
-        location_encoded = pest_location_encoder.transform([data.Location])[0] if data.Location in pest_location_encoder.classes_ else 0
-        features = np.array([[data.Temperature_C, data.Humidity_percent, data.Rainfall_mm, data.Soil_pH, data.Nitrogen_N, data.Phosphorus_P, data.Potassium_K, crop_encoded, location_encoded]])
-        pest_class = pest_classifier.predict(features)[0]
-        outbreak_prob = pest_regressor.predict(features)[0]
-        return {"success": True, "pest": str(pest_class), "probability": float(outbreak_prob)}
+        # Create a DataFrame since the Pipeline expects pandas with column names
+        features_df = pd.DataFrame([{
+            'crop': data.Crop_Type,
+            'avg_temperature_c': data.Temperature_C,
+            'annual_rainfall_mm': data.Rainfall_mm,
+            'soil_moisture_percent': data.Soil_Moisture
+        }])
+        
+        # Predict pressure
+        pest_pressure = pest_forecaster.predict(features_df)[0]
+        
+        # Determine risk level
+        if pest_pressure > 70:
+            risk_level = "HIGH"
+        elif pest_pressure > 40:
+            risk_level = "MEDIUM"
+        else:
+            risk_level = "LOW"
+            
+        risk_probability = float(max(0, min(100, pest_pressure)))
+        
+        return {
+            "success": True, 
+            "risk_probability": risk_probability,
+            "risk_level": risk_level,
+            "risk_window": "Next 5-7 days",
+            "key_factors": ["Temperature", "Humidity", "Rainfall", "Crop Type", "Growth Stage"],
+            "recommendation": "Inspect the field regularly and follow locally appropriate integrated pest-management guidance."
+        }
     except Exception as e:
         return {"success": False, "message": str(e)}
 
@@ -256,6 +274,7 @@ class SchemeQuery(BaseModel):
     land_size: str = ""
     gender: str = ""
     caste: str = ""
+    crop: str = ""
 
 @app.post("/schemes/search")
 async def search_schemes(query: SchemeQuery):
@@ -277,6 +296,9 @@ async def search_schemes(query: SchemeQuery):
             results.loc[results['eligibility'].str.contains('women|female|widow|girl', case=False), 'relevance_score'] += 15
         if query.caste == "SC/ST":
             results.loc[results['eligibility'].str.contains('sc|st|scheduled|tribe|caste', case=False), 'relevance_score'] += 15
+        if query.crop:
+            crop_search = query.crop.lower()
+            results.loc[results['details'].str.contains(crop_search, case=False) | results['scheme_name'].str.contains(crop_search, case=False), 'relevance_score'] += 20
             
         results = results.sort_values(by='relevance_score', ascending=False).head(15)
         formatted = []
@@ -289,7 +311,8 @@ async def search_schemes(query: SchemeQuery):
                 "eligibility": str(row.get("eligibility", ""))[:150] + "...",
                 "category": str(row.get("schemeCategory", "Agriculture")),
                 "level": str(row.get("level", "Central/State")),
-                "link": f"https://www.myscheme.gov.in/schemes/{slug}" if slug else "https://www.myscheme.gov.in/"
+                "link": f"https://www.myscheme.gov.in/schemes/{slug}" if slug else "https://www.myscheme.gov.in/",
+                "relevance_score": int(row.get("relevance_score", 0))
             })
         return {"success": True, "count": len(formatted), "data": formatted}
     except Exception as e:
