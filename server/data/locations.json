@@ -1,0 +1,110 @@
+{
+  "Maharashtra": [
+    "Pune",
+    "Nashik",
+    "Nagpur",
+    "Ahmednagar",
+    "Solapur",
+    "Kolhapur",
+    "Aurangabad",
+    "Amravati",
+    "Satara",
+    "Jalgaon",
+    "Sangli"
+  ],
+  "Karnataka": [
+    "Bengaluru Rural",
+    "Belagavi",
+    "Mysuru",
+    "Dharwad",
+    "Ballari",
+    "Vijayapura",
+    "Shivamogga",
+    "Tumakuru",
+    "Hassan",
+    "Mandya"
+  ],
+  "Punjab": [
+    "Ludhiana",
+    "Amritsar",
+    "Jalandhar",
+    "Patiala",
+    "Bathinda",
+    "Firozpur",
+    "Hoshiarpur",
+    "Sangrur"
+  ],
+  "Uttar Pradesh": [
+    "Varanasi",
+    "Lucknow",
+    "Agra",
+    "Kanpur Nagar",
+    "Prayagraj",
+    "Meerut",
+    "Bareilly",
+    "Gorakhpur",
+    "Aligarh",
+    "Mathura"
+  ],
+  "Gujarat": [
+    "Ahmedabad",
+    "Surat",
+    "Rajkot",
+    "Vadodara",
+    "Bhavnagar",
+    "Junagadh",
+    "Jamnagar",
+    "Anand",
+    "Mehsana"
+  ],
+  "Madhya Pradesh": [
+    "Indore",
+    "Bhopal",
+    "Jabalpur",
+    "Gwalior",
+    "Ujjain",
+    "Sagar",
+    "Dewas",
+    "Khargone"
+  ],
+  "Rajasthan": [
+    "Jaipur",
+    "Jodhpur",
+    "Kota",
+    "Bikaner",
+    "Ajmer",
+    "Udaipur",
+    "Alwar",
+    "Sriganganagar"
+  ],
+  "Haryana": [
+    "Karnal",
+    "Hisar",
+    "Ambala",
+    "Rohtak",
+    "Sirsa",
+    "Kurukshetra",
+    "Panipat",
+    "Sonipat"
+  ],
+  "Tamil Nadu": [
+    "Coimbatore",
+    "Madurai",
+    "Tiruchirappalli",
+    "Salem",
+    "Thanjavur",
+    "Erode",
+    "Dindigul",
+    "Tirunelveli"
+  ],
+  "Andhra Pradesh": [
+    "Guntur",
+    "Krishna",
+    "Kurnool",
+    "Anantapur",
+    "East Godavari",
+    "West Godavari",
+    "Chittoor",
+    "Visakhapatnam"
+  ]
+}

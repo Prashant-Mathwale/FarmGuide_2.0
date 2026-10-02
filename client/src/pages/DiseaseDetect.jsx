@@ -1,14 +1,16 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   UploadCloud, CheckCircle2, AlertTriangle, ScanLine, X, Sparkles, 
-  Camera, HelpCircle, ImageOff, ShieldAlert, RefreshCw, Image as ImageIcon 
+  Camera, HelpCircle, ImageOff, ShieldAlert, RefreshCw, Image as ImageIcon, Users
 } from 'lucide-react';
 import api from '../services/api';
 import CameraCapture from '../components/CameraCapture';
 import RecommendationCard from '../components/RecommendationCard';
 
 function DiseaseDetect() {
+    const navigate = useNavigate();
     const [selectedImage, setSelectedImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [result, setResult] = useState(null);
@@ -18,6 +20,30 @@ function DiseaseDetect() {
 
     const fileInputRef = useRef(null);
     const cameraFallbackInputRef = useRef(null);
+
+    const handleAskCommunity = () => {
+        const rawClass = result?.detectedDisease || result?.rawClass || '';
+        const cropPart = rawClass.split('___')[0] || '';
+        const guardStatus = result?.input_guard?.status || (result?.detectedDisease ? 'ok' : 'uncertain');
+
+        navigate('/community/new', {
+            state: {
+                cropName: cropPart,
+                cropKey: cropPart.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
+                imageFile: selectedImage,
+                suggestedTitle: result?.detectedDisease 
+                    ? `Need advice on ${result.detectedDisease.replace(/_/g, ' ')}` 
+                    : 'Need advice diagnosing crop issue',
+                suggestedBody: `I scanned this leaf with the diagnostic tool. Status: ${guardStatus}. Seeking advice from farmers who have seen this before.`,
+                scanSummary: {
+                    label: result?.detectedDisease || guardStatus,
+                    confidence: result?.confidenceScore || null,
+                    status: guardStatus,
+                    modelVersion: 'v2.0-cnn'
+                }
+            }
+        });
+    };
 
     const handleOpenPhotoCapture = (e) => {
         e?.stopPropagation?.();
@@ -313,12 +339,20 @@ function DiseaseDetect() {
                                                     )
                                                 )}
 
-                                                <button 
-                                                    onClick={handleReset} 
-                                                    className="w-full btn-secondary py-4 text-lg border-white/20 hover:bg-white/10 hover:border-white/40 flex items-center justify-center gap-2"
-                                                >
-                                                    <RefreshCw size={18} /> {guardStatus === 'possible' ? 'Retake / Upload Another' : 'Scan Another Image'}
-                                                </button>
+                                                <div className="flex flex-col sm:flex-row gap-3">
+                                                    <button 
+                                                        onClick={handleAskCommunity}
+                                                        className="flex-1 btn-primary py-3.5 text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-[0_10px_25px_rgba(76,175,80,0.3)] cursor-pointer"
+                                                    >
+                                                        <Users size={17} /> Ask Community
+                                                    </button>
+                                                    <button 
+                                                        onClick={handleReset} 
+                                                        className="flex-1 btn-secondary py-3.5 text-sm font-bold border-white/20 hover:bg-white/10 flex items-center justify-center gap-2 cursor-pointer"
+                                                    >
+                                                        <RefreshCw size={17} /> {guardStatus === 'possible' ? 'Retake / Upload Another' : 'Scan Another Image'}
+                                                    </button>
+                                                </div>
                                             </>
                                         )}
 
@@ -366,9 +400,20 @@ function DiseaseDetect() {
                                                     </div>
                                                 )}
 
-                                                <button onClick={handleReset} className="w-full btn-primary py-4 text-lg flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(76,175,80,0.3)]">
-                                                    <RefreshCw size={18} /> Retake Photo
-                                                </button>
+                                                <div className="flex flex-col gap-3">
+                                                    <button 
+                                                        onClick={handleAskCommunity}
+                                                        className="w-full btn-primary py-4 text-base font-bold flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(76,175,80,0.3)] cursor-pointer"
+                                                    >
+                                                        <Users size={18} /> Ask the Community for Advice
+                                                    </button>
+                                                    <button 
+                                                        onClick={handleReset} 
+                                                        className="w-full btn-secondary py-3 text-sm font-bold border-white/20 hover:bg-white/10 flex items-center justify-center gap-2 cursor-pointer"
+                                                    >
+                                                        <RefreshCw size={16} /> Retake Photo
+                                                    </button>
+                                                </div>
                                             </>
                                         )}
 
@@ -387,9 +432,20 @@ function DiseaseDetect() {
                                                     </p>
                                                 </div>
 
-                                                <button onClick={handleReset} className="w-full btn-primary py-4 text-lg flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(76,175,80,0.3)]">
-                                                    <RefreshCw size={18} /> Upload Another Image
-                                                </button>
+                                                <div className="flex flex-col gap-3">
+                                                    <button 
+                                                        onClick={handleAskCommunity}
+                                                        className="w-full btn-primary py-4 text-base font-bold flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(76,175,80,0.3)] cursor-pointer"
+                                                    >
+                                                        <Users size={18} /> Ask Community to Help Identify
+                                                    </button>
+                                                    <button 
+                                                        onClick={handleReset} 
+                                                        className="w-full btn-secondary py-3 text-sm font-bold border-white/20 hover:bg-white/10 flex items-center justify-center gap-2 cursor-pointer"
+                                                    >
+                                                        <RefreshCw size={16} /> Upload Another Image
+                                                    </button>
+                                                </div>
                                             </>
                                         )}
 
@@ -436,9 +492,20 @@ function DiseaseDetect() {
                                                     </ul>
                                                 </div>
 
-                                                <button onClick={handleReset} className="w-full btn-primary py-4 text-lg flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(76,175,80,0.3)]">
-                                                    <RefreshCw size={18} /> Retake Photo
-                                                </button>
+                                                <div className="flex flex-col gap-3">
+                                                    <button 
+                                                        onClick={handleAskCommunity}
+                                                        className="w-full btn-primary py-4 text-base font-bold flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(76,175,80,0.3)] cursor-pointer"
+                                                    >
+                                                        <Users size={18} /> Ask Community Anyway
+                                                    </button>
+                                                    <button 
+                                                        onClick={handleReset} 
+                                                        className="w-full btn-secondary py-3 text-sm font-bold border-white/20 hover:bg-white/10 flex items-center justify-center gap-2 cursor-pointer"
+                                                    >
+                                                        <RefreshCw size={16} /> Retake Photo
+                                                    </button>
+                                                </div>
                                             </>
                                         )}
 
