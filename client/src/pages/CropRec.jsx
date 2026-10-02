@@ -131,7 +131,7 @@ function CropRec() {
                             </button>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div className="relative">
                                 <label className="flex items-center gap-2 text-xs font-bold text-green-400 uppercase tracking-widest mb-2 opacity-90 group relative w-fit">
                                     Nitrogen (N)

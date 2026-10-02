@@ -283,18 +283,18 @@ function MarketPrices() {
                                 </p>
                             </div>
 
-                            <div className="grid grid-cols-3 gap-4 border-t border-white/10 pt-6 relative z-10">
-                                <div className="text-center rounded-xl p-3 border border-white/5">
+                            <div className="flex items-center justify-between gap-2 border-t border-white/10 pt-6 relative z-10">
+                                <div className="flex-1 text-center rounded-xl p-2 border border-white/5">
                                     <span className="block text-[10px] text-white/40 uppercase tracking-widest font-bold mb-1.5">Low</span>
-                                    <span className="font-semibold text-white/80">₹{Number(item.minPrice).toLocaleString('en-IN')}<span className="text-[10px] text-white/40 ml-0.5">/qtl</span></span>
+                                    <span className="text-sm font-semibold text-white/80 truncate block">₹{Number(item.minPrice).toLocaleString('en-IN')}<span className="text-[9px] text-white/40 ml-0.5">/qtl</span></span>
                                 </div>
-                                <div className="glass-card text-center transform scale-[1.15] bg-gradient-to-b from-green-500/10 to-transparent rounded-xl p-3 border border-green-500/20 shadow-[0_5px_15px_rgba(0,0,0,0.3)] z-10">
+                                <div className="flex-[1.2] glass-card text-center bg-gradient-to-b from-green-500/10 to-transparent rounded-xl p-2.5 border border-green-500/20 shadow-[0_5px_15px_rgba(0,0,0,0.3)] z-10 relative -mt-2">
                                     <span className="block text-[10px] text-green-400 uppercase tracking-widest font-black mb-1">Modal</span>
-                                    <span className="text-xl font-bold text-white drop-shadow-[0_0_8px_rgba(76,175,80,0.5)]">₹{Number(item.modalPrice).toLocaleString('en-IN')}<span className="text-xs font-medium text-green-400/70 ml-0.5">/qtl</span></span>
+                                    <span className="text-lg font-bold text-white drop-shadow-[0_0_8px_rgba(76,175,80,0.5)] truncate block">₹{Number(item.modalPrice).toLocaleString('en-IN')}<span className="text-[10px] font-medium text-green-400/70 ml-0.5">/qtl</span></span>
                                 </div>
-                                <div className="text-center rounded-xl p-3 border border-white/5">
+                                <div className="flex-1 text-center rounded-xl p-2 border border-white/5">
                                     <span className="block text-[10px] text-white/40 uppercase tracking-widest font-bold mb-1.5">High</span>
-                                    <span className="font-semibold text-white/80">₹{Number(item.maxPrice).toLocaleString('en-IN')}<span className="text-[10px] text-white/40 ml-0.5">/qtl</span></span>
+                                    <span className="text-sm font-semibold text-white/80 truncate block">₹{Number(item.maxPrice).toLocaleString('en-IN')}<span className="text-[9px] text-white/40 ml-0.5">/qtl</span></span>
                                 </div>
                             </div>
                         </motion.div>
