@@ -12,13 +12,12 @@ function CropRec() {
     const fetchWeatherData = async (lat, lon) => {
         try {
             setLocationLoading(true);
-            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation&timezone=auto`);
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m&timezone=auto`);
             const data = await res.json();
             setFormData(prev => ({
                 ...prev,
                 temperature: data.current?.temperature_2m ?? prev.temperature,
-                moisture: data.current?.relative_humidity_2m ?? prev.moisture,
-                rainfall: data.current?.precipitation ?? prev.rainfall
+                moisture: data.current?.relative_humidity_2m ?? prev.moisture
             }));
         } catch (err) {
             console.error(err);
@@ -107,7 +106,7 @@ function CropRec() {
                                 <span className="text-sm text-white/80 font-medium">Auto-fill weather data</span>
                                 <HelpCircle size={14} className="text-white/40 cursor-help hover:text-green-400 transition-colors" />
                                 <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 bg-[#1E293B] text-xs text-white/90 p-3 rounded-lg shadow-xl border border-white/10 z-50">
-                                    Uses your device's location to fetch real-time Temperature, Humidity, and Rainfall data from weather APIs. Ensure location permissions are granted!
+                                    Uses your device's location to fetch real-time Temperature and Humidity data from weather APIs. (Rainfall must be entered manually as seasonal average). Ensure location permissions are granted!
                                 </div>
                             </div>
                             <button 
