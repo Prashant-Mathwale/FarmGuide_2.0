@@ -39,7 +39,16 @@ export default function DashboardHeader({ user, weatherData, selectedLang, onLan
   const languages = [
     { code: 'en', label: 'English' },
     { code: 'hi', label: 'हिंदी (Hindi)' },
-    { code: 'mr', label: 'मराठी (Marathi)' }
+    { code: 'mr', label: 'मराठी (Marathi)' },
+    { code: 'pa', label: 'ਪੰਜਾਬੀ (Punjabi)' },
+    { code: 'gu', label: 'ગુજરાતી (Gujarati)' },
+    { code: 'ta', label: 'தமிழ் (Tamil)' },
+    { code: 'te', label: 'తెలుగు (Telugu)' },
+    { code: 'kn', label: 'ಕನ್ನಡ (Kannada)' },
+    { code: 'ml', label: 'മലയാളം (Malayalam)' },
+    { code: 'bn', label: 'বাংলা (Bengali)' },
+    { code: 'or', label: 'ଓଡ଼ିଆ (Odia)' },
+    { code: 'ur', label: 'اردو (Urdu)' }
   ];
 
   return (
@@ -82,13 +91,18 @@ export default function DashboardHeader({ user, weatherData, selectedLang, onLan
             </button>
 
             {showLangMenu && (
-              <div className="absolute right-0 mt-2 w-44 rounded-2xl bg-[#09150d] border border-white/15 p-1.5 shadow-2xl z-50 text-left">
+              <div className="absolute right-0 mt-2 w-44 max-h-72 overflow-y-auto custom-scrollbar rounded-2xl bg-[#09150d] border border-white/15 p-1.5 shadow-2xl z-50 text-left">
                 {languages.map(lang => (
                   <button
                     key={lang.code}
                     onClick={() => {
                       onLangChange(lang.code);
                       setShowLangMenu(false);
+                      const gtCombo = document.querySelector('.goog-te-combo');
+                      if (gtCombo) {
+                        gtCombo.value = lang.code;
+                        gtCombo.dispatchEvent(new Event('change'));
+                      }
                     }}
                     className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
                       selectedLang === lang.code 

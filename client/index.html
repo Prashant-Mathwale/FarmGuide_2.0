@@ -13,7 +13,7 @@
     <script type="module" src="/src/main.jsx"></script>
     
     <!-- Google Translate Floating Multi-Language Toggle -->
-    <div id="google_translate_element" style="position: fixed; top: 24px; right: 24px; z-index: 9999; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5);"></div>
+    <div id="google_translate_element" style="visibility: hidden; width: 0; height: 0; overflow: hidden; position: absolute; z-index: -1;"></div>
     
     <script type="text/javascript">
       function googleTranslateElementInit() {
@@ -29,8 +29,11 @@
     <style>
       /* 1. COMPLETELY DESTROY THE TOP BANNER */
       .goog-te-banner-frame, iframe.goog-te-banner-frame, iframe[name="goog_te_banner"] { display: none !important; visibility: hidden !important; }
+      .skiptranslate > iframe.skiptranslate { display: none !important; visibility: hidden !important; }
+      .VIpgJd-Zvi9od-aZ2wEe-wOHMyf, .VIpgJd-Zvi9od-aZ2wEe-wOHMyf-ti6hGc { display: none !important; }
       html { top: 0 !important; margin-top: 0 !important; }
       body { top: 0px !important; margin-top: 0 !important; position: static !important; }
+
       
       /* 2. HIDE GOOGLE LOGOS AND SPANS */
       .goog-logo-link { display: none !important; }
