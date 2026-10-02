@@ -11,7 +11,7 @@ const DEFAULT_MARKET_DATA = [
     { name: 'Maize', icon: '🌽', price: '2,100', change: 4, isUp: false },
 ];
 
-const MarketPricesCard = () => {
+const MarketPricesCard = ({ user }) => {
     const [prices, setPrices] = useState(DEFAULT_MARKET_DATA);
     const [lastUpdated, setLastUpdated] = useState('10 min ago');
 
@@ -19,20 +19,30 @@ const MarketPricesCard = () => {
         let isMounted = true;
         const loadMarketPrices = async () => {
             try {
-                const res = await api.get('/market/prices');
-                if (res.data?.data && Array.isArray(res.data.data) && res.data.data.length > 0 && isMounted) {
-                    // Map up to 5 crops if API has live data
-                    const mapped = res.data.data.slice(0, 5).map((item, idx) => {
-                        const fallback = DEFAULT_MARKET_DATA[idx] || DEFAULT_MARKET_DATA[0];
-                        const priceNum = item.modalPrice || item.price || item.currentPrice;
+                // Use user's state if available, otherwise default to Maharashtra
+                const userState = user?.state || 'Maharashtra';
+                const res = await fetch(`https://mandi-api.onrender.com/v1/prices?state=${encodeURIComponent(userState)}`);
+                const json = await res.json();
+                
+                if (json.success && Array.isArray(json.data) && json.data.length > 0 && isMounted) {
+                    const mapped = DEFAULT_MARKET_DATA.map((fallback) => {
+                        const apiItem = json.data.find(
+                            item => item.commodity && item.commodity.toLowerCase().includes(fallback.name.toLowerCase())
+                        );
+                        
+                        // Parse fallback price correctly (remove commas) just in case
+                        const fallbackPriceNum = Number(fallback.price.replace(/,/g, ''));
+                        const priceNum = apiItem ? (apiItem.modal_price || fallbackPriceNum) : fallbackPriceNum;
+                        
                         return {
-                            name: item.cropName || item.name || fallback.name,
+                            name: fallback.name,
                             icon: fallback.icon,
-                            price: priceNum ? Number(priceNum).toLocaleString('en-IN') : fallback.price,
-                            change: item.changePercent !== undefined ? Math.abs(item.changePercent) : fallback.change,
-                            isUp: item.changePercent !== undefined ? item.changePercent >= 0 : fallback.isUp,
+                            price: Number(priceNum).toLocaleString('en-IN'),
+                            change: fallback.change, // Keep mock change for UI aesthetics
+                            isUp: fallback.isUp,
                         };
                     });
+                    
                     setPrices(mapped);
                     setLastUpdated('Just now');
                 }
@@ -43,7 +53,7 @@ const MarketPricesCard = () => {
 
         loadMarketPrices();
         return () => { isMounted = false; };
-    }, []);
+    }, [user]);
 
     return (
         <div className="bg-[#0b2416]/75 backdrop-blur-md border border-[#1e4d30]/70 rounded-2xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.35)] flex flex-col justify-between h-full">

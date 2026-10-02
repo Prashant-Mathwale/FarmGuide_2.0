@@ -5,11 +5,11 @@ import { CloudSun, Droplets, CloudRain, Wind, MapPin, ArrowRight, Sun, Cloud } f
 const WeatherForecastCard = ({ weatherData }) => {
     // Default fallback matching reference image
     const location = weatherData?.location || 'Pune, Maharashtra';
-    const temp = weatherData?.temp !== undefined ? Math.round(weatherData.temp) : 28;
-    const condition = weatherData?.condition || 'Partly Cloudy';
-    const humidity = weatherData?.humidity !== undefined ? weatherData.humidity : 62;
-    const rainChance = weatherData?.rainChance !== undefined ? weatherData.rainChance : 20;
-    const windSpeed = weatherData?.windSpeed !== undefined ? weatherData.windSpeed : 12;
+    const temp = weatherData?.current?.temp !== undefined ? Math.round(weatherData.current.temp) : 28;
+    const condition = weatherData?.current?.description || 'Partly Cloudy';
+    const humidity = weatherData?.current?.humidity !== undefined ? weatherData.current.humidity : 62;
+    const rainChance = weatherData?.current?.rainChance !== undefined ? weatherData.current.rainChance : 20;
+    const windSpeed = weatherData?.current?.windSpeed !== undefined ? Math.round(weatherData.current.windSpeed * 3.6) : 12;
 
     const hourlyForecast = weatherData?.hourly || [
         { time: 'Now', temp: '28°', icon: 'sun-cloud' },

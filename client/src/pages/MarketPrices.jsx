@@ -8,27 +8,164 @@ function MarketPrices() {
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState({ cropName: '', stateName: '', marketName: '' });
     const [errorMessage, setErrorMessage] = useState('');
+    const [lastUpdated, setLastUpdated] = useState('');
+    
+    // Autocomplete data
+    const [statesList, setStatesList] = useState([]);
+    const [commoditiesList, setCommoditiesList] = useState([]);
+    const [marketsList, setMarketsList] = useState([]);
 
-    const fetchPrices = async () => {
+    const fetchPrices = async (overrideFilters = filters) => {
         setLoading(true);
         try {
-            const res = await api.get('/market/prices', { params: filters });
-            setTimeout(() => {
-                setPrices(res.data.data || []);
-                setErrorMessage(res.data.message || 'No aggregate data found for the specified query.');
-                setLoading(false);
-            }, 600);
+            const queryParams = new URLSearchParams();
+            if (overrideFilters.stateName) queryParams.append('state', overrideFilters.stateName);
+            if (overrideFilters.cropName) queryParams.append('commodity', overrideFilters.cropName);
+            if (overrideFilters.marketName) queryParams.append('market', overrideFilters.marketName);
+            
+            // Mandi API requires at least state or commodity. Fallback to user's state or Maharashtra
+            if (!overrideFilters.stateName && !overrideFilters.cropName) {
+                const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+                queryParams.append('state', userInfo?.state || 'Maharashtra');
+            }
+
+            // Step 1: Fetch without date to get the latest available date from API meta
+            const metaRes = await fetch(`https://mandi-api.onrender.com/v1/prices?${queryParams.toString()}`);
+            const metaJson = await metaRes.json();
+            
+            // Extract the latest date the API has data for
+            const latestDate = metaJson?.meta?.latest_fetched_at
+                ? metaJson.meta.latest_fetched_at.split('T')[0]
+                : metaJson?.data?.[0]?.arrival_date || null;
+
+            // Step 2: If we have a specific date, re-fetch with it for consistent results
+            let json = metaJson;
+            if (latestDate) {
+                const res = await fetch(`https://mandi-api.onrender.com/v1/prices?${queryParams.toString()}&date=${latestDate}`);
+                json = await res.json();
+            }
+            
+            if (json.success && json.data) {
+                const mappedData = json.data.map(item => ({
+                    _id: item.id,
+                    cropName: item.commodity,
+                    marketName: item.market,
+                    districtName: item.district,
+                    recordedDate: item.arrival_date || item.fetched_at,
+                    minPrice: item.min_price,
+                    maxPrice: item.max_price,
+                    modalPrice: item.modal_price
+                }));
+                setPrices(mappedData);
+                setErrorMessage('');
+                // Show the actual data date in the footer
+                if (latestDate) setLastUpdated(`Data from ${latestDate}`);
+            } else {
+                setPrices([]);
+                setErrorMessage(json.error?.message || 'No aggregate data found for the specified query.');
+            }
         } catch (err) {
             console.error(err);
+            setPrices([]);
+            setErrorMessage('Failed to fetch market prices. Please try again later.');
+        } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
         fetchPrices();
+        
+        // Fetch autocomplete data
+        const fetchAutocompleteData = async () => {
+            try {
+                const [statesRes, commRes] = await Promise.all([
+                    fetch('https://mandi-api.onrender.com/v1/states').then(r => r.json()),
+                    fetch('https://mandi-api.onrender.com/v1/commodities').then(r => r.json())
+                ]);
+                if (statesRes.success && statesRes.data) setStatesList(statesRes.data);
+                if (commRes.success && commRes.data) setCommoditiesList(commRes.data);
+            } catch (err) {
+                console.error("Failed to fetch autocomplete data", err);
+            }
+        };
+        fetchAutocompleteData();
     }, []);
 
+    // Fetch markets when state changes
+    useEffect(() => {
+        if (!filters.stateName) {
+            setMarketsList([]);
+            return;
+        }
+        const fetchMarkets = async () => {
+            try {
+                const res = await fetch(`https://mandi-api.onrender.com/v1/markets?state=${encodeURIComponent(filters.stateName)}`);
+                const json = await res.json();
+                if (json.success && json.data) {
+                    setMarketsList(json.data.map(m => m.market));
+                }
+            } catch (err) {
+                console.error("Failed to fetch markets", err);
+            }
+        };
+        
+        // Debounce slightly to avoid fetching on every keystroke immediately
+        const timer = setTimeout(() => {
+            fetchMarkets();
+        }, 300);
+        
+        return () => clearTimeout(timer);
+    }, [filters.stateName]);
+
     const handleFilterChange = (e) => setFilters({ ...filters, [e.target.name]: e.target.value });
+
+    const [locating, setLocating] = useState(false);
+
+    const handleUseCurrentLocation = async () => {
+        if (!navigator.geolocation) {
+            setErrorMessage('Geolocation is not supported by your browser.');
+            return;
+        }
+        setLocating(true);
+        setErrorMessage('');
+        navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+                try {
+                    const { latitude, longitude } = pos.coords;
+                    const res = await fetch(
+                        `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
+                        { headers: { 'Accept-Language': 'en' } }
+                    );
+                    const geo = await res.json();
+                    const addr = geo.address || {};
+                    const state = addr.state || '';
+                    // Prioritize nearest city/town over administrative divisions
+                    const district = addr.city || addr.town || addr.village || addr.suburb || addr.municipality || addr.county || addr.state_district || '';
+                    if (state || district) {
+                        const newFilters = {
+                            ...filters,
+                            stateName: state || filters.stateName,
+                            marketName: district || filters.marketName,
+                        };
+                        setFilters(newFilters);
+                        fetchPrices(newFilters);
+                    } else {
+                        setErrorMessage('Could not determine your state from GPS. Please enter manually.');
+                    }
+                } catch (err) {
+                    setErrorMessage('Failed to reverse geocode your location.');
+                } finally {
+                    setLocating(false);
+                }
+            },
+            () => {
+                setLocating(false);
+                setErrorMessage('Location access denied. Please allow location permission and try again.');
+            },
+            { timeout: 8000 }
+        );
+    };
 
     return (
         <div className="w-full max-w-7xl mx-auto">
@@ -62,26 +199,52 @@ function MarketPrices() {
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400" size={18} />
                         <input
                             type="text" name="cropName" placeholder="Commodity" value={filters.cropName} onChange={handleFilterChange}
+                            list="commodities-list"
                             className="input-field !pl-12 pr-5 py-3 w-full sm:w-48 text-white placeholder:text-white/80 bg-black/30 border border-white/20 focus:bg-black/50"
                         />
+                        <datalist id="commodities-list">
+                            {commoditiesList.map((item, idx) => <option key={idx} value={item} />)}
+                        </datalist>
                     </div>
                     <div className="relative">
                         <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400" size={18} />
                         <input
                             type="text" name="stateName" placeholder="State (e.g. Gujarat)" value={filters.stateName} onChange={handleFilterChange}
+                            list="states-list"
                             className="input-field !pl-12 pr-5 py-3 w-full sm:w-40 text-white placeholder:text-white/80 bg-black/30 border border-white/20 focus:bg-black/50"
                         />
+                        <datalist id="states-list">
+                            {statesList.map((item, idx) => <option key={idx} value={item} />)}
+                        </datalist>
                     </div>
                     <div className="relative">
                         <Store className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400" size={18} />
                         <input
                             type="text" name="marketName" placeholder="Mandi (e.g. Surat)" value={filters.marketName} onChange={handleFilterChange}
+                            list="markets-list"
                             className="input-field !pl-12 pr-5 py-3 w-full sm:w-40 text-white placeholder:text-white/80 bg-black/30 border border-white/20 focus:bg-black/50"
                         />
+                        <datalist id="markets-list">
+                            {marketsList.map((item, idx) => <option key={idx} value={item} />)}
+                        </datalist>
                     </div>
-                    <button onClick={fetchPrices} className="btn-primary w-full sm:w-auto py-3 px-8 shadow-[0_4px_15px_rgba(76,175,80,0.3)] text-sm font-bold tracking-wide">
-                        Query Market
-                    </button>
+                    <div className="flex gap-3 w-full sm:w-auto">
+                        <button onClick={() => fetchPrices(filters)} className="btn-primary flex-1 sm:flex-none py-3 px-8 shadow-[0_4px_15px_rgba(76,175,80,0.3)] text-sm font-bold tracking-wide">
+                            Query Market
+                        </button>
+                        <button
+                            onClick={handleUseCurrentLocation}
+                            disabled={locating}
+                            className="flex-1 sm:flex-none py-3 px-5 flex items-center justify-center gap-2 border border-green-500/30 text-green-400 hover:bg-green-500/10 text-sm font-bold tracking-wide rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                            title="Use Current GPS Location"
+                        >
+                            {locating ? (
+                                <><div className="w-4 h-4 border-2 border-green-400 border-t-transparent rounded-full animate-spin" /> Locating...</>
+                            ) : (
+                                <><MapPin size={18} /> Current Loc</>
+                            )}
+                        </button>
+                    </div>
                 </motion.div>
             </header>
 
@@ -101,33 +264,28 @@ function MarketPrices() {
                         >
                             <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full blur-[40px] group-hover:bg-green-500/10 transition-colors pointer-events-none" />
                             
-                            <div className="flex justify-between items-start mb-8 relative z-10">
-                                <div>
-                                    <h3 className="text-2xl font-bold text-white flex items-center gap-2 group-hover:text-green-300 transition-colors">
-                                        <Tag className="text-green-400" size={22} />
-                                        {item.cropName}
-                                    </h3>
-                                    <p className="text-sm text-white/60 flex items-center mt-2 font-medium">
-                                        <MapPin className="mr-1.5 text-green-500/70" size={16} /> {item.marketName}, {item.districtName}
-                                    </p>
-                                </div>
-                                <span className="text-[11px] font-bold tracking-wider text-green-300 px-4 py-1.5 rounded-full border border-green-500/20 shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]">
-                                    {new Date(item.recordedDate || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }).toUpperCase()}
-                                </span>
+                            <div className="mb-6 relative z-10">
+                                <h3 className="text-2xl font-bold text-white flex items-center gap-2 group-hover:text-green-300 transition-colors">
+                                    <Tag className="text-green-400" size={22} />
+                                    {item.cropName}
+                                </h3>
+                                <p className="text-sm text-white/60 flex items-center mt-2 font-medium">
+                                    <MapPin className="mr-1.5 text-green-500/70" size={16} /> {item.marketName}, {item.districtName}
+                                </p>
                             </div>
 
                             <div className="grid grid-cols-3 gap-4 border-t border-white/10 pt-6 relative z-10">
                                 <div className="text-center rounded-xl p-3 border border-white/5">
                                     <span className="block text-[10px] text-white/40 uppercase tracking-widest font-bold mb-1.5">Low</span>
-                                    <span className="font-semibold text-white/80">₹{item.minPrice}<span className="text-[10px] text-white/40 ml-0.5">/qtl</span></span>
+                                    <span className="font-semibold text-white/80">₹{Number(item.minPrice).toLocaleString('en-IN')}<span className="text-[10px] text-white/40 ml-0.5">/qtl</span></span>
                                 </div>
                                 <div className="glass-card text-center transform scale-[1.15] bg-gradient-to-b from-green-500/10 to-transparent rounded-xl p-3 border border-green-500/20 shadow-[0_5px_15px_rgba(0,0,0,0.3)] z-10">
                                     <span className="block text-[10px] text-green-400 uppercase tracking-widest font-black mb-1">Modal</span>
-                                    <span className="text-xl font-bold text-white drop-shadow-[0_0_8px_rgba(76,175,80,0.5)]">₹{item.modalPrice}<span className="text-xs font-medium text-green-400/70 ml-0.5">/qtl</span></span>
+                                    <span className="text-xl font-bold text-white drop-shadow-[0_0_8px_rgba(76,175,80,0.5)]">₹{Number(item.modalPrice).toLocaleString('en-IN')}<span className="text-xs font-medium text-green-400/70 ml-0.5">/qtl</span></span>
                                 </div>
                                 <div className="text-center rounded-xl p-3 border border-white/5">
                                     <span className="block text-[10px] text-white/40 uppercase tracking-widest font-bold mb-1.5">High</span>
-                                    <span className="font-semibold text-white/80">₹{item.maxPrice}<span className="text-[10px] text-white/40 ml-0.5">/qtl</span></span>
+                                    <span className="font-semibold text-white/80">₹{Number(item.maxPrice).toLocaleString('en-IN')}<span className="text-[10px] text-white/40 ml-0.5">/qtl</span></span>
                                 </div>
                             </div>
                         </motion.div>

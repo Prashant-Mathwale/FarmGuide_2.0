@@ -44,6 +44,8 @@ const Dashboard = () => {
         }
     });
 
+    const [isWeatherLoading, setIsWeatherLoading] = useState(true);
+
     // Default weather matching reference image
     const [weatherData, setWeatherData] = useState({
         location: 'Pune, Maharashtra',
@@ -130,8 +132,10 @@ const Dashboard = () => {
                     },
                     hourly: hourlyList.length > 0 ? hourlyList : weatherData.hourly
                 });
+                setIsWeatherLoading(false);
             } catch (err) {
                 // Fall back to default
+                setIsWeatherLoading(false);
             }
         };
 
@@ -167,6 +171,7 @@ const Dashboard = () => {
                 weatherData={weatherData}
                 selectedLang={selectedLang}
                 onLangChange={handleLangChange}
+                isWeatherLoading={isWeatherLoading}
             />
 
             {/* 2. Disease Detection (Primary Feature) + Quick Actions */}
@@ -185,7 +190,7 @@ const Dashboard = () => {
                     <WeatherForecastCard weatherData={weatherData} />
                 </div>
                 <div className="flex">
-                    <MarketPricesCard />
+                    <MarketPricesCard user={user} />
                 </div>
                 <div className="flex md:col-span-2 lg:col-span-1">
                     <RecentActivityCard />

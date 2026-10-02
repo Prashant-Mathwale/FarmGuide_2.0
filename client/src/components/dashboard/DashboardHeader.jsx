@@ -5,7 +5,7 @@ import {
   Sun, CloudSun, Droplets, CloudRain, Wind 
 } from 'lucide-react';
 
-export default function DashboardHeader({ user, weatherData, selectedLang, onLangChange }) {
+export default function DashboardHeader({ user, weatherData, selectedLang, onLangChange, isWeatherLoading }) {
   const [showLangMenu, setShowLangMenu] = useState(false);
 
   const getGreeting = () => {
@@ -137,43 +137,52 @@ export default function DashboardHeader({ user, weatherData, selectedLang, onLan
         </div>
 
         {/* ── Weather Summary Card (Top Right in Reference Image) ── */}
-        <div className="lg:mt-14 w-full sm:w-auto bg-[#0b1810]/80 backdrop-blur-xl border border-white/15 rounded-3xl p-4 sm:px-6 sm:py-3.5 flex items-center gap-5 shadow-[0_8px_30px_rgba(0,0,0,0.5)]">
-          {/* Main Temp & Condition */}
-          <div className="flex items-center gap-3 pr-4 border-r border-white/10">
-            <div className="text-amber-400 drop-shadow-[0_0_12px_rgba(251,191,36,0.5)]">
-              <CloudSun size={38} className="stroke-[1.75]" />
+        <div className="lg:mt-14 w-full sm:w-auto bg-[#0b1810]/80 backdrop-blur-xl border border-white/15 rounded-3xl p-4 sm:px-6 sm:py-3.5 flex items-center gap-5 shadow-[0_8px_30px_rgba(0,0,0,0.5)] min-h-[88px] min-w-[280px]">
+          {isWeatherLoading ? (
+            <div className="flex items-center justify-center w-full gap-3">
+              <div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-sm font-medium text-emerald-400/80 animate-pulse">Detecting weather...</span>
             </div>
-            <div>
-              <p className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-none">
-                {temp}°C
-              </p>
-              <p className="text-xs text-white/70 font-semibold mt-1 capitalize whitespace-nowrap">
-                {condition}
-              </p>
-            </div>
-          </div>
+          ) : (
+            <>
+              {/* Main Temp & Condition */}
+              <div className="flex items-center gap-3 pr-4 border-r border-white/10">
+                <div className="text-amber-400 drop-shadow-[0_0_12px_rgba(251,191,36,0.5)]">
+                  <CloudSun size={38} className="stroke-[1.75]" />
+                </div>
+                <div>
+                  <p className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-none">
+                    {temp}°C
+                  </p>
+                  <p className="text-xs text-white/70 font-semibold mt-1 capitalize whitespace-nowrap">
+                    {condition}
+                  </p>
+                </div>
+              </div>
 
-          {/* Weather Secondary Stats */}
-          <div className="space-y-1 text-xs">
-            <div className="flex items-center justify-between gap-3 text-white/60">
-              <span className="flex items-center gap-1.5">
-                <Droplets size={13} className="text-blue-400" /> Humidity
-              </span>
-              <span className="font-bold text-white font-mono">{humidity}%</span>
-            </div>
-            <div className="flex items-center justify-between gap-3 text-white/60">
-              <span className="flex items-center gap-1.5">
-                <CloudRain size={13} className="text-sky-400" /> Rain Chance
-              </span>
-              <span className="font-bold text-white font-mono">{rainChance}%</span>
-            </div>
-            <div className="flex items-center justify-between gap-3 text-white/60">
-              <span className="flex items-center gap-1.5">
-                <Wind size={13} className="text-teal-400" /> Wind
-              </span>
-              <span className="font-bold text-white font-mono">{windSpeed}</span>
-            </div>
-          </div>
+              {/* Weather Secondary Stats */}
+              <div className="space-y-1 text-xs">
+                <div className="flex items-center justify-between gap-3 text-white/60">
+                  <span className="flex items-center gap-1.5">
+                    <Droplets size={13} className="text-blue-400" /> Humidity
+                  </span>
+                  <span className="font-bold text-white font-mono">{humidity}%</span>
+                </div>
+                <div className="flex items-center justify-between gap-3 text-white/60">
+                  <span className="flex items-center gap-1.5">
+                    <CloudRain size={13} className="text-sky-400" /> Rain Chance
+                  </span>
+                  <span className="font-bold text-white font-mono">{rainChance}%</span>
+                </div>
+                <div className="flex items-center justify-between gap-3 text-white/60">
+                  <span className="flex items-center gap-1.5">
+                    <Wind size={13} className="text-teal-400" /> Wind
+                  </span>
+                  <span className="font-bold text-white font-mono">{windSpeed}</span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </header>
