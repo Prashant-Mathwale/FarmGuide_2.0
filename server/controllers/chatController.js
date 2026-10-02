@@ -37,11 +37,27 @@ const handleChat = async (req, res) => {
             }
         }
 
-        let errorMsg = "AI server currently out of credits. Please try tomorrow.";
-        if (lastError?.message.includes('429')) errorMsg = "Daily AI limit reached.";
-        res.status(500).json({ success: false, message: errorMsg });
+        // --- DEMO MOCK MODE FALLBACK ---
+        // If all Gemini models fail (e.g., rate limit hit during Hackathon demo), gracefully respond!
+        const lowerMsg = message.toLowerCase();
+        let mockResponse = "🚜 **Demo Mode Active:** The AI server has reached its quota, but FarmGuide is still here for you! Use our main tools (Weather, Market Prices, Disease Scan) for detailed analytics.";
+        
+        if (lowerMsg.includes('soybean') || lowerMsg.includes('wheat') || lowerMsg.includes('crop') || lowerMsg.includes('फसल')) {
+            mockResponse = "🚜 **Demo Mode Active:** For most crops, maintaining proper soil moisture and rotating crops each season is key to high yields. Check our **Crop Recommendation** tool for specifics!";
+        } else if (lowerMsg.includes('weather') || lowerMsg.includes('rain') || lowerMsg.includes('मौसम')) {
+            mockResponse = "🚜 **Demo Mode Active:** Weather is crucial! Please navigate to our **Weather Forecast** page to see the latest 7-day precipitation data from Open-Meteo.";
+        } else if (lowerMsg.includes('disease') || lowerMsg.includes('sick') || lowerMsg.includes('रोग')) {
+            mockResponse = "🚜 **Demo Mode Active:** To identify plant diseases accurately, take a clear picture of the leaf and upload it to our **Disease Detection** scanner.";
+        } else if (lowerMsg.includes('hello') || lowerMsg.includes('hi') || lowerMsg.includes('नमस्ते')) {
+            mockResponse = "🚜 **Demo Mode Active:** Hello there! I am your FarmGuide AI. Ask me about your crops, or tell me to navigate you to a specific tool!";
+        } else if (lowerMsg.includes('price') || lowerMsg.includes('mandi') || lowerMsg.includes('भाव')) {
+            mockResponse = "🚜 **Demo Mode Active:** Market rates change daily. Head over to our **Market Prices** section to see live Mandi rates across India.";
+        }
+        
+        return res.json({ success: true, response: mockResponse });
 
     } catch (error) {
+        // Only return 500 if the server itself completely crashes, not the API
         res.status(500).json({ success: false, message: "AI Assistant offline." });
     }
 };
