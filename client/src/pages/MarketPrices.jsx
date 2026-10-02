@@ -1,19 +1,21 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, MapPin, Tag, TrendingUp } from 'lucide-react';
+import { Search, MapPin, Tag, TrendingUp, Store } from 'lucide-react';
 import api from '../services/api';
 
 function MarketPrices() {
     const [prices, setPrices] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [filters, setFilters] = useState({ cropName: '', stateName: '' });
+    const [filters, setFilters] = useState({ cropName: '', stateName: '', marketName: '' });
+    const [errorMessage, setErrorMessage] = useState('');
 
     const fetchPrices = async () => {
         setLoading(true);
         try {
             const res = await api.get('/market/prices', { params: filters });
             setTimeout(() => {
-                setPrices(res.data.data);
+                setPrices(res.data.data || []);
+                setErrorMessage(res.data.message || 'No aggregate data found for the specified query.');
                 setLoading(false);
             }, 600);
         } catch (err) {
@@ -46,7 +48,7 @@ function MarketPrices() {
                         transition={{ delay: 0.1 }}
                         className="text-white/70 text-lg tracking-wide"
                     >
-                        Real-time commodity spot prices across regional agricultural markets.
+                        Latest available wholesale spot prices across regional agricultural markets.
                     </motion.p>
                 </div>
 
@@ -67,7 +69,14 @@ function MarketPrices() {
                         <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400" size={18} />
                         <input
                             type="text" name="stateName" placeholder="State (e.g. Gujarat)" value={filters.stateName} onChange={handleFilterChange}
-                            className="input-field !pl-12 pr-5 py-3 w-full sm:w-48 text-white placeholder:text-white/80 bg-black/30 border border-white/20 focus:bg-black/50"
+                            className="input-field !pl-12 pr-5 py-3 w-full sm:w-40 text-white placeholder:text-white/80 bg-black/30 border border-white/20 focus:bg-black/50"
+                        />
+                    </div>
+                    <div className="relative">
+                        <Store className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400" size={18} />
+                        <input
+                            type="text" name="marketName" placeholder="Mandi (e.g. Surat)" value={filters.marketName} onChange={handleFilterChange}
+                            className="input-field !pl-12 pr-5 py-3 w-full sm:w-40 text-white placeholder:text-white/80 bg-black/30 border border-white/20 focus:bg-black/50"
                         />
                     </div>
                     <button onClick={fetchPrices} className="btn-primary w-full sm:w-auto py-3 px-8 shadow-[0_4px_15px_rgba(76,175,80,0.3)] text-sm font-bold tracking-wide">
@@ -125,9 +134,9 @@ function MarketPrices() {
                     ))}
 
                     {prices.length === 0 && (
-                        <div className="glass-panel col-span-full h-64 flex flex-col items-center justify-center text-white/50 rounded-3xl border-2 border-dashed border-white/10">
+                        <div className="glass-panel col-span-full h-64 flex flex-col items-center justify-center text-white/50 rounded-3xl border-2 border-dashed border-white/10 p-6 text-center">
                             <TrendingUp size={48} className="text-white/20 mb-4" />
-                            <p className="font-medium text-lg tracking-wide">No aggregate data found for the specified query.</p>
+                            <p className="font-medium text-lg tracking-wide">{errorMessage}</p>
                         </div>
                     )}
                 </div>

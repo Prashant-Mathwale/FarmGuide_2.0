@@ -27,6 +27,7 @@ app.use('/api/market', require('./routes/marketRoutes'));
 app.use('/api/weather', require('./routes/weatherRoutes'));
 app.use('/api/chat', require('./routes/chatRoutes'));
 app.use('/api/community', require('./routes/communityRoutes'));
+app.use('/api/schemes', require('./routes/schemeRoutes'));
 
 // 404 Route Handler
 app.use((req, res) => {
