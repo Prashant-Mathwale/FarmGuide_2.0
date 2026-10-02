@@ -1,8 +1,74 @@
+const fs = require('fs');
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env.local') });
 const SoilData = require('../models/SoilData');
 const axios = require('axios');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+// ── Curated Disease Knowledge Base (loaded once at startup) ─────────────────
+const KNOWLEDGE_PATH = path.resolve(__dirname, '../data/disease_knowledge.json');
+let diseaseKnowledge = {};
+let normalizedKnowledgeMap = {};
+
+try {
+    if (fs.existsSync(KNOWLEDGE_PATH)) {
+        diseaseKnowledge = JSON.parse(fs.readFileSync(KNOWLEDGE_PATH, 'utf8'));
+        Object.keys(diseaseKnowledge).forEach((key) => {
+            const normKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+            normalizedKnowledgeMap[normKey] = diseaseKnowledge[key];
+        });
+        console.log(`[Knowledge] Successfully loaded ${Object.keys(diseaseKnowledge).length} curated disease entries.`);
+    } else {
+        console.warn(`[Knowledge] Warning: ${KNOWLEDGE_PATH} not found. Fallback recommendations will be used.`);
+    }
+} catch (err) {
+    console.error(`[Knowledge] Error loading disease_knowledge.json: ${err.message}. Using fallback.`);
+    diseaseKnowledge = {};
+    normalizedKnowledgeMap = {};
+}
+
+const SAFETY_NOTICE = "General guidance only. Follow the product label, wear protective gear, and confirm with your local Krishi Vigyan Kendra or agronomist before spraying.";
+
+/**
+ * Look up curated disease recommendation by class key or disease label.
+ * Returns structured recommendation object or null for non-disease statuses.
+ */
+function getDiseaseRecommendation(status, classKey, diseaseLabel) {
+    // Never show treatment for uncertain, poor_quality, not_a_leaf, invalid_image, or missing disease
+    if (!['ok', 'possible'].includes(status) || (!classKey && !diseaseLabel)) {
+        return null;
+    }
+
+    // 1. Exact match by raw class key
+    let entry = null;
+    if (classKey && diseaseKnowledge[classKey]) {
+        entry = diseaseKnowledge[classKey];
+    }
+
+    // 2. Resilient normalized match (strips underscores, hyphens, spaces, casing)
+    if (!entry) {
+        const target = (classKey || diseaseLabel || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (target && normalizedKnowledgeMap[target]) {
+            entry = normalizedKnowledgeMap[target];
+        }
+    }
+
+    // 3. Match found in curated knowledge base
+    if (entry) {
+        return {
+            ...entry,
+            safety_notice: SAFETY_NOTICE,
+            source: "curated"
+        };
+    }
+
+    // 4. Class not found in knowledge base -> generic fallback recommendation
+    return {
+        message: "We don't have detailed guidance for this yet. Please consult your local Krishi Vigyan Kendra or agriculture officer.",
+        safety_notice: SAFETY_NOTICE,
+        source: "fallback"
+    };
+}
 
 const getCropRecommendation = async (req, res) => {
     const { N_level, P_level, K_level, pH_value, moisture, temperature, rainfall } = req.body;
@@ -90,39 +156,12 @@ const detectDisease = async (req, res) => {
 
         const mlData = pythonApiRes.data;
         const detectedDisease = mlData.disease || null;
+        const classKey = mlData.class_key || mlData.class_name || null;
         const guardStatus = mlData.status || 'ok';
-        let suggestedAction = mlData.treatment || null;
 
-        // Use Gemini for dynamic treatment only when we have an actual disease result
-        if (detectedDisease && !detectedDisease.toLowerCase().includes('healthy') && guardStatus !== 'uncertain') {
-            try {
-                if (process.env.GEMINI_API_KEY) {
-                    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-                    let result;
-                    try {
-                        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-                        const prompt = `A farmer's crop was just diagnosed with ${detectedDisease} by a CNN model. Provide a very concise, practical, and direct treatment recommendation. Example format: "Spray Mancozeb 2 grams per liter in the evening. Repeat after 7 days." Keep it to 1 or 2 sentences max.`;
-                        result = await model.generateContent(prompt);
-                    } catch (primaryModelError) {
-                        console.warn("Gemini 2.0-flash not found or failed, trying gemini-flash-latest fallback...");
-                        const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
-                        const prompt = `A farmer's crop was just diagnosed with ${detectedDisease} by a CNN model. Provide a very concise, practical, and direct treatment recommendation. Example format: "Spray Mancozeb 2 grams per liter in the evening. Repeat after 7 days." Keep it to 1 or 2 sentences max.`;
-                        result = await model.generateContent(prompt);
-                    }
-                    const responseText = result.response.text();
-
-                    if (responseText) {
-                        suggestedAction = responseText.trim();
-                    }
-                } else {
-                    console.warn("GEMINI_API_KEY is missing, falling back to static treatment.");
-                }
-            } catch (geminiError) {
-                console.error("Gemini Treatment Generation Error Details:", geminiError.message || geminiError);
-                console.error("Gemini Stack:", geminiError.stack);
-                suggestedAction = `[DEBUG] Gemini Error: ${geminiError.message}`;
-            }
-        }
+        // Retrieve structured recommendation from curated knowledge base (no dynamic LLM call)
+        const recommendation = getDiseaseRecommendation(guardStatus, classKey, detectedDisease);
+        const suggestedAction = recommendation?.summary || mlData.treatment || null;
 
         // Forward all fields — old and new — to the client
         res.json({
@@ -131,7 +170,7 @@ const detectDisease = async (req, res) => {
             confidenceScore: mlData.confidence,
             suggestedAction: suggestedAction,
             heatmap: mlData.heatmap || null,
-            // New guard fields (forwarded unchanged)
+            // Guard fields (forwarded unchanged)
             status: guardStatus,
             guardMessage: mlData.message || null,
             reasons: mlData.reasons || [],
@@ -139,6 +178,8 @@ const detectDisease = async (req, res) => {
             quality: mlData.quality || {},
             confidenceMetrics: mlData.confidence_metrics || {},
             warnings: mlData.warnings || [],
+            // Structured curated recommendation
+            recommendation: recommendation,
         });
     } catch (error) {
         console.error("Disease Detection Error:", error.message);

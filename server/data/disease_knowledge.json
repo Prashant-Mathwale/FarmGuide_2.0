@@ -1,0 +1,1686 @@
+{
+  "Apple___Apple_scab": {
+    "crop": "Apple",
+    "disease": "Apple scab",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Fungal infection causing olive-green to dark brown velvety scabs on leaves and fruit, causing premature leaf fall.",
+    "symptoms": [
+      "Olive-green to brown velvety spots on upper leaf surfaces that turn dark brown or black",
+      "Puckered, curled leaves that yellow and drop prematurely",
+      "Scabby, corky dark lesions on fruit that may crack open as fruit grows"
+    ],
+    "immediate_actions": [
+      "Rake up, collect, and burn or bury fallen infected leaves to stop ascospore release",
+      "Prune dense canopy branches during dry weather to increase airflow and sunlight penetration"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Apply neem oil (3-5 ml/L) or wettable sulfur as a preventive spray before bud break",
+        "Keep the orchard floor clean and well-mowed to reduce humidity under the trees"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Mancozeb 75% WP",
+          "dosage": "2.5 g per liter of water",
+          "dosage_verified": true,
+          "note": "Protective spray; apply at green tip stage and repeat at pink bud stage"
+        },
+        {
+          "active_ingredient": "Difenoconazole 25% EC",
+          "dosage": "0.5 ml per liter of water",
+          "dosage_verified": true,
+          "note": "Curative spray; apply within 72 hours of an infection rain event"
+        }
+      ]
+    },
+    "prevention": [
+      "Plant scab-resistant apple cultivars adapted to your region",
+      "Ensure wide tree spacing to allow rapid canopy drying after rain",
+      "Apply urea (5%) to fallen leaves in autumn to accelerate leaf decomposition"
+    ],
+    "when_to_seek_help": "Contact your local horticulture officer if scabs appear on over 20% of your young fruitlets despite preventive spraying.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Apple Scab",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_fruits_apple.html"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Apple Scab",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Apple___Black_rot": {
+    "crop": "Apple",
+    "disease": "Black rot",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Fungal disease causing frog-eye circular leaf spots, limb cankers, and firm, decaying black rot on fruit.",
+    "symptoms": [
+      "Small purple leaf spots that enlarge into circular lesions with light brown centers ('frog-eye' spots)",
+      "Sunken reddish-brown cankers on bark and larger limbs with cracked borders",
+      "Firm, dark rotting rings on ripening fruit that dry into shriveled black mummies"
+    ],
+    "immediate_actions": [
+      "Prune out dead wood, cankered twigs, and mummified fruit hanging on the tree",
+      "Dispose of all pruned diseased wood and fallen mummies away from the orchard"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Sterilize pruning shears with 70% alcohol or 10% bleach solution between cuts",
+        "Avoid tree stress by mulching and watering during prolonged dry spells"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Captan 50% WP",
+          "dosage": "2 g per liter of water",
+          "dosage_verified": true,
+          "note": "Apply from petal fall through summer cover sprays at 10-14 day intervals"
+        },
+        {
+          "active_ingredient": "Thiophanate-methyl 70% WP",
+          "dosage": "Follow the product label and local advisory",
+          "dosage_verified": false,
+          "note": "Rotational fungicide for canker and summer rot suppression"
+        }
+      ]
+    },
+    "prevention": [
+      "Prevent bark damage from mowers, pruning tools, and insect borers",
+      "Maintain balanced tree nutrition and avoid excessive nitrogen fertilizer",
+      "Remove nearby wild brambles or dead hardwood trees that harbor the fungus"
+    ],
+    "when_to_seek_help": "Seek guidance from an agricultural university extension if major scaffold limbs show expanding trunk cankers.",
+    "sources": [
+      {
+        "name": "Penn State Extension - Apple Black Rot",
+        "url": "https://extension.psu.edu/apple-disease-black-rot"
+      },
+      {
+        "name": "TNAU Agritech Portal - Apple Diseases",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_fruits_apple.html"
+      }
+    ],
+    "reviewed": false
+  },
+  "Apple___Cedar_apple_rust": {
+    "crop": "Apple",
+    "disease": "Cedar apple rust",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Fungal disease requiring junipers/cedars as alternate hosts, creating bright yellow-orange spots on apple foliage.",
+    "symptoms": [
+      "Bright yellow-orange circular spots on upper leaf surfaces with tiny black dots in the center",
+      "Tube-like fungal structures on the lower leaf surface that release powdery orange spores",
+      "Premature leaf drop and distorted orange blemishes on developing fruit"
+    ],
+    "immediate_actions": [
+      "Inspect nearby red cedars and junipers and prune off brown galled swellings before spring rains",
+      "Inspect orchard trees weekly during warm, rainy spring conditions"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Plant rust-resistant apple varieties such as Enterprise, Liberty, or Freedom",
+        "Remove eastern red cedar and ornamental juniper windbreaks within 500 meters of the orchard"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Mancozeb 75% WP",
+          "dosage": "2.5 g per liter of water",
+          "dosage_verified": true,
+          "note": "Protective cover spray applied between pink bud and petal fall"
+        },
+        {
+          "active_ingredient": "Myclobutanil 10% WP",
+          "dosage": "Follow the product label and local advisory",
+          "dosage_verified": false,
+          "note": "Systemic fungicide applied at early infection timing"
+        }
+      ]
+    },
+    "prevention": [
+      "Select disease-resistant rootstocks and scion varieties",
+      "Maintain spatial separation between apple orchards and juniper trees",
+      "Keep orchard canopies well-pruned for rapid leaf drying after morning dew"
+    ],
+    "when_to_seek_help": "Consult your local horticulture department if severe defoliation occurs on over 30% of your trees before mid-summer.",
+    "sources": [
+      {
+        "name": "Purdue University Extension - Cedar Apple Rust",
+        "url": "https://www.extension.purdue.edu/extmedia/bp/bp-35-w.pdf"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Cedar Apple Rust",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Apple___healthy": {
+    "crop": "Apple",
+    "disease": "Healthy Plant",
+    "is_healthy": true,
+    "type": "healthy",
+    "summary": "Your apple leaves look healthy, clean, and free from active disease symptoms.",
+    "symptoms": [],
+    "immediate_actions": [],
+    "treatment": {
+      "organic_cultural": [],
+      "chemical": []
+    },
+    "prevention": [
+      "Continue regular scouting every 7-10 days, especially after humid rain spells",
+      "Maintain balanced NPK fertilization and annual dormant pruning to sustain strong canopy airflow",
+      "Ensure uniform drip or basin irrigation without waterlogging around the root flare"
+    ],
+    "when_to_seek_help": "Consult an agronomist if you notice sudden leaf yellowing, unusual wilting, or dark spots developing on leaves.",
+    "sources": [
+      {
+        "name": "ICAR - Indian Council of Agricultural Research",
+        "url": "https://icar.org.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Blueberry___healthy": {
+    "crop": "Blueberry",
+    "disease": "Healthy Plant",
+    "is_healthy": true,
+    "type": "healthy",
+    "summary": "Your blueberry foliage appears healthy, vigorous, and free from noticeable disease symptoms.",
+    "symptoms": [],
+    "immediate_actions": [],
+    "treatment": {
+      "organic_cultural": [],
+      "chemical": []
+    },
+    "prevention": [
+      "Maintain acidic soil conditions (pH 4.5 to 5.2) with pine bark or elemental sulfur mulch",
+      "Provide consistent shallow irrigation using drip lines to prevent moisture stress",
+      "Prune older canes (over 5 years old) during winter to encourage fresh productive shoots"
+    ],
+    "when_to_seek_help": "Contact a berry specialist if you observe sudden twig dieback, interveinal leaf chlorosis, or shriveled berries.",
+    "sources": [
+      {
+        "name": "ICAR - Indian Council of Agricultural Research",
+        "url": "https://icar.org.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Cherry_(including_sour)___Powdery_mildew": {
+    "crop": "Cherry (including sour)",
+    "disease": "Powdery mildew",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Fungal infection creating powdery white patches on leaves, young shoots, and developing cherries.",
+    "symptoms": [
+      "White powdery fungal patches on the underside of young foliage",
+      "Upward leaf curling, twisting, and distorted terminal shoot growth",
+      "Web-like markings or leathery unripened skin on affected cherry fruit"
+    ],
+    "immediate_actions": [
+      "Prune crowded water sprouts and dense inner branches to maximize sunlight and airflow",
+      "Avoid overhead sprinkler irrigation that elevates canopy humidity"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Apply potassium bicarbonate (3-5 g/L) or horticultural mineral oil at early symptom onset",
+        "Avoid excessive nitrogen applications that trigger tender, highly susceptible shoot flushes"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Wettable Sulfur 80% WP",
+          "dosage": "2 to 3 g per liter of water",
+          "dosage_verified": true,
+          "note": "Do not spray when ambient temperature exceeds 30°C to avoid leaf burn"
+        },
+        {
+          "active_ingredient": "Tebuconazole 25.9% EC",
+          "dosage": "Follow the product label and local advisory",
+          "dosage_verified": false,
+          "note": "Rotate with other fungicide classes to manage chemical resistance"
+        }
+      ]
+    },
+    "prevention": [
+      "Prune cherry trees annually to maintain an open vase or central leader canopy",
+      "Monitor leaves weekly starting right after shuck split through harvest",
+      "Ensure good orchard drainage and avoid planting in low-lying frost pockets"
+    ],
+    "when_to_seek_help": "Consult a local fruit extension officer if powdery mildew coats over 25% of new shoot tips before harvest.",
+    "sources": [
+      {
+        "name": "UC IPM - Cherry Powdery Mildew",
+        "url": "https://ipm.ucanr.edu/agriculture/cherry/powdery-mildew/"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Cherry Powdery Mildew",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Cherry_(including_sour)___healthy": {
+    "crop": "Cherry (including sour)",
+    "disease": "Healthy Plant",
+    "is_healthy": true,
+    "type": "healthy",
+    "summary": "Your cherry tree foliage appears healthy with normal green color and no active disease signs.",
+    "symptoms": [],
+    "immediate_actions": [],
+    "treatment": {
+      "organic_cultural": [],
+      "chemical": []
+    },
+    "prevention": [
+      "Prune dead, diseased, or crossing wood annually during dormant periods",
+      "Paint tree trunks with white latex paint to prevent winter sunscald and bark cracking",
+      "Apply balanced organic compost and maintain a clean weed-free root zone"
+    ],
+    "when_to_seek_help": "Reach out to your district horticulture officer if you observe gum oozing from bark, sudden wilting, or yellowing leaves.",
+    "sources": [
+      {
+        "name": "ICAR - Indian Council of Agricultural Research",
+        "url": "https://icar.org.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot": {
+    "crop": "Corn (maize)",
+    "disease": "Cercospora leaf spot (Gray leaf spot)",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Fungal leaf blight of maize causing narrow, rectangular, tan lesions strictly bounded by leaf veins.",
+    "symptoms": [
+      "Small tan spots with yellow halos that expand into narrow rectangular lesions bounded by leaf veins",
+      "Lesions turn gray during humid morning hours due to dense fungal sporulation",
+      "Extensive leaf blighting starting from the lower canopy and progressing upward to the ear leaf"
+    ],
+    "immediate_actions": [
+      "Scout lower leaves as maize approaches tasseling stage",
+      "Avoid overhead sprinkler irrigation during warm, humid weather"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Rotate corn fields with non-host crops like soybean or pulses for at least 1-2 seasons",
+        "Deeply plow under corn crop residues after harvest to accelerate decomposition of fungal structures"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Azoxystrobin 18.2% + Difenoconazole 11.4% SC",
+          "dosage": "1 ml per liter of water",
+          "dosage_verified": true,
+          "note": "Spray at onset of lesions near tasseling to protect upper leaves"
+        },
+        {
+          "active_ingredient": "Mancozeb 75% WP",
+          "dosage": "2 g per liter of water",
+          "dosage_verified": true,
+          "note": "Protective spray applied when lower leaves first show symptoms"
+        }
+      ]
+    },
+    "prevention": [
+      "Select maize hybrids with documented genetic tolerance to gray leaf spot",
+      "Avoid continuous corn-on-corn planting cycles, especially under minimum-tillage systems",
+      "Maintain balanced soil fertility and avoid nitrogen deficiency"
+    ],
+    "when_to_seek_help": "Consult a Krishi Vigyan Kendra agronomist if rectangular lesions reach the ear leaf or higher before silking.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Maize Diseases",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_cereals_maize.html"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Gray Leaf Spot of Maize",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Corn_(maize)___Common_rust_": {
+    "crop": "Corn (maize)",
+    "disease": "Common rust",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Airborne fungal disease creating circular to elongate cinnamon-brown powdery pustules on both leaf surfaces.",
+    "symptoms": [
+      "Small, round to elongate powdery golden-brown to cinnamon pustules scattered on both leaf surfaces",
+      "Pustules rupture the leaf epidermis, releasing reddish-brown powdery airborne spores",
+      "Severely infected leaves turn yellow, desiccate, and cause premature plant death and poor grain fill"
+    ],
+    "immediate_actions": [
+      "Scout fields weekly during cool (16-25°C), high-humidity weather spells",
+      "Ensure proper row spacing to reduce humidity buildup within the canopy"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Plant rust-resistant maize hybrids recommended by state agricultural universities",
+        "Avoid late planting dates that expose crops to peak spore migration periods"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Mancozeb 75% WP",
+          "dosage": "2 to 2.5 g per liter of water",
+          "dosage_verified": true,
+          "note": "Apply as soon as pustules first appear on lower foliage"
+        },
+        {
+          "active_ingredient": "Propiconazole 25% EC",
+          "dosage": "1 ml per liter of water",
+          "dosage_verified": true,
+          "note": "Systemic triazole spray if rust spreads before or during tasseling"
+        }
+      ]
+    },
+    "prevention": [
+      "Plant certified rust-resistant seed varieties adapted to your agro-climatic zone",
+      "Practice timely sowing at the beginning of the recommended planting window",
+      "Avoid excessive nitrogen fertilizer which stimulates lush, susceptible leaf tissue"
+    ],
+    "when_to_seek_help": "Contact your local agricultural extension officer if rust pustules appear on leaves above the ear before pollination.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Maize Rust",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_cereals_maize.html"
+      },
+      {
+        "name": "ICAR-Indian Institute of Maize Research",
+        "url": "https://iimr.icar.gov.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Corn_(maize)___Northern_Leaf_Blight": {
+    "crop": "Corn (maize)",
+    "disease": "Northern leaf blight",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Fungal disease producing large, long, cigar-shaped grayish-green to tan lesions on corn foliage.",
+    "symptoms": [
+      "Long, elliptical, cigar-shaped lesions (2.5 to 15 cm long) on leaves",
+      "Lesions start as grayish-green, turning tan with dark fungal sporulation during wet periods",
+      "Extensive leaf drying from the lower leaves upward, giving plants a burnt appearance"
+    ],
+    "immediate_actions": [
+      "Examine lower leaves before tasseling; count lesions on leaves near the ear",
+      "Avoid working in wet fields to prevent spore dissemination"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Practice 2-year crop rotation with non-grass crops like soybean, groundnut, or pulses",
+        "Incorporate infected crop residue into the soil post-harvest to promote breakdown"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Mancozeb 75% WP",
+          "dosage": "2 to 2.5 g per liter of water",
+          "dosage_verified": true,
+          "note": "Spray at 10-15 day intervals upon first appearance of spots"
+        },
+        {
+          "active_ingredient": "Azoxystrobin 23% SC",
+          "dosage": "1 ml per liter of water",
+          "dosage_verified": true,
+          "note": "Foliar spray if disease reaches the ear leaf around silking stage"
+        }
+      ]
+    },
+    "prevention": [
+      "Grow maize hybrids with polygenic resistance to Northern leaf blight",
+      "Avoid continuous maize cultivation in the same field",
+      "Balance potassium and nitrogen fertilizer applications"
+    ],
+    "when_to_seek_help": "Contact a Krishi Vigyan Kendra agronomist if cigar-shaped lesions appear on leaves near the ear before silking.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Maize Northern Leaf Blight",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_cereals_maize.html"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Northern Leaf Blight of Maize",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Corn_(maize)___healthy": {
+    "crop": "Corn (maize)",
+    "disease": "Healthy Plant",
+    "is_healthy": true,
+    "type": "healthy",
+    "summary": "Your corn crop leaves look healthy, green, and free from noticeable disease symptoms.",
+    "symptoms": [],
+    "immediate_actions": [],
+    "treatment": {
+      "organic_cultural": [],
+      "chemical": []
+    },
+    "prevention": [
+      "Scout fields weekly, especially as the crop enters the critical knee-high and tasseling stages",
+      "Apply recommended nitrogen in split doses to match crop uptake periods",
+      "Maintain effective weed control during the first 30-40 days to eliminate alternative hosts"
+    ],
+    "when_to_seek_help": "Consult a village agriculture assistant if you observe rapid leaf drying, purple discoloration, or stunted tassels.",
+    "sources": [
+      {
+        "name": "ICAR - Indian Council of Agricultural Research",
+        "url": "https://icar.org.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Grape___Black_rot": {
+    "crop": "Grape",
+    "disease": "Black rot",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Destructive fungal disease producing reddish-brown leaf spots with black border and shriveled black 'mummy' berries.",
+    "symptoms": [
+      "Circular reddish-brown spots with dark borders and tiny black pimple-like fruiting bodies on leaves",
+      "Black elliptical lesions on young shoots, petioles, and tendrils",
+      "Berries turn brown, soften, shrivel, and transform into hard, wrinkled black mummies"
+    ],
+    "immediate_actions": [
+      "Collect and destroy all dried mummy berries hanging on vines and on the ground",
+      "Prune out diseased shoots during winter dormancy"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Trellis and train vines to open up the canopy for rapid leaf drying and sunlight penetration",
+        "Apply Bordeaux mixture (1%) before bud burst and after berry set"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Mancozeb 75% WP",
+          "dosage": "2 g per liter of water",
+          "dosage_verified": true,
+          "note": "Spray before bloom and 10-14 days post-bloom"
+        },
+        {
+          "active_ingredient": "Myclobutanil 10% WP",
+          "dosage": "Follow the product label and local advisory",
+          "dosage_verified": false,
+          "note": "Systemic protectant and early post-infection fungicide"
+        }
+      ]
+    },
+    "prevention": [
+      "Keep vines properly pruned and tied to allow breeze to penetrate the canopy",
+      "Remove all wild grapevines within 100 meters of the vineyard border",
+      "Avoid sprinkler irrigation that wets the grape foliage and fruit clusters"
+    ],
+    "when_to_seek_help": "Consult an ICAR-NRC Grapes specialist if black rot spots appear on clusters during the early berry formation stage.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Grape Diseases",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_fruits_grapes.html"
+      },
+      {
+        "name": "ICAR - National Research Centre for Grapes",
+        "url": "https://nrcgrapes.icar.gov.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Grape___Esca_(Black_Measles)": {
+    "crop": "Grape",
+    "disease": "Esca (Black Measles)",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Complex wood-canker disease causing distinctive tiger-stripe leaf patterns and spotted, leathery fruit.",
+    "symptoms": [
+      "Interveinal yellowing and necrosis resulting in a 'tiger-stripe' pattern on mature leaves",
+      "Small, dark purplish to black spots ('measles') on berry skins",
+      "Gradual vine decline, spongy white internal trunk rot, and occasional sudden summer vine collapse"
+    ],
+    "immediate_actions": [
+      "Mark symptomatic vines during summer to prune and isolate them separately during the dormant season",
+      "Avoid pruning during damp, foggy, or rainy days when fungal spores disperse in the air"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Seal pruning wounds immediately with tree wound paint or copper paste",
+        "Disinfect pruning shears between individual vines using 70% alcohol or 10% bleach solution"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Copper Oxychloride 50% WP",
+          "dosage": "2.5 to 3 g per liter of water",
+          "dosage_verified": true,
+          "note": "Apply as a paste or paint directly onto large pruning cuts to protect wounds"
+        },
+        {
+          "active_ingredient": "Carbendazim 50% WP",
+          "dosage": "Follow the product label and local advisory",
+          "dosage_verified": false,
+          "note": "Wound protectant treatment after dormant pruning"
+        }
+      ]
+    },
+    "prevention": [
+      "Use double-pruning techniques (delayed final pruning until late dormancy)",
+      "Avoid large pruning cuts close to the main trunk",
+      "Purchase certified virus-free and canker-free grafted rootstocks"
+    ],
+    "when_to_seek_help": "Contact a viticulturist or ICAR-NRC Grapes scientist if multiple mature vines exhibit sudden collapse during hot summer weather.",
+    "sources": [
+      {
+        "name": "ICAR-NRC for Grapes Disease Advisory",
+        "url": "https://nrcgrapes.icar.gov.in/"
+      },
+      {
+        "name": "UC IPM - Esca (Black Measles)",
+        "url": "https://ipm.ucanr.edu/agriculture/grape/esca-black-measles/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": {
+    "crop": "Grape",
+    "disease": "Leaf blight (Isariopsis leaf spot)",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Fungal leaf spot causing irregular dark brown necrotic lesions that lead to premature leaf drop and weak vines.",
+    "symptoms": [
+      "Small, irregular brown spots on upper leaf surfaces that enlarge into dark brown necrotic patches",
+      "Spots coalesce into large dead leaf areas bordered by a faint yellow halo",
+      "Premature defoliation exposing grape bunches to sunburn and weakening cane maturation"
+    ],
+    "immediate_actions": [
+      "Remove severely infected lower leaves to restrict spore splash to upper foliage",
+      "Maintain good vine pruning and shoot positioning for ventilation"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Spray copper hydroxide or Bordeaux mixture (0.5% - 1%) after harvest",
+        "Collect and destroy fallen leaf litter from the vineyard floor"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Mancozeb 75% WP",
+          "dosage": "2 g per liter of water",
+          "dosage_verified": true,
+          "note": "Apply at 10-15 day intervals during warm, humid conditions"
+        },
+        {
+          "active_ingredient": "Azoxystrobin 23% SC",
+          "dosage": "1 ml per liter of water",
+          "dosage_verified": true,
+          "note": "Foliar spray when disease first appears on lower leaves"
+        }
+      ]
+    },
+    "prevention": [
+      "Prune vines to open the canopy and promote rapid leaf drying",
+      "Avoid over-fertilizing with nitrogen which creates excessive leafy growth",
+      "Apply post-harvest clean-up sprays before winter dormancy"
+    ],
+    "when_to_seek_help": "Consult your local viticulture officer if leaf blight causes widespread defoliation before fruit ripening.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Grape Diseases",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_fruits_grapes.html"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Grape Leaf Spot",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Grape___healthy": {
+    "crop": "Grape",
+    "disease": "Healthy Plant",
+    "is_healthy": true,
+    "type": "healthy",
+    "summary": "Your grapevine foliage appears healthy, vigorous, and free from visible leaf spots or mildew.",
+    "symptoms": [],
+    "immediate_actions": [],
+    "treatment": {
+      "organic_cultural": [],
+      "chemical": []
+    },
+    "prevention": [
+      "Maintain proper canopy management with shoot thinning, de-suckering, and leaf removal around clusters",
+      "Monitor weather forecasts and apply preventive protective bio-fungicides ahead of monsoon rains",
+      "Maintain optimal drip irrigation and avoid water stress during berry sizing"
+    ],
+    "when_to_seek_help": "Contact an ICAR-NRC Grapes expert if you notice oily yellow spots, white powder, or abnormal berry cracking.",
+    "sources": [
+      {
+        "name": "ICAR - Indian Council of Agricultural Research",
+        "url": "https://icar.org.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Orange___Haunglongbing_(Citrus_greening)": {
+    "crop": "Orange",
+    "disease": "Huanglongbing (Citrus greening)",
+    "is_healthy": false,
+    "type": "bacterial",
+    "summary": "Devastating bacterial disease spread by psyllid insects causing asymmetrical yellow blotches on leaves and bitter, lopsided fruit.",
+    "symptoms": [
+      "Asymmetrical, blotchy yellow mottling across leaf veins (unlike uniform zinc or iron deficiency)",
+      "Leaves become small, upright, thick, and leathery ('rabbit ears')",
+      "Small, lopsided, sour or bitter fruit that remains green at the stylar blossom end ('greening')"
+    ],
+    "immediate_actions": [
+      "Prune and eradicate severely declining, unthrifty trees to eliminate bacterial reservoirs for psyllids",
+      "Scout new shoot flushes for presence of nymphs and adults of the Asian citrus psyllid vector"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Plant certified disease-free nursery stock from government-certified insect-proof screenhouses",
+        "Erect yellow sticky traps in the orchard canopy to monitor and catch psyllids"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Imidacloprid 17.8% SL",
+          "dosage": "0.5 ml per liter of water",
+          "dosage_verified": true,
+          "note": "Target vector (Asian citrus psyllid) during flush periods; no chemical cures the internal bacterium"
+        },
+        {
+          "active_ingredient": "Thiamethoxam 25% WG",
+          "dosage": "Follow the product label and local advisory",
+          "dosage_verified": false,
+          "note": "Alternate insecticide class for vector management during vegetative growth flushes"
+        }
+      ]
+    },
+    "prevention": [
+      "Never graft or propagate budwood from uncertified or untested orchard trees",
+      "Control psyllid populations regionally in coordination with neighboring orchards",
+      "Apply micronutrient foliar sprays (zinc, iron, manganese) to sustain vigor in mildly affected trees"
+    ],
+    "when_to_seek_help": "Immediately report suspected citrus greening symptoms to your state agriculture university or Central Citrus Research Institute (ICAR-CCRI).",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Citrus Greening",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_fruits_citrus.html"
+      },
+      {
+        "name": "ICAR-Central Citrus Research Institute",
+        "url": "https://ccri.icar.gov.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Peach___Bacterial_spot": {
+    "crop": "Peach",
+    "disease": "Bacterial spot",
+    "is_healthy": false,
+    "type": "bacterial",
+    "summary": "Bacterial disease causing water-soaked angular leaf spots, 'shot-hole' perforation, and sunken fruit pits.",
+    "symptoms": [
+      "Small, angular water-soaked leaf spots that turn purple-brown and drop out, creating a 'shot-hole' appearance",
+      "Severe leaf yellowing at the tip followed by early defoliation",
+      "Sunken, cracked, dark crater-like pits with gum exudation on the peach skin"
+    ],
+    "immediate_actions": [
+      "Avoid high-pressure overhead irrigation that splashes bacteria across trees",
+      "Prune out diseased and cankered twigs during winter dormancy"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Plant bacterial-spot tolerant peach cultivars adapted to your region",
+        "Do not plant orchards in excessively windy, exposed sites without windbreaks"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Copper Oxychloride 50% WP",
+          "dosage": "2.5 g per liter of water",
+          "dosage_verified": true,
+          "note": "Apply during dormant season before bud break; reduce rate after petal fall to prevent leaf burn"
+        },
+        {
+          "active_ingredient": "Oxytetracycline",
+          "dosage": "Follow the product label and local advisory",
+          "dosage_verified": false,
+          "note": "Consult local extension specialist for approved regional antibiotic registrations"
+        }
+      ]
+    },
+    "prevention": [
+      "Avoid excessive nitrogen fertilization that stimulates overly vegetative, susceptible shoots",
+      "Maintain tree vigor with proper drainage and root aeration",
+      "Disinfect pruning tools between cuts on symptomatic trees"
+    ],
+    "when_to_seek_help": "Contact your local horticulture officer if fruit shows extensive pitting or cracking before pit hardening.",
+    "sources": [
+      {
+        "name": "Penn State Extension - Peach Bacterial Spot",
+        "url": "https://extension.psu.edu/peach-disease-bacterial-spot"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Bacterial Spot of Prunus",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Peach___healthy": {
+    "crop": "Peach",
+    "disease": "Healthy Plant",
+    "is_healthy": true,
+    "type": "healthy",
+    "summary": "Your peach tree foliage appears clean, vibrant, and free from active bacterial or fungal lesions.",
+    "symptoms": [],
+    "immediate_actions": [],
+    "treatment": {
+      "organic_cultural": [],
+      "chemical": []
+    },
+    "prevention": [
+      "Prune peach trees to an open center (vase) canopy during late winter to maximize sunlight penetration",
+      "Apply a preventive copper or lime sulfur wash during late dormancy to prevent peach leaf curl",
+      "Thin fruitlets to 15-20 cm apart along shoots for optimal fruit size and reduced cluster rot"
+    ],
+    "when_to_seek_help": "Consult a fruit specialist if you notice red curled leaves in spring or gum exudation on the trunk.",
+    "sources": [
+      {
+        "name": "ICAR - Indian Council of Agricultural Research",
+        "url": "https://icar.org.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Pepper,_bell___Bacterial_spot": {
+    "crop": "Pepper (bell)",
+    "disease": "Bacterial spot",
+    "is_healthy": false,
+    "type": "bacterial",
+    "summary": "Bacterial disease creating water-soaked angular spots on leaves and raised, scabby warts on bell peppers.",
+    "symptoms": [
+      "Small, water-soaked angular spots on lower leaf surfaces turning brown with yellow halos",
+      "Infected leaves turn yellow and drop prematurely, causing sunscald on exposed peppers",
+      "Rough, circular, raised wart-like scabs on green and ripening pepper fruit"
+    ],
+    "immediate_actions": [
+      "Avoid working in pepper fields when foliage is wet from rain or dew",
+      "Rogue out and destroy heavily infected seedlings from nurseries"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Rotate with non-solanaceous crops (maize, beans, sorghum) for at least 2 years",
+        "Use hot-water treated or certified disease-free pepper seeds"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Copper Hydroxide 53.8% DF",
+          "dosage": "2 g per liter of water",
+          "dosage_verified": true,
+          "note": "Tank-mix with Mancozeb (2 g/L) for improved bacterial spot suppression"
+        },
+        {
+          "active_ingredient": "Streptocycline",
+          "dosage": "Follow the product label and local advisory",
+          "dosage_verified": false,
+          "note": "Agricultural bactericide; follow label and regional regulations strictly"
+        }
+      ]
+    },
+    "prevention": [
+      "Grow bacterial-spot resistant bell pepper hybrids with designated race resistance",
+      "Use drip irrigation rather than overhead sprinklers to keep foliage dry",
+      "Plow under pepper crop residue immediately after final harvest"
+    ],
+    "when_to_seek_help": "Contact your Krishi Vigyan Kendra agronomist if nursery seedlings show water-soaked spots before transplanting.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Chilli and Bell Pepper Diseases",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_veg_chilli.html"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Bacterial Spot of Pepper",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Pepper,_bell___healthy": {
+    "crop": "Pepper (bell)",
+    "disease": "Healthy Plant",
+    "is_healthy": true,
+    "type": "healthy",
+    "summary": "Your bell pepper foliage looks healthy, vigorous, and free from disease spots or virus mottling.",
+    "symptoms": [],
+    "immediate_actions": [],
+    "treatment": {
+      "organic_cultural": [],
+      "chemical": []
+    },
+    "prevention": [
+      "Maintain consistent soil moisture with organic straw or plastic mulch to avoid blossom-end rot",
+      "Scout leaf undersides weekly for aphids, thrips, and mites that transmit viruses",
+      "Stake or cage heavy-bearing bell pepper plants to keep fruit and leaves off damp soil"
+    ],
+    "when_to_seek_help": "Reach out to your local agriculture officer if leaves show mosaic mottling, upward curling, or blossom drops.",
+    "sources": [
+      {
+        "name": "ICAR - Indian Council of Agricultural Research",
+        "url": "https://icar.org.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Potato___Early_blight": {
+    "crop": "Potato",
+    "disease": "Early blight",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Common fungal disease causing dark brown oval spots with concentric target-like rings on older potato leaves.",
+    "symptoms": [
+      "Brown to dark-brown angular or circular leaf spots with concentric target-board rings ('bull's eye')",
+      "Lesions primarily affect older, lower foliage and are bordered by yellow chlorotic halos",
+      "Severe blighting leads to leaf curling, drying, and reduced tuber bulking"
+    ],
+    "immediate_actions": [
+      "Remove and destroy severely blighted bottom leaves to reduce airborne spore load",
+      "Avoid furrow irrigation that splashes mud onto foliage; water early in the morning"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Practice a 3-year crop rotation avoiding tomato, eggplant, and chilli",
+        "Maintain optimum plant nutrition, as nitrogen-deficient or stressed plants are more vulnerable"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Mancozeb 75% WP",
+          "dosage": "2 to 2.5 g per liter of water",
+          "dosage_verified": true,
+          "note": "Apply as preventive spray starting 45 days after planting, repeat at 10-14 day intervals"
+        },
+        {
+          "active_ingredient": "Azoxystrobin 23% SC",
+          "dosage": "1 ml per liter of water",
+          "dosage_verified": true,
+          "note": "Apply when symptoms first appear on lower canopy"
+        }
+      ]
+    },
+    "prevention": [
+      "Use certified disease-free seed tubers from trusted government agencies",
+      "Ensure balanced fertilization with adequate potassium and organic compost",
+      "Destroy potato volunteer plants and solanaceous weeds in nearby field margins"
+    ],
+    "when_to_seek_help": "Contact your district agriculture department or CPRI center if spots spread rapidly to the upper third of the canopy.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Potato Early Blight",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_veg_potato.html"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Early Blight of Potato",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Potato___Late_blight": {
+    "crop": "Potato",
+    "disease": "Late blight",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Aggressive disease causing water-soaked black-brown lesions with white mold margins under humid, cool weather.",
+    "symptoms": [
+      "Irregular water-soaked pale green spots that rapidly turn dark brown or purplish-black",
+      "White fuzzy mildew growth visible on the underside of leaves along lesion borders in morning humidity",
+      "Infected tubers show irregular reddish-brown dry rot extending into flesh"
+    ],
+    "immediate_actions": [
+      "Inspect fields daily during cool, foggy, overcast, or rainy weather",
+      "Rogue out and bury infected plants along with their seed tubers immediately in a deep pit"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Use certified blight-free seed tubers from trusted seed agencies",
+        "Hill up soil well around potato bases to prevent sporangia from washing into tubers"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Mancozeb 75% WP",
+          "dosage": "2.5 g per liter of water",
+          "dosage_verified": true,
+          "note": "Preventive spray before disease onset; ensure thorough canopy coverage"
+        },
+        {
+          "active_ingredient": "Metalaxyl 8% + Mancozeb 64% WP",
+          "dosage": "2 g per liter of water",
+          "dosage_verified": true,
+          "note": "Systemic spray when initial blight lesions appear in the region"
+        }
+      ]
+    },
+    "prevention": [
+      "Plant blight-tolerant cultivars (e.g. Kufri Girdhari, Kufri Jyoti, Kufri Himalini)",
+      "Destroy cull piles of rejected potatoes before planting season begins",
+      "Follow local agro-meteorological advisories for late blight forecast warnings"
+    ],
+    "when_to_seek_help": "Alert your local Krishi Vigyan Kendra immediately if you detect late blight, as it can destroy entire fields within a week.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Potato Late Blight",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_veg_potato.html"
+      },
+      {
+        "name": "ICAR - Central Potato Research Institute (CPRI)",
+        "url": "https://cpri.icar.gov.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Potato___healthy": {
+    "crop": "Potato",
+    "disease": "Healthy Plant",
+    "is_healthy": true,
+    "type": "healthy",
+    "summary": "Your potato plants appear healthy with clean foliage, vigorous stems, and no visible blight lesions.",
+    "symptoms": [],
+    "immediate_actions": [],
+    "treatment": {
+      "organic_cultural": [],
+      "chemical": []
+    },
+    "prevention": [
+      "Maintain deep earthing-up (hilling) around stems to protect developing tubers from greening and pests",
+      "Scout crops closely twice weekly during cool, foggy, or overcast weather for early blight signs",
+      "Stop irrigation 10-15 days prior to harvest to allow tuber skin to mature and harden"
+    ],
+    "when_to_seek_help": "Contact your local agriculture officer immediately if leaves develop water-soaked dark patches or white underside mold.",
+    "sources": [
+      {
+        "name": "ICAR - Central Potato Research Institute (CPRI)",
+        "url": "https://cpri.icar.gov.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Raspberry___healthy": {
+    "crop": "Raspberry",
+    "disease": "Healthy Plant",
+    "is_healthy": true,
+    "type": "healthy",
+    "summary": "Your raspberry foliage looks healthy, green, and free from active cane blights or rust spots.",
+    "symptoms": [],
+    "immediate_actions": [],
+    "treatment": {
+      "organic_cultural": [],
+      "chemical": []
+    },
+    "prevention": [
+      "Prune out spent floricanes (fruiting canes) down to the ground immediately after harvest",
+      "Trellis canes upright to maintain good air circulation and prevent canes from trailing on damp soil",
+      "Maintain organic wood-chip mulch to retain uniform moisture and prevent weed competition"
+    ],
+    "when_to_seek_help": "Consult a berry specialist if canes develop purple lesions, spur blight, or sudden tip dieback.",
+    "sources": [
+      {
+        "name": "ICAR - Indian Council of Agricultural Research",
+        "url": "https://icar.org.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Soybean___healthy": {
+    "crop": "Soybean",
+    "disease": "Healthy Plant",
+    "is_healthy": true,
+    "type": "healthy",
+    "summary": "Your soybean foliage looks healthy, vigorous, and free from visible rust or bacterial pustules.",
+    "symptoms": [],
+    "immediate_actions": [],
+    "treatment": {
+      "organic_cultural": [],
+      "chemical": []
+    },
+    "prevention": [
+      "Inoculate seeds with Rhizobium culture before planting for optimal biological nitrogen fixation",
+      "Maintain good field drainage to avoid root rot and collar rot during heavy monsoon spells",
+      "Scout leaf undersides weekly for soybean rust pustules and defoliating caterpillars"
+    ],
+    "when_to_seek_help": "Contact your local KVK agronomist if you notice reddish-brown rust pustules or yellow mosaic patterns on leaves.",
+    "sources": [
+      {
+        "name": "ICAR-Indian Institute of Soybean Research",
+        "url": "https://iisrindore.icar.gov.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Squash___Powdery_mildew": {
+    "crop": "Squash",
+    "disease": "Powdery mildew",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Fungal disease blanketing squash leaves, petioles, and stems with white, powdery fungal colonies.",
+    "symptoms": [
+      "White, talcum powder-like spots on upper and lower surfaces of mature leaves and stems",
+      "Infected leaves turn yellow, then brown, and become dry and brittle",
+      "Premature defoliation leads to sunburned fruit and reduced sweetness and yield"
+    ],
+    "immediate_actions": [
+      "Prune out crowded foliage to maximize sun exposure and airflow through the vine canopy",
+      "Avoid high nitrogen fertilizers that encourage excessive lush, susceptible growth"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Spray potassium bicarbonate (3-5 g/L) or neem oil (5 ml/L) at the very first sign of colonies",
+        "Select powdery mildew-resistant squash varieties"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Wettable Sulfur 80% WP",
+          "dosage": "2 to 3 g per liter of water",
+          "dosage_verified": true,
+          "note": "Do not apply if ambient temperature is above 30°C to avoid scorching cucurbit foliage"
+        },
+        {
+          "active_ingredient": "Difenoconazole 25% EC",
+          "dosage": "0.5 ml per liter of water",
+          "dosage_verified": true,
+          "note": "Systemic foliar spray at early disease onset"
+        }
+      ]
+    },
+    "prevention": [
+      "Grow powdery mildew-resistant cucurbit hybrids",
+      "Space squash hills generously (1.5 to 2 meters) to encourage good air movement",
+      "Water with drip irrigation rather than overhead sprinklers"
+    ],
+    "when_to_seek_help": "Consult a vegetable extension officer if white powder covers over one-third of the canopy before harvest.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Cucurbit Diseases",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_veg_cucurbits.html"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Powdery Mildew of Cucurbits",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Strawberry___Leaf_scorch": {
+    "crop": "Strawberry",
+    "disease": "Leaf scorch",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Fungal disease causing irregular dark purple-brown blotches on leaves that give plants a scorched appearance.",
+    "symptoms": [
+      "Irregular small purple spots on upper leaf surfaces that enlarge and coalesce into dark purplish blotches",
+      "Tissue between spots turns reddish-purple or brown, causing leaves to curl upward and look burnt or scorched",
+      "Petioles, runners, and fruit calyx develop similar sunken purple-brown lesions"
+    ],
+    "immediate_actions": [
+      "Remove and destroy older, scorched leaves after harvest",
+      "Switch from overhead sprinklers to drip irrigation to prevent wet foliage"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Plant on raised beds with clean straw or plastic mulch to avoid soil splashing",
+        "Ensure good plant spacing (30-40 cm) to facilitate quick canopy drying"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Captan 50% WP",
+          "dosage": "2 g per liter of water",
+          "dosage_verified": true,
+          "note": "Apply before bloom and repeat post-harvest if disease persists"
+        },
+        {
+          "active_ingredient": "Azoxystrobin 23% SC",
+          "dosage": "Follow the product label and local advisory",
+          "dosage_verified": false,
+          "note": "Broad-spectrum strobilurin fungicide; observe pre-harvest interval"
+        }
+      ]
+    },
+    "prevention": [
+      "Use certified disease-free strawberry runners",
+      "Mow and renovate June-bearing strawberry beds immediately after final harvest",
+      "Maintain well-drained sandy loam soil with good air exposure"
+    ],
+    "when_to_seek_help": "Contact your local horticulture officer if scorch lesions spread across runner plants in the nursery bed.",
+    "sources": [
+      {
+        "name": "Penn State Extension - Strawberry Leaf Scorch",
+        "url": "https://extension.psu.edu/strawberry-disease-leaf-scorch"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Strawberry Leaf Scorch",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Strawberry___healthy": {
+    "crop": "Strawberry",
+    "disease": "Healthy Plant",
+    "is_healthy": true,
+    "type": "healthy",
+    "summary": "Your strawberry plants look healthy, green, and free from leaf spot or scorch lesions.",
+    "symptoms": [],
+    "immediate_actions": [],
+    "treatment": {
+      "organic_cultural": [],
+      "chemical": []
+    },
+    "prevention": [
+      "Mulch beds with clean wheat straw or silver-black plastic mulch to keep fruit clean and off damp soil",
+      "Drip irrigate at the root zone to keep leaves and blossoms completely dry",
+      "Remove older dying leaves and excessive runners during the growing season"
+    ],
+    "when_to_seek_help": "Consult a fruit agronomist if you notice red spots with white centers, scorched edges, or gray mold on berries.",
+    "sources": [
+      {
+        "name": "ICAR - Indian Council of Agricultural Research",
+        "url": "https://icar.org.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Tomato___Bacterial_spot": {
+    "crop": "Tomato",
+    "disease": "Bacterial spot",
+    "is_healthy": false,
+    "type": "bacterial",
+    "summary": "Bacterial infection causing tiny water-soaked angular leaf spots, severe defoliation, and scabby fruit lesions.",
+    "symptoms": [
+      "Small, water-soaked dark brown circular to angular spots on leaves, often surrounded by yellow halos",
+      "Severe blighting and premature dropping of lower foliage, exposing tomatoes to sunscald",
+      "Rough, black, raised scab-like lesions on green and ripening fruit"
+    ],
+    "immediate_actions": [
+      "Do not enter or cultivate tomato fields when plants are wet with rain or dew",
+      "Discard infected seedlings immediately from the nursery area"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Rotate fields with corn, beans, or cabbage for 2 to 3 years",
+        "Use hot-water treated disease-free certified seeds"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Copper Oxychloride 50% WP",
+          "dosage": "2.5 g per liter of water",
+          "dosage_verified": true,
+          "note": "Combine with Mancozeb (2 g/L) for enhanced bactericidal activity against copper-tolerant strains"
+        },
+        {
+          "active_ingredient": "Streptocycline",
+          "dosage": "Follow the product label and local advisory",
+          "dosage_verified": false,
+          "note": "Strictly observe regional agricultural chemical guidelines"
+        }
+      ]
+    },
+    "prevention": [
+      "Use certified disease-free seed and soak in hot water (50°C for 25 minutes) before sowing",
+      "Apply drip irrigation under plastic mulch to prevent splashing bacteria from soil to leaves",
+      "Disinfect greenhouse benches, trays, and stakes between crop cycles"
+    ],
+    "when_to_seek_help": "Contact a Krishi Vigyan Kendra agronomist if seedlings exhibit water-soaked dark spots before transplanting.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Tomato Bacterial Spot",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_veg_tomato.html"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Bacterial Spot of Tomato",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Tomato___Early_blight": {
+    "crop": "Tomato",
+    "disease": "Early blight",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Fungal pathogen producing concentric dark ring spots ('target spots') on older leaves and dark sunken stem cankers.",
+    "symptoms": [
+      "Dark brown to black spots with concentric rings ('target board') on older leaves",
+      "Surrounding leaf tissue turns chlorotic yellow, leading to premature leaf drop",
+      "Sunken, dark, leathery lesions at the stem end of developing tomato fruits"
+    ],
+    "immediate_actions": [
+      "Prune off the lowest 30 cm of foliage once plants are established to prevent soil contact",
+      "Mulch around the base of plants with straw or plastic film to prevent rain splash"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Water at soil level with drip irrigation; avoid overhead sprinklers",
+        "Rotate away from solanaceous crops (potato, pepper, eggplant) for at least 2 seasons"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Mancozeb 75% WP",
+          "dosage": "2 g per liter of water",
+          "dosage_verified": true,
+          "note": "Preventive spray every 10-14 days starting at first cluster flowering"
+        },
+        {
+          "active_ingredient": "Azoxystrobin 23% SC",
+          "dosage": "1 ml per liter of water",
+          "dosage_verified": true,
+          "note": "Apply at first sign of lower leaf spotting"
+        }
+      ]
+    },
+    "prevention": [
+      "Stake or trellis tomato vines to keep foliage upright and dry",
+      "Space plants at least 50-60 cm apart to ensure airflow",
+      "Destroy solanaceous crop residues and weeds immediately after harvest"
+    ],
+    "when_to_seek_help": "Consult a village agricultural officer if target spots spread to upper foliage near fruit clusters.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Tomato Early Blight",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_veg_tomato.html"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Early Blight of Tomato",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Tomato___Late_blight": {
+    "crop": "Tomato",
+    "disease": "Late blight",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Fast-spreading disease under cool, damp conditions causing large water-soaked greasy patches and white fungal fuzz.",
+    "symptoms": [
+      "Rapidly expanding water-soaked greasy dark greenish-brown lesions on leaves and stems",
+      "White delicate fungal mold on the underside of affected leaves during high humidity",
+      "Firm, greasy, olive-brown sunken decay on green and ripe tomato fruits"
+    ],
+    "immediate_actions": [
+      "Remove and bag severely infected plants immediately; do not add to compost piles",
+      "Ensure high air circulation by staking, trellising, and pruning suckers"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Avoid planting tomatoes downwind or adjacent to late-blight infected potato fields",
+        "Select late blight-tolerant hybrid tomato varieties"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Mancozeb 75% WP",
+          "dosage": "2.5 g per liter of water",
+          "dosage_verified": true,
+          "note": "Preventive cover spray prior to rainy, cool spells"
+        },
+        {
+          "active_ingredient": "Cymoxanil 8% + Mancozeb 64% WP",
+          "dosage": "2 g per liter of water",
+          "dosage_verified": true,
+          "note": "Curative systemic spray when early symptoms are identified in the vicinity"
+        }
+      ]
+    },
+    "prevention": [
+      "Plant late-blight resistant tomato cultivars",
+      "Avoid overhead irrigation; use drip irrigation beneath plastic mulch",
+      "Follow local weather-based disease forecast advisories"
+    ],
+    "when_to_seek_help": "Seek immediate advice from your local Krishi Vigyan Kendra, as late blight can destroy an entire field within days.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Tomato Late Blight",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_veg_tomato.html"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Late Blight of Tomato",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Tomato___Leaf_Mold": {
+    "crop": "Tomato",
+    "disease": "Leaf mold",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Fungal disease common in humid greenhouses causing pale green/yellow leaf patches with velvety olive-green mold below.",
+    "symptoms": [
+      "Pale green or yellowish blotches on upper leaf surfaces with indistinct margins",
+      "Dense, velvety olive-green to brownish fungal mold growth on the corresponding lower leaf surface",
+      "Infected leaves curl, wither, and drop prematurely in high relative humidity (>85%)"
+    ],
+    "immediate_actions": [
+      "Increase greenhouse ventilation and turn on exhaust fans to lower relative humidity below 80%",
+      "Space tomato plants generously and prune bottom leaves to facilitate air movement"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Water early in the morning and avoid splashing water onto foliage",
+        "Grow leaf-mold resistant greenhouse tomato hybrids"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Copper Oxychloride 50% WP",
+          "dosage": "2.5 g per liter of water",
+          "dosage_verified": true,
+          "note": "Thorough foliar spray ensuring complete coverage of leaf undersides"
+        },
+        {
+          "active_ingredient": "Difenoconazole 25% EC",
+          "dosage": "Follow the product label and local advisory",
+          "dosage_verified": false,
+          "note": "Systemic triazole fungicide for protected cultivation"
+        }
+      ]
+    },
+    "prevention": [
+      "Maintain greenhouse relative humidity below 85% with adequate night-time ventilation",
+      "Disinfect polyhouse structures and planting stakes between crop cycles",
+      "Use drip irrigation under mulch to prevent standing water inside polyhouses"
+    ],
+    "when_to_seek_help": "Contact a protected-cultivation specialist if olive mold covers more than 20% of the greenhouse canopy.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Tomato Diseases",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_veg_tomato.html"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Tomato Leaf Mould",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Tomato___Septoria_leaf_spot": {
+    "crop": "Tomato",
+    "disease": "Septoria leaf spot",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Fungal leaf disease characterized by numerous small circular spots with grayish-white centers and dark brown margins.",
+    "symptoms": [
+      "Numerous small (2-3 mm) circular spots with grayish-white centers and distinct dark brown margins",
+      "Tiny black specks (pycnidia) clearly visible inside the center of mature spots",
+      "Rapid leaf yellowing and defoliation progressing strictly from oldest bottom leaves upwards"
+    ],
+    "immediate_actions": [
+      "Pick off and destroy infected lower leaves at first notice before disease reaches fruit clusters",
+      "Apply organic mulch around tomato bases to prevent rain-splash from soil"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Practice 3-year crop rotation without solanaceous crops",
+        "Keep field weed-free; eliminate solanaceous weeds like black nightshade"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Chlorothalonil 75% WP",
+          "dosage": "2 g per liter of water",
+          "dosage_verified": true,
+          "note": "Foliar spray on bottom leaves every 7-10 days during warm, rainy weather"
+        },
+        {
+          "active_ingredient": "Mancozeb 75% WP",
+          "dosage": "2 g per liter of water",
+          "dosage_verified": true,
+          "note": "Broad-spectrum protectant spray"
+        }
+      ]
+    },
+    "prevention": [
+      "Mulch beds heavily to create a barrier between soil-borne spores and lower leaves",
+      "Stake and prune indeterminate tomatoes to maintain upright air circulation",
+      "Destroy all tomato crop vines immediately after final harvest"
+    ],
+    "when_to_seek_help": "Consult your local agriculture officer if spots progress more than halfway up the plant canopy.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Tomato Septoria Leaf Spot",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_veg_tomato.html"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Septoria Leaf Spot of Tomato",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Tomato___Spider_mites Two-spotted_spider_mite": {
+    "crop": "Tomato",
+    "disease": "Two-spotted spider mite infestation",
+    "is_healthy": false,
+    "type": "pest",
+    "summary": "Microscopic sap-feeding arachnid pests causing fine yellow stippling, bronzing, and delicate silk webbing on leaves.",
+    "symptoms": [
+      "Tiny yellow or white speckles and stippling across the upper leaf surface",
+      "Fine, silky webbing visible on leaf undersides, growing tips, and flower clusters in heavy infestations",
+      "Leaves turn bronze or yellow, dry up, and plants appear dusty and stunted"
+    ],
+    "immediate_actions": [
+      "Wash down foliage undersides with a strong stream of water to dislodge mites and webs",
+      "Avoid broad-spectrum synthetic pyrethroids which kill beneficial predatory mites and cause pest flares"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Spray neem oil (5 ml per liter of water with soap) or insecticidal soap solution",
+        "Conserve or release natural predatory mites (*Phytoseiulus persimilis*)"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Spiromesifen 22.9% SC",
+          "dosage": "1 ml per liter of water",
+          "dosage_verified": true,
+          "note": "Thorough foliar spray targeting leaf undersides where mites feed"
+        },
+        {
+          "active_ingredient": "Fenazaquin 10% EC",
+          "dosage": "Follow the product label and local advisory",
+          "dosage_verified": false,
+          "note": "Contact acaricide; alternate modes of action to prevent resistance"
+        }
+      ]
+    },
+    "prevention": [
+      "Avoid dusty field conditions; keep dirt farm roads watered or mulched near tomato plots",
+      "Avoid water-stressing tomato crops, as drought conditions accelerate mite reproduction",
+      "Inspect borders and weeds regularly for initial mite hotspots"
+    ],
+    "when_to_seek_help": "Consult a pest management officer if webbing envelopes growing tips and flower clusters.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Tomato Pests & Mites",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_veg_tomato.html"
+      },
+      {
+        "name": "ICAR-Indian Institute of Vegetable Research",
+        "url": "https://iivr.icar.gov.in/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Tomato___Target_Spot": {
+    "crop": "Tomato",
+    "disease": "Target spot",
+    "is_healthy": false,
+    "type": "fungal",
+    "summary": "Fungal disease causing brown circular lesions with concentric rings and sunken, crater-like lesions on green fruit.",
+    "symptoms": [
+      "Small brown pinpoint spots that enlarge into circular lesions with light brown centers and dark concentric rings",
+      "Spots on leaves and stems often have yellow chlorotic halos, causing extensive defoliation",
+      "Small, brown, sunken spots on tomato fruit that expand into large deep craters"
+    ],
+    "immediate_actions": [
+      "Increase spacing between plants and stake vines securely off the ground",
+      "Prune lower foliage to maintain good air circulation and rapid leaf drying"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Avoid overhead irrigation; use drip lines under plastic mulch",
+        "Rotate with non-susceptible crops like maize, sorghum, or grasses"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Azoxystrobin 18.2% + Difenoconazole 11.4% SC",
+          "dosage": "1 ml per liter of water",
+          "dosage_verified": true,
+          "note": "Spray at first appearance of symptoms and repeat after 12-14 days"
+        },
+        {
+          "active_ingredient": "Chlorothalonil 75% WP",
+          "dosage": "Follow the product label and local advisory",
+          "dosage_verified": false,
+          "note": "Protectant fungicide; follow label spray intervals"
+        }
+      ]
+    },
+    "prevention": [
+      "Avoid planting tomatoes near older infected cucurbit, pepper, or tomato plantings",
+      "Maintain uniform plant nutrition and avoid excessive nitrogen",
+      "Ensure rapid field drainage during monsoon periods"
+    ],
+    "when_to_seek_help": "Contact your local agricultural extension service if target spot lesions appear on immature green fruit.",
+    "sources": [
+      {
+        "name": "PlantwisePlus Knowledge Bank - Tomato Target Spot",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      },
+      {
+        "name": "TNAU Agritech Portal - Tomato Diseases",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_veg_tomato.html"
+      }
+    ],
+    "reviewed": false
+  },
+  "Tomato___Tomato_Yellow_Leaf_Curl_Virus": {
+    "crop": "Tomato",
+    "disease": "Tomato yellow leaf curl virus (TYLCV)",
+    "is_healthy": false,
+    "type": "viral",
+    "summary": "Destructive virus spread by whiteflies resulting in severe stunting, upward leaf curling, yellow margins, and flower drop.",
+    "symptoms": [
+      "Pronounced upward curling and cupping of leaflets",
+      "Interveinal yellowing (chlorosis) along leaflet margins with reduced leaf size",
+      "Severe plant stunting, bushy erect appearance, and flower drop preventing fruit set"
+    ],
+    "immediate_actions": [
+      "Rogue out and destroy virus-infected plants immediately to prevent whiteflies from acquiring and spreading the virus",
+      "Install yellow sticky traps (15-20 traps per acre) in and around the field to monitor and trap whiteflies"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Erect insect-proof 40-50 mesh nylon netting in nurseries",
+        "Plant border crops of maize, sorghum, or pearl millet (2-3 rows) around tomato fields as physical barriers"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "Diafenthiuron 50% WP",
+          "dosage": "1.2 g per liter of water",
+          "dosage_verified": true,
+          "note": "Spray to control whitefly vector population; no chemical cures the virus itself"
+        },
+        {
+          "active_ingredient": "Thiamethoxam 25% WG",
+          "dosage": "Follow the product label and local advisory",
+          "dosage_verified": false,
+          "note": "Systemic insecticide for vector control; rotate chemicals to manage resistance"
+        }
+      ]
+    },
+    "prevention": [
+      "Grow TYLCV-resistant tomato hybrids (e.g. varieties carrying Ty genes)",
+      "Raise seedlings under 40-mesh insect-proof netting to ensure virus-free transplants",
+      "Eliminate weed hosts like Datura, Parthenium, and wild Solanum around field borders"
+    ],
+    "when_to_seek_help": "Contact your district agriculture officer if whitefly populations surge despite sticky traps and systemic sprays.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Tomato Yellow Leaf Curl Virus",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_veg_tomato.html"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Tomato Yellow Leaf Curl",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Tomato___Tomato_mosaic_virus": {
+    "crop": "Tomato",
+    "disease": "Tomato mosaic virus (ToMV)",
+    "is_healthy": false,
+    "type": "viral",
+    "summary": "Extremely stable mechanically transmitted virus creating light/dark green mottled mosaic patterns and leaf distortion.",
+    "symptoms": [
+      "Mottled light and dark green mosaic patterns on leaves with blistered or puckered surfaces",
+      "Leaf distortion, curling, and in severe cases narrow 'shoestring' or 'fern-like' leaves",
+      "Stunted plant growth with brown internal necrotic browning inside fruits"
+    ],
+    "immediate_actions": [
+      "Carefully rogue out and destroy infected plants; do NOT compost them",
+      "Wash hands with soap and water or skimmed milk before touching healthy plants, especially after handling tobacco"
+    ],
+    "treatment": {
+      "organic_cultural": [
+        "Disinfect all pruning knives, stakes, and tools in 10% trisodium phosphate (TSP) or 20% household bleach",
+        "Plant certified ToMV-resistant tomato varieties (designated with Tm-2/Tm-2^2 resistance)"
+      ],
+      "chemical": [
+        {
+          "active_ingredient": "None (Viral disease - chemical control is ineffective)",
+          "dosage": "Follow the product label and local advisory",
+          "dosage_verified": false,
+          "note": "Antibiotics and synthetic pesticides cannot cure plant viruses. Focus strictly on sanitation and tool hygiene."
+        }
+      ]
+    },
+    "prevention": [
+      "Use certified virus-free seed treated with 10% trisodium phosphate or heat treatment",
+      "Prohibit smoking or tobacco handling near greenhouses and tomato fields",
+      "Rotate fields away from solanaceous crops for at least 2 seasons"
+    ],
+    "when_to_seek_help": "Consult a plant virologist or KVK scientist if mosaic symptoms appear widely in a commercial greenhouse crop.",
+    "sources": [
+      {
+        "name": "TNAU Agritech Portal - Tomato Mosaic Virus",
+        "url": "https://agritech.tnau.ac.in/crop_protection/crop_prot_crop_diseases_veg_tomato.html"
+      },
+      {
+        "name": "PlantwisePlus Knowledge Bank - Tomato Mosaic Virus",
+        "url": "https://plantwiseplusknowledgebank.org/"
+      }
+    ],
+    "reviewed": false
+  },
+  "Tomato___healthy": {
+    "crop": "Tomato",
+    "disease": "Healthy Plant",
+    "is_healthy": true,
+    "type": "healthy",
+    "summary": "Your tomato plant leaves look healthy, lush green, and free from blight or virus symptoms.",
+    "symptoms": [],
+    "immediate_actions": [],
+    "treatment": {
+      "organic_cultural": [],
+      "chemical": []
+    },
+    "prevention": [
+      "Stake and prune vines regularly to prevent leaves from touching damp soil",
+      "Apply drip irrigation under mulch to keep foliage dry and reduce disease pressure",
+      "Scout lower leaves twice weekly for early signs of fungal leaf spots"
+    ],
+    "when_to_seek_help": "Consult a village agriculture assistant if leaves develop dark spots, yellow margins, or powdery growth.",
+    "sources": [
+      {
+        "name": "ICAR - Indian Council of Agricultural Research",
+        "url": "https://icar.org.in/"
+      }
+    ],
+    "reviewed": false
+  }
+}
