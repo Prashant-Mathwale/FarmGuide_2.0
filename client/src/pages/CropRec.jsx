@@ -1,12 +1,49 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Loader2, Sparkles } from 'lucide-react';
+import { CheckCircle2, Loader2, Sparkles, Navigation, HelpCircle } from 'lucide-react';
 import api from '../services/api';
 
 function CropRec() {
     const [formData, setFormData] = useState({ N_level: '', P_level: '', K_level: '', pH_value: '', moisture: '', temperature: '', rainfall: '' });
     const [recommendations, setRecommendations] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [locationLoading, setLocationLoading] = useState(false);
+
+    const fetchWeatherData = async (lat, lon) => {
+        try {
+            setLocationLoading(true);
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m&timezone=auto`);
+            const data = await res.json();
+            setFormData(prev => ({
+                ...prev,
+                temperature: data.current?.temperature_2m ?? prev.temperature,
+                moisture: data.current?.relative_humidity_2m ?? prev.moisture
+            }));
+        } catch (err) {
+            console.error(err);
+            alert("Failed to fetch weather data.");
+        } finally {
+            setLocationLoading(false);
+        }
+    };
+
+    const fetchUserLocation = () => {
+        if ("geolocation" in navigator) {
+            setLocationLoading(true);
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    fetchWeatherData(position.coords.latitude, position.coords.longitude);
+                },
+                (error) => {
+                    console.error(error);
+                    alert("Location access denied.");
+                    setLocationLoading(false);
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by your browser.");
+        }
+    };
 
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -64,34 +101,94 @@ function CropRec() {
                     </h3>
 
                     <form onSubmit={handleSubmit} className="space-y-6 relative z-10 w-full">
+                        <div className="flex justify-between items-center bg-white/5 border border-white/10 p-3 rounded-xl mb-4">
+                            <div className="flex items-center gap-2 group relative">
+                                <span className="text-sm text-white/80 font-medium">Auto-fill weather data</span>
+                                <HelpCircle size={14} className="text-white/40 cursor-help hover:text-green-400 transition-colors" />
+                                <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 bg-[#1E293B] text-xs text-white/90 p-3 rounded-lg shadow-xl border border-white/10 z-50">
+                                    Uses your device's location to fetch real-time Temperature and Humidity data from weather APIs. (Rainfall must be entered manually as seasonal average). Ensure location permissions are granted!
+                                </div>
+                            </div>
+                            <button 
+                                type="button" 
+                                onClick={fetchUserLocation} 
+                                disabled={locationLoading} 
+                                className="bg-green-600/20 hover:bg-green-600/40 text-green-400 transition-colors px-4 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2"
+                            >
+                                <Navigation size={14} /> {locationLoading ? 'Loading...' : 'Use My Location'}
+                            </button>
+                        </div>
+
                         <div className="grid grid-cols-2 gap-6">
                             <div className="relative">
-                                <label className="block text-xs font-bold text-green-400 uppercase tracking-widest mb-2 opacity-90">Nitrogen (N)</label>
-                                <input name="N_level" type="number" onChange={handleChange} required className="input-field" placeholder="mg/kg" />
+                                <label className="flex items-center gap-2 text-xs font-bold text-green-400 uppercase tracking-widest mb-2 opacity-90 group relative w-fit">
+                                    Nitrogen (N)
+                                    <HelpCircle size={12} className="cursor-help hover:text-white transition-colors" />
+                                    <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 bg-[#1E293B] text-xs text-white/90 p-2 rounded-lg shadow-xl border border-white/10 z-50 normal-case font-normal">
+                                        Ratio of Nitrogen content in soil. Range: 0 to 150 mg/kg.
+                                    </div>
+                                </label>
+                                <input name="N_level" type="number" min="0" max="150" step="any" value={formData.N_level} onChange={handleChange} required className="input-field" placeholder="mg/kg" />
                             </div>
                             <div className="relative">
-                                <label className="block text-xs font-bold text-green-400 uppercase tracking-widest mb-2 opacity-90">Phosphorus (P)</label>
-                                <input name="P_level" type="number" onChange={handleChange} required className="input-field" placeholder="mg/kg" />
+                                <label className="flex items-center gap-2 text-xs font-bold text-green-400 uppercase tracking-widest mb-2 opacity-90 group relative w-fit">
+                                    Phosphorus (P)
+                                    <HelpCircle size={12} className="cursor-help hover:text-white transition-colors" />
+                                    <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 bg-[#1E293B] text-xs text-white/90 p-2 rounded-lg shadow-xl border border-white/10 z-50 normal-case font-normal">
+                                        Ratio of Phosphorus content in soil. Range: 5 to 150 mg/kg.
+                                    </div>
+                                </label>
+                                <input name="P_level" type="number" min="5" max="150" step="any" value={formData.P_level} onChange={handleChange} required className="input-field" placeholder="mg/kg" />
                             </div>
                             <div className="relative">
-                                <label className="block text-xs font-bold text-green-400 uppercase tracking-widest mb-2 opacity-90">Potassium (K)</label>
-                                <input name="K_level" type="number" onChange={handleChange} required className="input-field" placeholder="mg/kg" />
+                                <label className="flex items-center gap-2 text-xs font-bold text-green-400 uppercase tracking-widest mb-2 opacity-90 group relative w-fit">
+                                    Potassium (K)
+                                    <HelpCircle size={12} className="cursor-help hover:text-white transition-colors" />
+                                    <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 bg-[#1E293B] text-xs text-white/90 p-2 rounded-lg shadow-xl border border-white/10 z-50 normal-case font-normal">
+                                        Ratio of Potassium content in soil. Range: 5 to 210 mg/kg.
+                                    </div>
+                                </label>
+                                <input name="K_level" type="number" min="5" max="210" step="any" value={formData.K_level} onChange={handleChange} required className="input-field" placeholder="mg/kg" />
                             </div>
                             <div className="relative">
-                                <label className="block text-xs font-bold text-green-400 uppercase tracking-widest mb-2 opacity-90">pH Level</label>
-                                <input name="pH_value" type="number" step="0.1" onChange={handleChange} required className="input-field" placeholder="0 - 14" />
+                                <label className="flex items-center gap-2 text-xs font-bold text-green-400 uppercase tracking-widest mb-2 opacity-90 group relative w-fit">
+                                    pH Level
+                                    <HelpCircle size={12} className="cursor-help hover:text-white transition-colors" />
+                                    <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 bg-[#1E293B] text-xs text-white/90 p-2 rounded-lg shadow-xl border border-white/10 z-50 normal-case font-normal">
+                                        Soil pH level. Range: 0 to 14.
+                                    </div>
+                                </label>
+                                <input name="pH_value" type="number" min="0" max="14" step="any" value={formData.pH_value} onChange={handleChange} required className="input-field" placeholder="0 - 14" />
                             </div>
                             <div className="relative">
-                                <label className="block text-xs font-bold text-green-400 uppercase tracking-widest mb-2 opacity-90">Temperature</label>
-                                <input name="temperature" type="number" step="0.1" onChange={handleChange} required className="input-field" placeholder="°C" />
+                                <label className="flex items-center gap-2 text-xs font-bold text-green-400 uppercase tracking-widest mb-2 opacity-90 group relative w-fit">
+                                    Temperature
+                                    <HelpCircle size={12} className="cursor-help hover:text-white transition-colors" />
+                                    <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 bg-[#1E293B] text-xs text-white/90 p-2 rounded-lg shadow-xl border border-white/10 z-50 normal-case font-normal">
+                                        Average temperature in Celsius. Range: 0 to 50 °C.
+                                    </div>
+                                </label>
+                                <input name="temperature" type="number" min="0" max="50" step="any" value={formData.temperature} onChange={handleChange} required className="input-field" placeholder="°C" />
                             </div>
                             <div className="relative">
-                                <label className="block text-xs font-bold text-green-400 uppercase tracking-widest mb-2 opacity-90">Rainfall</label>
-                                <input name="rainfall" type="number" step="0.1" onChange={handleChange} required className="input-field" placeholder="mm" />
+                                <label className="flex items-center gap-2 text-xs font-bold text-green-400 uppercase tracking-widest mb-2 opacity-90 group relative w-fit">
+                                    Rainfall
+                                    <HelpCircle size={12} className="cursor-help hover:text-white transition-colors" />
+                                    <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 bg-[#1E293B] text-xs text-white/90 p-2 rounded-lg shadow-xl border border-white/10 z-50 normal-case font-normal">
+                                        Rainfall in mm. Range: 0 to 300 mm.
+                                    </div>
+                                </label>
+                                <input name="rainfall" type="number" min="0" max="300" step="any" value={formData.rainfall} onChange={handleChange} required className="input-field" placeholder="mm" />
                             </div>
                             <div className="relative col-span-2">
-                                <label className="block text-xs font-bold text-green-400 uppercase tracking-widest mb-2 opacity-90">Humidity</label>
-                                <input name="moisture" type="number" step="0.1" onChange={handleChange} required className="input-field" placeholder="%" />
+                                <label className="flex items-center gap-2 text-xs font-bold text-green-400 uppercase tracking-widest mb-2 opacity-90 group relative w-fit">
+                                    Humidity
+                                    <HelpCircle size={12} className="cursor-help hover:text-white transition-colors" />
+                                    <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-48 bg-[#1E293B] text-xs text-white/90 p-2 rounded-lg shadow-xl border border-white/10 z-50 normal-case font-normal">
+                                        Relative humidity in percentage. Range: 0 to 100 %.
+                                    </div>
+                                </label>
+                                <input name="moisture" type="number" min="0" max="100" step="any" value={formData.moisture} onChange={handleChange} required className="input-field" placeholder="%" />
                             </div>
                         </div>
 
