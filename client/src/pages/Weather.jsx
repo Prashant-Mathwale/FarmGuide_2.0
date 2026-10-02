@@ -1,37 +1,108 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, MapPin, Wind, Droplets, CloudRain, Sun, Cloud, Thermometer } from 'lucide-react';
+import { Search, MapPin, Wind, Droplets, CloudRain, Sun, Cloud, Thermometer, Navigation } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import api from '../services/api';
+
+// WMO Weather codes mapping
+const getWeatherDescription = (code) => {
+    if (code === 0) return 'Clear sky';
+    if (code === 1 || code === 2 || code === 3) return 'Partly cloudy';
+    if (code === 45 || code === 48) return 'Fog';
+    if (code >= 51 && code <= 67) return 'Rain / Drizzle';
+    if (code >= 71 && code <= 86) return 'Snow';
+    if (code >= 95 && code <= 99) return 'Thunderstorm';
+    return 'Clear sky';
+};
 
 function Weather() {
     const [weatherData, setWeatherData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [searchCity, setSearchCity] = useState('');
+    const [errorMsg, setErrorMsg] = useState(null);
 
-    const fetchWeather = async (city = 'Pune') => {
+    const fetchWeatherByCoords = async (lat, lon, locationName) => {
         setLoading(true);
+        setErrorMsg(null);
         try {
-            const res = await api.get('/weather', { params: { city } });
-            setTimeout(() => {
-                setWeatherData(res.data);
-                setLoading(false);
-            }, 500);
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max&timezone=auto`);
+            const data = await res.json();
+            
+            const formattedData = {
+                location: locationName,
+                current: {
+                    temp: data.current.temperature_2m,
+                    humidity: data.current.relative_humidity_2m,
+                    windSpeed: data.current.wind_speed_10m,
+                    description: getWeatherDescription(data.current.weather_code)
+                },
+                forecast: data.daily.time.slice(1, 6).map((date, index) => ({
+                    date,
+                    temp: data.daily.temperature_2m_max[index + 1],
+                    description: getWeatherDescription(data.daily.weather_code[index + 1])
+                }))
+            };
+            
+            setWeatherData(formattedData);
+            setLoading(false);
         } catch (err) {
             console.error(err);
+            setErrorMsg("Failed to fetch weather data.");
             setLoading(false);
         }
     };
 
+    const fetchWeatherByCity = async (city) => {
+        setLoading(true);
+        setErrorMsg(null);
+        try {
+            const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=en&format=json`);
+            const geoData = await geoRes.json();
+            
+            if (geoData.results && geoData.results.length > 0) {
+                const { latitude, longitude, name, country } = geoData.results[0];
+                await fetchWeatherByCoords(latitude, longitude, `${name}, ${country}`);
+            } else {
+                setErrorMsg("City not found.");
+                setLoading(false);
+            }
+        } catch (err) {
+            console.error(err);
+            setErrorMsg("Failed to search city.");
+            setLoading(false);
+        }
+    };
+
+    const fetchUserLocation = () => {
+        setLoading(true);
+        setErrorMsg(null);
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const { latitude, longitude } = position.coords;
+                    // Reverse geocode to get name (optional, using coordinates directly here)
+                    // We'll use a placeholder name since Open-Meteo doesn't have a reverse geocoding API
+                    await fetchWeatherByCoords(latitude, longitude, "Your Location");
+                },
+                (error) => {
+                    console.error("Geolocation error:", error);
+                    // Fallback
+                    fetchWeatherByCity('Pune');
+                }
+            );
+        } else {
+            // Fallback
+            fetchWeatherByCity('Pune');
+        }
+    };
+
     useEffect(() => {
-        // Default on load
-        fetchWeather();
+        fetchUserLocation();
     }, []);
 
     const handleSearch = (e) => {
         e.preventDefault();
         if (searchCity.trim()) {
-            fetchWeather(searchCity);
+            fetchWeatherByCity(searchCity);
         }
     };
 
@@ -48,9 +119,11 @@ function Weather() {
     // Helper to get a proper dynamic icon
     const getWeatherIcon = (desc, size = 48) => {
         const d = desc.toLowerCase();
-        if (d.includes('rain')) return <CloudRain size={size} className="text-blue-400" />;
-        if (d.includes('cloud')) return <Cloud size={size} className="text-slate-300" />;
+        if (d.includes('rain') || d.includes('drizzle')) return <CloudRain size={size} className="text-blue-400" />;
+        if (d.includes('cloud') || d.includes('fog')) return <Cloud size={size} className="text-slate-300" />;
         if (d.includes('clear') || d.includes('sun')) return <Sun size={size} className="text-yellow-400" />;
+        if (d.includes('thunderstorm')) return <CloudRain size={size} className="text-purple-400" />; // simplistic
+        if (d.includes('snow')) return <Cloud size={size} className="text-white" />;
         return <Sun size={size} className="text-yellow-400" />; // Default
     };
 
@@ -68,27 +141,34 @@ function Weather() {
                     <p className="text-slate-400 text-lg">Hyper-local agricultural forecasting using live satellite data.</p>
                 </div>
 
-                <form onSubmit={handleSearch} className="glass-panel flex gap-3 p-2 rounded-xl border border-slate-700/50">
-                    <div className="relative">
-                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                        <input
-                            type="text"
-                            placeholder="Enter City..."
-                            value={searchCity}
-                            onChange={(e) => setSearchCity(e.target.value)}
-                            className="input-field !pl-12 pr-4 py-2 text-sm text-white w-48 md:w-64"
-                        />
-                    </div>
-                    <button type="submit" className="bg-sky-600 hover:bg-sky-500 transition-colors text-white px-6 py-2 rounded-lg font-medium text-sm shadow-lg shadow-sky-500/20 flex items-center">
-                        <Search size={16} className="mr-2" /> Search
+                <div className="flex gap-2">
+                    <button onClick={fetchUserLocation} title="Get Current Location" className="bg-slate-800 hover:bg-slate-700 transition-colors text-slate-300 p-2.5 rounded-xl border border-slate-700/50 flex items-center justify-center shadow-lg">
+                        <Navigation size={18} />
                     </button>
-                </form>
+                    <form onSubmit={handleSearch} className="glass-panel flex gap-3 p-2 rounded-xl border border-slate-700/50">
+                        <div className="relative">
+                            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                            <input
+                                type="text"
+                                placeholder="Enter City..."
+                                value={searchCity}
+                                onChange={(e) => setSearchCity(e.target.value)}
+                                className="input-field !pl-12 pr-4 py-2 text-sm text-white w-48 md:w-64"
+                            />
+                        </div>
+                        <button type="submit" className="bg-sky-600 hover:bg-sky-500 transition-colors text-white px-6 py-2 rounded-lg font-medium text-sm shadow-lg shadow-sky-500/20 flex items-center">
+                            <Search size={16} className="mr-2" /> Search
+                        </button>
+                    </form>
+                </div>
             </header>
 
             {loading ? (
                 <div className="flex justify-center items-center h-64">
                     <div className="w-10 h-10 border-4 border-sky-500/20 border-t-sky-500 rounded-full animate-spin" />
                 </div>
+            ) : errorMsg ? (
+                <div className="text-center py-20 text-red-400 font-medium">{errorMsg}</div>
             ) : weatherData ? (
                 <motion.div variants={containerVariants} initial="hidden" animate="show" className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -124,7 +204,7 @@ function Weather() {
                                 <Wind className="text-teal-400 mr-2" size={20} />
                                 <div>
                                     <p className="text-xs text-slate-400 uppercase tracking-wider">Wind</p>
-                                    <p className="font-semibold text-white">{weatherData.current.windSpeed} m/s</p>
+                                    <p className="font-semibold text-white">{weatherData.current.windSpeed} km/h</p>
                                 </div>
                             </div>
                         </div>
