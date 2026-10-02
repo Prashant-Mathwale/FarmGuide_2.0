@@ -13,8 +13,8 @@ GUARD_CONFIG = {
 
     # ── Gate B: Leaf plausibility (HSV colour heuristic) ─────────────────
     # Deliberately lenient to avoid rejecting diseased (brown/yellow) leaves.
-    "MIN_PLANT_RATIO": 0.12,      # below this → not_a_leaf
-    "BORDERLINE_PLANT_RATIO": 0.25,  # between MIN and this → borderline
+    "MIN_PLANT_RATIO": 0.65,      # below this → not_a_leaf
+    "BORDERLINE_PLANT_RATIO": 0.75,  # between MIN and this → borderline
 
     # ── Gate C: Model-confidence checks ──────────────────────────────────
     "LOW_CONF": 0.50,             # top-1 prob below this → uncertain
