@@ -197,16 +197,18 @@ const predictPest = async (req, res) => {
             throw new Error(pythonApiRes.data.message || 'Failed to get pest prediction from ML server');
         }
 
-        const predictedPest = pythonApiRes.data.pest;
-        const outbreakProb = pythonApiRes.data.probability;
-        let actionPlan = "Monitor crop closely and maintain good agricultural practices.";
+        const riskLevel = pythonApiRes.data.risk_level;
+        const riskProbability = pythonApiRes.data.risk_probability;
+        const riskWindow = pythonApiRes.data.risk_window;
+        const keyFactors = pythonApiRes.data.key_factors;
+        let actionPlan = pythonApiRes.data.recommendation || "Monitor crop closely.";
 
         // Integrate Gemini Action Plan if probability is high enough
-        if (outbreakProb > 50 && process.env.GEMINI_API_KEY) {
+        if (riskProbability > 50 && process.env.GEMINI_API_KEY) {
             try {
                 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
                 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-                const prompt = `A predictive ML model has flagged a ${outbreakProb.toFixed(1)}% probability of an outbreak of ${predictedPest} in a ${payload.Crop_Type} field located in ${payload.Location}. Provide a highly concise, practical, and immediate preventative action plan for the farmer. Maximum 2 sentences. Format: "Action: [What to do]."`;
+                const prompt = `A predictive ML model has flagged a ${riskProbability.toFixed(1)}% probability of a general pest outbreak (Risk Level: ${riskLevel}) in a ${payload.Crop_Type} field located in ${payload.Location}. Provide a highly concise, practical, and immediate preventative action plan for the farmer. Maximum 2 sentences. Format: "Action: [What to do]."`;
                 
                 const result = await model.generateContent(prompt);
                 const responseText = result.response.text();
@@ -219,7 +221,7 @@ const predictPest = async (req, res) => {
                     // Fallback to flash-latest if 2.0 fails
                     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
                     const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
-                    const prompt = `A predictive ML model has flagged a ${outbreakProb.toFixed(1)}% probability of an outbreak of ${predictedPest} in a ${payload.Crop_Type} field located in ${payload.Location}. Provide a highly concise, practical, and immediate preventative action plan for the farmer. Maximum 2 sentences. Format: "Action: [What to do]."`;
+                    const prompt = `A predictive ML model has flagged a ${riskProbability.toFixed(1)}% probability of a general pest outbreak (Risk Level: ${riskLevel}) in a ${payload.Crop_Type} field located in ${payload.Location}. Provide a highly concise, practical, and immediate preventative action plan for the farmer. Maximum 2 sentences. Format: "Action: [What to do]."`;
                     const result = await model.generateContent(prompt);
                     actionPlan = result.response.text().trim();
                 } catch(e) {}
@@ -228,8 +230,10 @@ const predictPest = async (req, res) => {
 
         res.json({
             success: true,
-            pest: predictedPest,
-            probability: outbreakProb,
+            riskLevel: riskLevel,
+            riskProbability: riskProbability,
+            riskWindow: riskWindow,
+            keyFactors: keyFactors,
             actionPlan: actionPlan
         });
     } catch (error) {

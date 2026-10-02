@@ -8,7 +8,8 @@ function Schemes() {
         state: 'All India',
         land_size: '',
         gender: 'Male',
-        caste: 'General'
+        caste: 'General',
+        crop: ''
     });
     const [schemes, setSchemes] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -77,7 +78,7 @@ function Schemes() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
                         onSubmit={handleSearch} 
-                        className="glass-panel grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-3 w-full p-4 rounded-2xl border border-slate-700/50"
+                        className="glass-panel grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3 w-full p-4 rounded-2xl border border-slate-700/50"
                     >
                         <div className="relative">
                             <label className="text-[10px] uppercase font-bold text-slate-500 mb-1 block">Region</label>
@@ -128,6 +129,23 @@ function Schemes() {
                                 <option value="SC/ST">SC / ST</option>
                             </select>
                         </div>
+                        
+                        <div className="relative">
+                            <label className="text-[10px] uppercase font-bold text-slate-500 mb-1 block">Primary Crop</label>
+                            <select 
+                                name="crop"
+                                className="input-field text-sm appearance-none cursor-pointer border-slate-700"
+                                value={searchParams.crop}
+                                onChange={handleChange}
+                            >
+                                <option value="">Any Crop</option>
+                                <option value="wheat">Wheat</option>
+                                <option value="rice">Rice</option>
+                                <option value="cotton">Cotton</option>
+                                <option value="sugarcane">Sugarcane</option>
+                                <option value="maize">Maize</option>
+                            </select>
+                        </div>
 
                         <div className="relative flex items-end">
                             <button 
@@ -173,6 +191,11 @@ function Schemes() {
                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
                                     {scheme.level.includes('Central') ? 'Central Scheme' : 'State Scheme'}
                                 </span>
+                                {scheme.relevance_score > 0 && (
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                        {scheme.relevance_score >= 20 ? 'Highly Relevant' : 'Relevant'}
+                                    </span>
+                                )}
                             </div>
                             
                             <h3 className="text-xl font-bold text-white mb-3 line-clamp-2 leading-tight">

@@ -186,8 +186,9 @@ export default function PestPrediction() {
       if (res.data.success) {
           setResults({ 
             success: true,
-            mlProbability: res.data.probability,
-            mlPest: res.data.pest,
+            mlProbability: res.data.riskProbability,
+            riskLevel: res.data.riskLevel,
+            riskWindow: res.data.riskWindow,
             actionPlan: res.data.actionPlan,
             crop: form.crop,
           });
@@ -316,6 +317,7 @@ export default function PestPrediction() {
             </label>
             <input
               type="number"
+              step="any"
               name="temperature"
               value={form.temperature}
               onChange={handleChange}
@@ -333,6 +335,7 @@ export default function PestPrediction() {
             </label>
             <input
               type="number"
+              step="any"
               name="humidity"
               value={form.humidity}
               onChange={handleChange}
@@ -350,6 +353,7 @@ export default function PestPrediction() {
             </label>
             <input
               type="number"
+              step="any"
               name="rainfall"
               value={form.rainfall}
               onChange={handleChange}
@@ -367,6 +371,7 @@ export default function PestPrediction() {
             </label>
             <input
               type="number"
+              step="any"
               name="windSpeed"
               value={form.windSpeed}
               onChange={handleChange}
@@ -444,8 +449,9 @@ export default function PestPrediction() {
                 {/* Summary Bar */}
                 <div className="glass-panel rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
                   <div className="flex-1">
-                    <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Primary Threat</p>
-                    <p className="text-2xl font-headline font-bold text-orange-400 mt-1">{results.mlPest}</p>
+                    <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">General Pest Risk Level</p>
+                    <p className={`text-2xl font-headline font-bold mt-1 ${results.riskLevel === 'HIGH' ? 'text-red-400' : results.riskLevel === 'MEDIUM' ? 'text-amber-400' : 'text-green-400'}`}>{results.riskLevel}</p>
+                    <p className="text-xs mt-1 text-on-surface-variant opacity-70">({results.riskWindow})</p>
                   </div>
                   <div className="flex-1 text-center md:border-l md:border-r border-white/10">
                     <p className="text-xs text-on-surface-variant uppercase font-bold tracking-tighter">Outbreak Probability</p>

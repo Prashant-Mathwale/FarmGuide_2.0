@@ -11,6 +11,7 @@ import MarketPrices from './pages/MarketPrices';
 import Weather from './pages/Weather';
 import Schemes from './pages/Schemes';
 import PestPrediction from './pages/PestPrediction';
+import News from './pages/News';
 import Layout from './components/Layout';
 import Chatbot from './components/Chatbot';
 
@@ -50,6 +51,7 @@ function App() {
           <Route path="/weather" element={user ? <Layout user={user} setUser={setUser}><Weather /></Layout> : <Navigate to="/login" replace />} />
           <Route path="/schemes" element={user ? <Layout user={user} setUser={setUser}><Schemes /></Layout> : <Navigate to="/login" replace />} />
           <Route path="/pest-predict" element={user ? <Layout user={user} setUser={setUser}><PestPrediction /></Layout> : <Navigate to="/login" replace />} />
+          <Route path="/news" element={user ? <Layout user={user} setUser={setUser}><News /></Layout> : <Navigate to="/login" replace />} />
           
           {/* Fallback Catch-all Route */}
           <Route path="*" element={<Navigate to={user ? "/dashboard" : "/"} replace />} />
