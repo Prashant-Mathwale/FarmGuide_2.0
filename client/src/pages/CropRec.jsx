@@ -51,32 +51,78 @@ function CropRec() {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await api.post('/ml/crop-recommendation', formData);
+            const payload = {
+                N_level: parseFloat(formData.N_level),
+                P_level: parseFloat(formData.P_level),
+                K_level: parseFloat(formData.K_level),
+                pH_value: parseFloat(formData.pH_value),
+                moisture: parseFloat(formData.moisture),
+                temperature: parseFloat(formData.temperature),
+                rainfall: parseFloat(formData.rainfall)
+            };
+            const res = await api.post('/ml/crop-recommendation', payload);
             // Simulate network delay for premium feel
             setTimeout(() => {
                 setRecommendations(res.data.recommendedCrops);
                 setLoading(false);
             }, 1200);
         } catch (err) {
-            const errorMsg = err.response && err.response.data && err.response.data.message 
-                ? err.response.data.message 
+            const errorMsg = err.response && err.response.data && err.response.data.message
+                ? err.response.data.message
                 : 'Error fetching recommendation';
             alert(errorMsg);
             setLoading(false);
         }
     };
 
+    const [fetchingWeather, setFetchingWeather] = useState(false);
+
+    const autofillWeather = () => {
+        setFetchingWeather(true);
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const { latitude, longitude } = position.coords;
+                    try {
+                        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,precipitation`);
+                        const data = await res.json();
+                        
+                        setFormData(prev => ({
+                            ...prev,
+                            temperature: data.current.temperature_2m !== undefined ? parseFloat(data.current.temperature_2m) : '',
+                            moisture: data.current.relative_humidity_2m !== undefined ? parseFloat(data.current.relative_humidity_2m) : '',
+                            rainfall: data.current.precipitation !== undefined ? parseFloat(data.current.precipitation) : ''
+                        }));
+                    } catch (err) {
+                        console.error(err);
+                        alert("Failed to fetch weather data");
+                    } finally {
+                        setFetchingWeather(false);
+                    }
+                },
+                (error) => {
+                    console.error("Geolocation error:", error);
+                    alert("Location access denied or unavailable.");
+                    setFetchingWeather(false);
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by your browser");
+            setFetchingWeather(false);
+        }
+    };
+
     return (
         <div className="w-full max-w-5xl mx-auto">
             <header className="mb-12">
-                <motion.h2 
+                <motion.h2
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-3 text-glow-strong"
                 >
                     Crop Recommendation
                 </motion.h2>
-                <motion.p 
+                <motion.p
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
@@ -95,10 +141,21 @@ function CropRec() {
                     {/* Subtle glow effect behind form */}
                     <div className="absolute top-0 right-0 w-64 h-64 bg-green-500/10 rounded-full blur-[80px] -z-10" />
 
-                    <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-                        <Sparkles className="text-green-400" size={24} />
-                        Soil Parameters
-                    </h3>
+                    <div className="flex justify-between items-center mb-8">
+                        <h3 className="text-2xl font-bold text-white flex items-center gap-3">
+                            <Sparkles className="text-green-400" size={24} />
+                            Soil Parameters
+                        </h3>
+                        <button 
+                            type="button" 
+                            onClick={autofillWeather} 
+                            disabled={fetchingWeather}
+                            className="bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 border border-blue-500/30 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2"
+                        >
+                            {fetchingWeather ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                            Autofill Weather
+                        </button>
+                    </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6 relative z-10 w-full">
                         <div className="flex justify-between items-center bg-white/5 border border-white/10 p-3 rounded-xl mb-4">
@@ -228,7 +285,7 @@ function CropRec() {
                                         className="relative pl-12"
                                     >
                                         <div className="absolute left-1 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-green-400 shadow-[0_0_15px_rgba(76,175,80,0.8)] border-2 border-[#1E293B]" />
-                                        
+
                                         <div className="glass-card p-5 flex justify-between items-center group hover:bg-white/5 transition-all">
                                             <span className="text-xl font-bold text-white tracking-wide capitalize">{rec.name || rec}</span>
                                             <div className="text-right">

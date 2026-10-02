@@ -77,7 +77,7 @@ const getCropRecommendation = async (req, res) => {
         let soilDataId = null;
         if (req.user && req.user._id) {
             const soilData = await SoilData.create({
-                userId: req.user._id, 
+                userId: req.user._id,
                 N_level, P_level, K_level, pH_value, moisture
             });
             soilDataId = soilData._id;
@@ -209,7 +209,6 @@ const predictPest = async (req, res) => {
                 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
                 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
                 const prompt = `A predictive ML model has flagged a ${riskProbability.toFixed(1)}% probability of a general pest outbreak (Risk Level: ${riskLevel}) in a ${payload.Crop_Type} field located in ${payload.Location}. Provide a highly concise, practical, and immediate preventative action plan for the farmer. Maximum 2 sentences. Format: "Action: [What to do]."`;
-                
                 const result = await model.generateContent(prompt);
                 const responseText = result.response.text();
                 if (responseText) {
@@ -224,7 +223,7 @@ const predictPest = async (req, res) => {
                     const prompt = `A predictive ML model has flagged a ${riskProbability.toFixed(1)}% probability of a general pest outbreak (Risk Level: ${riskLevel}) in a ${payload.Crop_Type} field located in ${payload.Location}. Provide a highly concise, practical, and immediate preventative action plan for the farmer. Maximum 2 sentences. Format: "Action: [What to do]."`;
                     const result = await model.generateContent(prompt);
                     actionPlan = result.response.text().trim();
-                } catch(e) {}
+                } catch (e) { }
             }
         }
 
