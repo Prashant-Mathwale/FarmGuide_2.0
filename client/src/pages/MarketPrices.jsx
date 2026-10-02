@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, MapPin, Tag, TrendingUp, Store } from 'lucide-react';
 import api from '../services/api';
+import { addRecentActivity } from '../utils/activityTracker';
 
 function MarketPrices() {
     const [prices, setPrices] = useState([]);
@@ -17,6 +18,14 @@ function MarketPrices() {
                 setPrices(res.data.data || []);
                 setErrorMessage(res.data.message || 'No aggregate data found for the specified query.');
                 setLoading(false);
+
+                const cropLabel = filters.cropName ? filters.cropName : 'commodities';
+                addRecentActivity({
+                    type: 'market',
+                    title: 'Market Prices',
+                    subtitle: `Checked ${cropLabel} prices`,
+                    to: '/market-prices'
+                });
             }, 600);
         } catch (err) {
             console.error(err);

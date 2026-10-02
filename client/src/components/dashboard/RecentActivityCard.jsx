@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Clock, ArrowRight, Camera, Sprout, TrendingUp, Cloud } from 'lucide-react';
+import { getRecentActivities } from '../../utils/activityTracker';
+
+const TYPE_CONFIG = {
+    disease: { icon: Camera, color: 'bg-emerald-600/30 text-emerald-400 border-emerald-500/30', defaultTo: '/disease-detect' },
+    crop: { icon: Sprout, color: 'bg-green-600/30 text-green-400 border-green-500/30', defaultTo: '/crop-rec' },
+    market: { icon: TrendingUp, color: 'bg-amber-600/30 text-amber-400 border-amber-500/30', defaultTo: '/market-prices' },
+    weather: { icon: Cloud, color: 'bg-sky-600/30 text-sky-400 border-sky-500/30', defaultTo: '/weather' }
+};
 
 const DEFAULT_ACTIVITIES = [
     {
@@ -48,18 +56,30 @@ const DEFAULT_ACTIVITIES = [
 const RecentActivityCard = () => {
     const [activities, setActivities] = useState(DEFAULT_ACTIVITIES);
 
-    useEffect(() => {
-        try {
-            const stored = localStorage.getItem('farmguide_recent_activity');
-            if (stored) {
-                const parsed = JSON.parse(stored);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    setActivities(parsed);
-                }
-            }
-        } catch (e) {
-            // Ignore parse errors and keep defaults
+    const refreshActivities = () => {
+        const stored = getRecentActivities();
+        if (stored.length > 0) {
+            const mapped = stored.map(item => {
+                const config = TYPE_CONFIG[item.type] || TYPE_CONFIG.disease;
+                return {
+                    ...item,
+                    icon: config.icon,
+                    color: config.color,
+                    to: item.to || config.defaultTo
+                };
+            });
+            setActivities(mapped);
+        } else {
+            setActivities(DEFAULT_ACTIVITIES);
         }
+    };
+
+    useEffect(() => {
+        refreshActivities();
+        window.addEventListener('farmguide_activity_updated', refreshActivities);
+        return () => {
+            window.removeEventListener('farmguide_activity_updated', refreshActivities);
+        };
     }, []);
 
     return (

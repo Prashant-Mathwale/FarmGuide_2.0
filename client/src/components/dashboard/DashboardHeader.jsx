@@ -54,23 +54,39 @@ export default function DashboardHeader({ user, weatherData, selectedLang, onLan
   return (
     <header className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 mb-8 text-left">
       {/* ── Left Side: Greeting & Meta ── */}
-      <div>
-        <h1 className="text-3xl sm:text-4xl lg:text-[2.65rem] font-extrabold text-white tracking-tight leading-tight">
-          {getGreeting()}, <span className="text-emerald-400 glow-text">{username}</span> 👋
+      <div className="relative max-w-2xl">
+        {/* Soft dark backing aura to guarantee 100% legibility on any background image */}
+        <div className="absolute -inset-3 sm:-inset-4 bg-gradient-to-r from-black/70 via-black/45 to-transparent rounded-3xl blur-md pointer-events-none -z-10" />
+
+        <h1 
+          className="text-3xl sm:text-4xl lg:text-[2.65rem] font-extrabold text-white tracking-tight leading-tight"
+          style={{ textShadow: '0 2px 10px rgba(0, 0, 0, 0.95), 0 4px 20px rgba(0, 0, 0, 0.85), 0 1px 3px rgba(0, 0, 0, 1)' }}
+        >
+          {getGreeting()},{' '}
+          <span 
+            className="text-emerald-400 font-extrabold inline-block"
+            style={{ textShadow: '0 2px 10px rgba(0, 0, 0, 0.95), 0 0 25px rgba(52, 211, 153, 0.7)' }}
+          >
+            {username}
+          </span>{' '}
+          <span className="inline-block drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">👋</span>
         </h1>
-        <p className="text-sm sm:text-base text-white/70 font-medium mt-1">
+        <p 
+          className="text-sm sm:text-base text-emerald-50/95 font-medium mt-1.5"
+          style={{ textShadow: '0 1px 6px rgba(0, 0, 0, 0.95), 0 2px 12px rgba(0, 0, 0, 0.85)' }}
+        >
           Here's what's happening with your farm today.
         </p>
 
-        <div className="flex flex-wrap items-center gap-4 mt-3 text-xs sm:text-sm text-white/60 font-medium">
-          <div className="flex items-center gap-1.5 bg-white/[0.04] px-3 py-1.5 rounded-full border border-white/10">
-            <MapPin size={15} className="text-emerald-400" />
-            <span>{location}</span>
+        <div className="flex flex-wrap items-center gap-3 mt-3.5 text-xs sm:text-sm font-semibold">
+          <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 text-white shadow-[0_4px_14px_rgba(0,0,0,0.6)]">
+            <MapPin size={15} className="text-emerald-400 drop-shadow" />
+            <span style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>{location}</span>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-white/[0.04] px-3 py-1.5 rounded-full border border-white/10">
-            <Calendar size={15} className="text-emerald-400" />
-            <span>{formattedDate}</span>
+          <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 text-white shadow-[0_4px_14px_rgba(0,0,0,0.6)]">
+            <Calendar size={15} className="text-emerald-400 drop-shadow" />
+            <span style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>{formattedDate}</span>
           </div>
         </div>
       </div>

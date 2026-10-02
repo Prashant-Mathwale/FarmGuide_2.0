@@ -171,10 +171,10 @@ const Dashboard = () => {
 
             {/* 2. Disease Detection (Primary Feature) + Quick Actions */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-                <div className="lg:col-span-7 flex">
+                <div className="lg:col-span-6 xl:col-span-7 flex">
                     <DiseaseDetectionCard recentScan={recentScan} />
                 </div>
-                <div className="lg:col-span-5 flex">
+                <div className="lg:col-span-6 xl:col-span-5 flex">
                     <QuickActions />
                 </div>
             </div>
