@@ -11,4 +11,6 @@ const marketDataSchema = new mongoose.Schema({
     recordedDate: { type: Date, default: Date.now }
 }, { timestamps: true });
 
+marketDataSchema.index({ cropName: 1, stateName: 1, districtName: 1 });
+
 module.exports = mongoose.model('MarketData', marketDataSchema);

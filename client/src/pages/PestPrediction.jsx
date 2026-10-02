@@ -183,28 +183,20 @@ export default function PestPrediction() {
 
       const res = await api.post('/ml/pest-predict', payload);
       
-      const temp = parseFloat(form.temperature);
-      const hum = parseFloat(form.humidity);
-      const condKey = getConditionKey(temp, hum);
-      const cropData = PEST_DATA[form.crop] || PEST_DATA.wheat;
-      const pests = cropData[condKey] || cropData['warm_wet'];
-
-      // Merge ML results with UI data
-      setResults({ 
-        pests, 
-        condition: condKey, 
-        crop: form.crop,
-        mlProbability: res.data.probability 
-      });
+      if (res.data.success) {
+          setResults({ 
+            success: true,
+            mlProbability: res.data.probability,
+            mlPest: res.data.pest,
+            actionPlan: res.data.actionPlan,
+            crop: form.crop,
+          });
+      } else {
+          alert("Pest prediction failed: " + res.data.message);
+      }
     } catch (err) {
       console.error("ML Pest Error:", err);
-      // Fallback to local logic if ML fails
-      const temp = parseFloat(form.temperature);
-      const hum = parseFloat(form.humidity);
-      const condKey = getConditionKey(temp, hum);
-      const cropData = PEST_DATA[form.crop] || PEST_DATA.wheat;
-      const pests = cropData[condKey] || cropData['warm_wet'];
-      setResults({ pests, condition: condKey, crop: form.crop });
+      alert("Pest prediction failed. Please check your connection.");
     } finally {
       setLoading(false);
     }
@@ -450,75 +442,41 @@ export default function PestPrediction() {
                 className="flex flex-col gap-4"
               >
                 {/* Summary Bar */}
-                <div className="glass-panel rounded-2xl px-6 py-4 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Condition Detected</p>
-                    <p className="text-lg font-headline font-bold text-on-surface mt-1">{conditionLabel[results.condition]}</p>
+                <div className="glass-panel rounded-2xl px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+                  <div className="flex-1">
+                    <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Primary Threat</p>
+                    <p className="text-2xl font-headline font-bold text-orange-400 mt-1">{results.mlPest}</p>
                   </div>
-                  {results.mlProbability && (
-                    <div className="text-center px-4 border-l border-r border-white/10">
-                      <p className="text-xs text-on-surface-variant uppercase font-bold tracking-tighter">Outbreak Prob.</p>
-                      <p className={`text-xl font-black ${results.mlProbability > 0.6 ? 'text-red-400' : 'text-green-400'}`}>{(results.mlProbability * 100).toFixed(1)}%</p>
-                    </div>
-                  )}
-                  <div className="text-right">
-                    <p className="text-xs text-on-surface-variant">Pests identified</p>
-                    <p className="text-3xl font-black text-orange-400">{results.pests.length}</p>
+                  <div className="flex-1 text-center md:border-l md:border-r border-white/10">
+                    <p className="text-xs text-on-surface-variant uppercase font-bold tracking-tighter">Outbreak Probability</p>
+                    <p className={`text-3xl font-black ${results.mlProbability > 50 ? 'text-red-400' : 'text-green-400'}`}>
+                      {results.mlProbability.toFixed(1)}%
+                    </p>
+                  </div>
+                  <div className="flex-1 text-right">
+                    <p className="text-xs text-on-surface-variant">Crop Vulnerability</p>
+                    <p className="text-lg font-black text-on-surface capitalize">{results.crop}</p>
                   </div>
                 </div>
 
-                {/* Pest Cards */}
-                {results.pests.map((pest, i) => (
-                  <motion.div
-                    key={pest.name}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.12 }}
-                    className={`glass-panel rounded-2xl border overflow-hidden ${riskBg[pest.risk]}`}
-                  >
-                    <button
-                      onClick={() => setExpanded(expanded === i ? null : i)}
-                      className="w-full px-6 py-4 flex items-center justify-between text-left"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{pest.icon}</span>
-                        <div>
-                          <p className="font-bold text-on-surface text-sm">{pest.name}</p>
-                          <div className={`flex items-center gap-1 mt-0.5 text-xs font-bold ${riskColor[pest.risk]}`}>
-                            {riskIcon[pest.risk]} {pest.risk} Risk
-                          </div>
-                        </div>
-                      </div>
-                      <ChevronDown
-                        size={18}
-                        className={`text-on-surface-variant transition-transform ${expanded === i ? 'rotate-180' : ''}`}
-                      />
-                    </button>
-
-                    <AnimatePresence>
-                      {expanded === i && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="px-6 pb-5 flex flex-col gap-3 border-t border-white/10 pt-4">
-                            <div>
-                              <p className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-1">💊 Treatment</p>
-                              <p className="text-sm text-on-surface-variant leading-relaxed">{pest.treatment}</p>
-                            </div>
-                            <div>
-                              <p className="text-xs font-bold text-green-400 uppercase tracking-wider mb-1">🛡️ Prevention</p>
-                              <p className="text-sm text-on-surface-variant leading-relaxed">{pest.prevention}</p>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                ))}
+                {/* Gemini Action Plan */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`glass-panel rounded-2xl border overflow-hidden ${results.mlProbability > 50 ? 'bg-red-400/10 border-red-400/30' : 'bg-amber-400/10 border-amber-400/30'}`}
+                >
+                  <div className="px-6 py-5 flex flex-col gap-3">
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="text-2xl">🤖</span>
+                        <p className="font-bold text-on-surface text-lg">AI Action Plan</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-on-surface-variant leading-relaxed">
+                          {results.actionPlan}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>

@@ -69,21 +69,12 @@ except Exception:
     print("Warning: models/crop_model.pkl not found.")
 
 
-pest_classifier = None
-pest_regressor = None
-pest_crop_encoder = None
-pest_location_encoder = None
+pest_pipeline = None
 try:
-    with open('models/pest_classifier.pkl', 'rb') as f:
-        pest_classifier = pickle.load(f)
-    with open('models/pest_regressor.pkl', 'rb') as f:
-        pest_regressor = pickle.load(f)
-    with open('models/pest_crop_encoder.pkl', 'rb') as f:
-        pest_crop_encoder = pickle.load(f)
-    with open('models/pest_location_encoder.pkl', 'rb') as f:
-        pest_location_encoder = pickle.load(f)
+    with open('models/pest_pipeline.pkl', 'rb') as f:
+        pest_pipeline = pickle.load(f)
 except Exception:
-    print("Warning: Pest prediction models not found.")
+    print("Warning: Pest prediction pipeline not found.")
 
 yield_model = None
 area_encoder = None
@@ -132,15 +123,30 @@ class PestData(BaseModel):
 
 @app.post("/predict_pest")
 async def predict_pest(data: PestData):
-    if any(m is None for m in [pest_classifier, pest_regressor, pest_crop_encoder, pest_location_encoder]):
-        return {"success": False, "message": "Pest prediction models not loaded."}
+    if pest_pipeline is None:
+        return {"success": False, "message": "Pest prediction pipeline not loaded."}
     try:
-        crop_encoded = pest_crop_encoder.transform([data.Crop_Type])[0] if data.Crop_Type in pest_crop_encoder.classes_ else 0
-        location_encoded = pest_location_encoder.transform([data.Location])[0] if data.Location in pest_location_encoder.classes_ else 0
-        features = np.array([[data.Temperature_C, data.Humidity_percent, data.Rainfall_mm, data.Soil_pH, data.Nitrogen_N, data.Phosphorus_P, data.Potassium_K, crop_encoded, location_encoded]])
-        pest_class = pest_classifier.predict(features)[0]
-        outbreak_prob = pest_regressor.predict(features)[0]
-        return {"success": True, "pest": str(pest_class), "probability": float(outbreak_prob)}
+        # Create a DataFrame since the Pipeline expects pandas with column names
+        features_df = pd.DataFrame([{
+            'Temperature_C': data.Temperature_C,
+            'Humidity_percent': data.Humidity_percent,
+            'Rainfall_mm': data.Rainfall_mm,
+            'Soil_pH': data.Soil_pH,
+            'Nitrogen_N': data.Nitrogen_N,
+            'Phosphorus_P': data.Phosphorus_P,
+            'Potassium_K': data.Potassium_K,
+            'Crop_Type': data.Crop_Type,
+            'Location': data.Location
+        }])
+        
+        # Predict class
+        pest_class = pest_pipeline.predict(features_df)[0]
+        
+        # Predict probability (max confidence)
+        probabilities = pest_pipeline.predict_proba(features_df)[0]
+        max_prob = max(probabilities) * 100
+        
+        return {"success": True, "pest": str(pest_class), "probability": float(max_prob)}
     except Exception as e:
         return {"success": False, "message": str(e)}
 

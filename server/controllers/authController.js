@@ -7,6 +7,15 @@ const generateToken = (id) => {
 
 const registerUser = async (req, res) => {
     const { fullName, phone, password, state, district, landSizeAcres } = req.body;
+    
+    // Basic Input Validation
+    if (!fullName || !phone || !password || !state || !district) {
+        return res.status(400).json({ message: 'Please provide all required fields' });
+    }
+    if (password.length < 6) {
+        return res.status(400).json({ message: 'Password must be at least 6 characters' });
+    }
+
     try {
         const userExists = await User.findOne({ phone });
         if (userExists) return res.status(400).json({ message: 'User already exists' });
@@ -27,6 +36,11 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     const { phone, password } = req.body;
+    
+    if (!phone || !password) {
+        return res.status(400).json({ message: 'Please provide phone and password' });
+    }
+
     try {
         const user = await User.findOne({ phone });
         if (user && (await user.matchPassword(password))) {
