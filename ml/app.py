@@ -8,7 +8,8 @@ import json
 
 import io
 
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Form
+import base64
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -768,9 +769,7 @@ def _build_top_predictions(probs, top_indices):
 
 
 @app.post("/predict_disease")
-
-async def predict_disease(file: UploadFile = File(...)):
-
+async def predict_disease(file: UploadFile = File(...), is_multi_leaf: str = Form("false"), expected_crop: str = Form("")):
     # Base response fields — always present for backward compatibility
 
     base = {
@@ -812,6 +811,94 @@ async def predict_disease(file: UploadFile = File(...)):
 
 
         contents = await file.read()
+
+        # --- MULTI-LEAF OBJECT DETECTION PIPELINE ---
+        if is_multi_leaf.lower() == "true":
+            nparr = np.frombuffer(contents, np.uint8)
+            img_bgr = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            
+            # Find green areas (leaves)
+            hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
+            lower_green = np.array([25, 40, 40])
+            upper_green = np.array([90, 255, 255])
+            mask = cv2.inRange(hsv, lower_green, upper_green)
+            
+            # Morphology to clean up mask
+            kernel = np.ones((5,5), np.uint8)
+            mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+            mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+            
+            contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            contours = sorted(contours, key=cv2.contourArea, reverse=True)[:5] # Top 5 leaves
+            
+            diseases_found = []
+            
+            for cnt in contours:
+                area = cv2.contourArea(cnt)
+                if area < 1000: continue
+                
+                x, y, w, h = cv2.boundingRect(cnt)
+                leaf_crop = img_bgr[y:y+h, x:x+w]
+                
+                leaf_rgb = cv2.cvtColor(leaf_crop, cv2.COLOR_BGR2RGB)
+                leaf_resized = cv2.resize(leaf_rgb, (224, 224))
+                leaf_array = np.expand_dims(leaf_resized / 255.0, axis=0)
+                
+                if disease_model:
+                    preds = disease_model.predict(leaf_array)[0]
+                    
+                    # Apply optional crop filter
+                    if expected_crop and expected_crop.strip().lower() != "auto-detect":
+                        target_crop = expected_crop.strip().lower()
+                        # 'corn' should match 'Corn_(maize)'
+                        for i, cls_name in enumerate(disease_classes):
+                            if target_crop not in cls_name.lower():
+                                preds[i] = 0.0 # Zero out probabilities for other crops
+                    
+                    top_idx = np.argmax(preds)
+                    conf = float(preds[top_idx] * 100)
+                    raw_label = disease_classes[top_idx]
+                    label = _format_label(raw_label)
+                    
+                    color = (0, 255, 0) # Green for healthy
+                    if "healthy" not in label.lower():
+                        color = (0, 0, 255) # Red for diseased
+                        diseases_found.append({"label": label, "confidence": conf, "raw": raw_label})
+                    
+                    # Draw bounding box
+                    thickness = max(2, int(img_bgr.shape[0]*0.005))
+                    cv2.rectangle(img_bgr, (x, y), (x+w, y+h), color, thickness)
+                    font_scale = max(0.5, img_bgr.shape[0]*0.001)
+                    cv2.putText(img_bgr, f"{label} ({conf:.0f}%)", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, font_scale, color, thickness)
+                    
+            # Encode image to base64
+            _, buffer = cv2.imencode('.jpg', img_bgr)
+            img_base64 = base64.b64encode(buffer).decode('utf-8')
+            
+            unique_diseases = []
+            seen = set()
+            for d in diseases_found:
+                if d["label"] not in seen:
+                    seen.add(d["label"])
+                    unique_diseases.append(d)
+                    
+            main_diagnosis = "All detected leaves appear healthy."
+            if unique_diseases:
+                main_diagnosis = f"Detected {len(unique_diseases)} distinct issues across the plant."
+                
+            base.update({
+                "heatmap": "data:image/jpeg;base64," + img_base64,
+                "disease": unique_diseases[0]["raw"] if unique_diseases else "Healthy_Plant___Healthy",
+                "class_name": unique_diseases[0]["raw"] if unique_diseases else "Healthy_Plant___Healthy",
+                "confidence": unique_diseases[0]["confidence"] if unique_diseases else 95.0,
+                "status": "ok",
+                "message": main_diagnosis,
+                "top_predictions": unique_diseases,
+                "is_multi_leaf": True
+            })
+            return base
+
+        # --- SINGLE LEAF PIPELINE (ORIGINAL) ---
 
 
 

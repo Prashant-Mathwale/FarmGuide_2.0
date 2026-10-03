@@ -18,6 +18,7 @@ function DiseaseDetect() {
     const [loading, setLoading] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
+    const [isMultiLeaf, setIsMultiLeaf] = useState(false); // New state for Multi-Leaf Mode
 
     const fileInputRef = useRef(null);
     const cameraFallbackInputRef = useRef(null);
@@ -92,6 +93,7 @@ function DiseaseDetect() {
         try {
             const formData = new FormData();
             formData.append('image', selectedImage);
+            formData.append('is_multi_leaf', isMultiLeaf ? 'true' : 'false'); // Send flag to backend
 
             const res = await api.post('/ml/disease-detect', formData, {
                 headers: {
@@ -314,7 +316,10 @@ function DiseaseDetect() {
                                         <Sparkles className="text-green-400" size={28} />
                                         Image Ready
                                     </h3>
-                                    <p className="text-white/60 text-lg mb-10">Initiate the analysis when you're ready.</p>
+                                    <p className="text-white/60 text-lg mb-6">Initiate the analysis when you're ready.</p>
+                                    
+
+
                                     <button onClick={handleDetect} className="btn-primary w-full text-xl py-5 flex items-center justify-center shadow-[0_10px_30px_rgba(76,175,80,0.3)]">
                                         <ScanLine className="mr-3" size={28} /> Run Diagnostics
                                     </button>

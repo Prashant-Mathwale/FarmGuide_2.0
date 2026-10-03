@@ -239,7 +239,7 @@ function Chatbot() {
                                         </div>
                                         <div className={`p-3 rounded-2xl whitespace-pre-wrap ${msg.role === 'user' ? 'bg-emerald-500 text-white rounded-tr-none' : 'glass-card text-slate-200 rounded-tl-none border border-slate-600'}`}>
                                             <p className="text-sm leading-relaxed">
-                                                {msg.text.replace(/\*\*/g, '').replace(/(^|\n)\s*\*\s+/g, '$1• ').replace(/###\s+/g, '')}
+                                                {(msg.text || '').replace(/\*\*/g, '').replace(/(^|\n)\s*\*\s+/g, '$1• ').replace(/###\s+/g, '')}
                                             </p>
                                         </div>
                                     </div>

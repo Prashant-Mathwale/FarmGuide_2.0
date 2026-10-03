@@ -127,12 +127,61 @@ const detectDisease = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Please upload an image' });
         }
 
+        // Automatic crop detection via OpenRouter Vision if Auto-Detect or not provided
+        let expectedCrop = req.body.expected_crop || "Auto-Detect";
+        if (expectedCrop === "Auto-Detect" && process.env.OPENROUTER_API_KEY) {
+            try {
+                console.log("[ML] Automatically detecting crop using OpenRouter Vision...");
+                const prompt = "Identify the main crop plant or leaf in this image. Reply ONLY with the single crop name from this list: Apple, Blueberry, Cherry, Corn, Grape, Orange, Peach, Pepper, Potato, Raspberry, Soybean, Squash, Strawberry, Tomato. If it doesn't clearly match any of these, reply 'Auto-Detect'.";
+                
+                const payload = {
+                    model: "openrouter/free", // Automatically routes to the best available free vision model
+                    messages: [
+                        {
+                            role: "user",
+                            content: [
+                                { type: "text", text: prompt },
+                                { type: "image_url", image_url: { url: `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}` } }
+                            ]
+                        }
+                    ],
+                    max_tokens: 50
+                };
+                
+                const result = await axios.post("https://openrouter.ai/api/v1/chat/completions", payload, {
+                    headers: { 
+                        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`, 
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": "https://farmguide.com",
+                        "X-Title": "FarmGuide Hackathon"
+                    }
+                });
+                
+                const detectedText = result.data.choices[0].message.content.trim();
+                const validCrops = ["Apple", "Blueberry", "Cherry", "Corn", "Grape", "Orange", "Peach", "Pepper", "Potato", "Raspberry", "Soybean", "Squash", "Strawberry", "Tomato"];
+                
+                if (validCrops.some(c => detectedText.toLowerCase().includes(c.toLowerCase()))) {
+                    expectedCrop = validCrops.find(c => detectedText.toLowerCase().includes(c.toLowerCase()));
+                    console.log(`[ML] OpenRouter automatically identified crop: ${expectedCrop}`);
+                }
+            } catch (err) {
+                const errorDetails = err.response?.data ? JSON.stringify(err.response.data) : err.message;
+                console.error("[ML] OpenRouter auto-detect failed:", errorDetails);
+            }
+        }
+
         // Prepare Form Data for Python Microservice
         const form = new FormData();
         form.append('file', req.file.buffer, {
             filename: req.file.originalname,
             contentType: req.file.mimetype,
         });
+        if (req.body.is_multi_leaf) {
+            form.append('is_multi_leaf', req.body.is_multi_leaf);
+        }
+        if (expectedCrop && expectedCrop !== "Auto-Detect") {
+            form.append('expected_crop', expectedCrop);
+        }
 
         const formHeaders = form.getHeaders();
         const contentLength = form.getLengthSync();
@@ -207,28 +256,33 @@ const predictPest = async (req, res) => {
         const keyFactors = pythonApiRes.data.key_factors || ['Temperature', 'Humidity', 'Rainfall', 'Crop Type'];
         let actionPlan = pythonApiRes.data.recommendation || (pestName ? `Monitor crop closely for ${pestName} symptoms and take preventative measures.` : 'Monitor crop closely.');
 
-        // Integrate Gemini Action Plan if probability is high enough
-        if (riskProbability > 50 && process.env.GEMINI_API_KEY) {
+        // Integrate OpenRouter Action Plan if probability is high enough
+        if (riskProbability > 50 && process.env.OPENROUTER_API_KEY) {
             try {
-                const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-                const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
                 const prompt = `A predictive ML model has flagged a ${riskProbability.toFixed(1)}% probability of a general pest outbreak (Risk Level: ${riskLevel}${pestName ? `, Likely pest/disease: ${pestName}` : ''}) in a ${payload.Crop_Type} field located in ${payload.Location || 'India'}. Provide a highly concise, practical, and immediate preventative action plan for the farmer. Maximum 2 sentences. Format: "Action: [What to do]."`;
                 
-                const result = await model.generateContent(prompt);
-                const responseText = result.response.text();
+                const openRouterPayload = {
+                    model: "openrouter/free",
+                    messages: [{ role: "user", content: prompt }],
+                    max_tokens: 100
+                };
+                
+                const result = await axios.post("https://openrouter.ai/api/v1/chat/completions", openRouterPayload, {
+                    headers: { 
+                        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`, 
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": "https://farmguide.com",
+                        "X-Title": "FarmGuide Hackathon"
+                    }
+                });
+                
+                const responseText = result.data.choices[0].message.content.trim();
                 if (responseText) {
-                    actionPlan = responseText.trim();
+                    actionPlan = responseText;
                 }
-            } catch (geminiError) {
-                console.error("Gemini Pest Action Plan Error:", geminiError.message);
-                try {
-                    // Fallback to flash-latest if 2.0 fails
-                    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-                    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
-                    const prompt = `A predictive ML model has flagged a ${riskProbability.toFixed(1)}% probability of a general pest outbreak (Risk Level: ${riskLevel}${pestName ? `, Likely pest/disease: ${pestName}` : ''}) in a ${payload.Crop_Type} field located in ${payload.Location || 'India'}. Provide a highly concise, practical, and immediate preventative action plan for the farmer. Maximum 2 sentences. Format: "Action: [What to do]."`;
-                    const result = await model.generateContent(prompt);
-                    actionPlan = result.response.text().trim();
-                } catch(e) {}
+            } catch (error) {
+                const errorDetails = error.response?.data ? JSON.stringify(error.response.data) : error.message;
+                console.error("OpenRouter Pest Action Plan Error:", errorDetails);
             }
         }
 

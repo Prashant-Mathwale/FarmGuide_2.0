@@ -1,44 +1,49 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const axios = require('axios');
 
 const handleChat = async (req, res) => {
     try {
         const { message, history } = req.body;
-        if (!process.env.GEMINI_API_KEY) {
-            return res.status(500).json({ success: false, message: 'Gemini API Key missing.' });
-        }
-
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const modelNames = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-flash-latest", "gemini-pro-latest"];
-        let lastError = null;
-
-        for (const modelName of modelNames) {
+        
+        // --- OpenRouter Integration ---
+        if (process.env.OPENROUTER_API_KEY) {
             try {
-                const model = genAI.getGenerativeModel({
-                    model: modelName,
-                    systemInstruction: "You are the AI assistant for FarmGuide. Provide concise, actionable agronomical advice."
-                });
-
                 const formattedHistory = (history || []).map(msg => ({
-                    role: msg.role === 'user' ? 'user' : 'model',
-                    parts: [{ text: msg.text }]
+                    role: msg.role === 'user' ? 'user' : 'assistant',
+                    content: msg.text
                 }));
-
-                const chat = model.startChat({ 
-                    history: formattedHistory,
-                    generationConfig: { maxOutputTokens: 500, temperature: 0.5 }
+                
+                formattedHistory.push({ role: 'user', content: message });
+                
+                const payload = {
+                    model: "openrouter/free", // Automatically routes to the best available free model
+                    messages: [
+                        { role: 'user', content: "SYSTEM INSTRUCTION: You are the AI assistant for FarmGuide. Provide concise, actionable agronomical advice. Do not mention you are an AI." },
+                        ...formattedHistory
+                    ],
+                    max_tokens: 500,
+                    temperature: 0.5
+                };
+                
+                const response = await axios.post("https://openrouter.ai/api/v1/chat/completions", payload, {
+                    headers: {
+                        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": "https://farmguide.com",
+                        "X-Title": "FarmGuide Hackathon"
+                    }
                 });
-
-                const result = await chat.sendMessage(message);
-                return res.json({ success: true, response: result.response.text() });
+                
+                const finalResponse = response.data.choices[0].message.content || "I couldn't generate a response. Please try asking again in a different way.";
+                return res.json({ success: true, response: finalResponse });
             } catch (e) {
-                lastError = e;
-                if (e.message.includes('429') || e.message.includes('quota') || e.message.includes('404')) continue;
-                break;
+                const errorDetails = e.response?.data ? JSON.stringify(e.response.data) : e.message;
+                console.error("OpenRouter API Failed:", errorDetails);
+                // Will fall through to Demo Mock Mode if OpenRouter also fails
             }
         }
 
         // --- DEMO MOCK MODE FALLBACK ---
-        // If all Gemini models fail (e.g., rate limit hit during Hackathon demo), gracefully respond!
+        // If all API calls fail, gracefully respond!
         const lowerMsg = message.toLowerCase();
         let mockResponse = "🚜 **Demo Mode Active:** The AI server has reached its quota, but FarmGuide is still here for you! Use our main tools (Weather, Market Prices, Disease Scan) for detailed analytics.";
         
