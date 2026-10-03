@@ -265,7 +265,7 @@ const predictPest = async (req, res) => {
                 const openRouterPayload = {
                     model: "openrouter/free",
                     messages: [{ role: "user", content: prompt }],
-                    max_tokens: 100
+                    max_tokens: 300
                 };
                 
                 const result = await axios.post("https://openrouter.ai/api/v1/chat/completions", openRouterPayload, {
