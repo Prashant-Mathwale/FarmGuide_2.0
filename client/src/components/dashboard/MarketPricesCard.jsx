@@ -28,49 +28,39 @@ const MarketPricesCard = ({ user }) => {
     const mapMandiDataToDisplay = (items) => {
         if (!Array.isArray(items) || items.length === 0) return null;
 
-        const matched = [];
-        for (const crop of TARGET_CROPS) {
-            const apiItem = items.find(item => {
-                const cName = (item.commodity || item.cropName || '').toLowerCase();
-                return crop.aliases.some(alias => cName.includes(alias));
-            });
+        return items.map(apiItem => {
+            const name = apiItem.commodity || apiItem.cropName || 'Unknown Crop';
+            const modal = Number(apiItem.modal_price || apiItem.modalPrice || 0);
+            const min = Number(apiItem.min_price || apiItem.minPrice || modal);
+            const max = Number(apiItem.max_price || apiItem.maxPrice || modal);
 
-            if (apiItem) {
-                const modal = Number(apiItem.modal_price || apiItem.modalPrice || crop.fallbackPrice);
-                const min = Number(apiItem.min_price || apiItem.minPrice || modal);
-                const max = Number(apiItem.max_price || apiItem.maxPrice || modal);
+            let change = 0;
+            let isUp = true;
 
-                let change = crop.fallbackChange;
-                let isUp = crop.defaultUp;
-
-                if (max > min && modal > 0) {
-                    const mid = (min + max) / 2;
-                    const diff = Math.round(Math.abs((modal - mid) / mid) * 100);
-                    change = diff > 0 ? diff : crop.fallbackChange;
-                    isUp = modal >= mid;
-                }
-
-                matched.push({
-                    name: crop.name,
-                    icon: crop.icon,
-                    price: modal.toLocaleString('en-IN'),
-                    change,
-                    isUp
-                });
-            } else {
-                matched.push({
-                    name: crop.name,
-                    icon: crop.icon,
-                    price: crop.fallbackPrice.toLocaleString('en-IN'),
-                    change: crop.fallbackChange,
-                    isUp: crop.defaultUp
-                });
+            if (max > min && modal > 0) {
+                const mid = (min + max) / 2;
+                const diff = Math.round(Math.abs((modal - mid) / mid) * 100);
+                change = diff;
+                isUp = modal >= mid;
             }
 
-            if (matched.length === 5) break;
-        }
+            // Assign a simple default icon if we don't have one in TARGET_CROPS
+            let icon = '🌾';
+            const matchedCrop = TARGET_CROPS.find(c => 
+                c.aliases.some(alias => name.toLowerCase().includes(alias))
+            );
+            if (matchedCrop) {
+                icon = matchedCrop.icon;
+            }
 
-        return matched;
+            return {
+                name: name,
+                icon: icon,
+                price: modal > 0 ? modal.toLocaleString('en-IN') : '—',
+                change: change,
+                isUp: isUp
+            };
+        });
     };
 
     useEffect(() => {
@@ -163,10 +153,9 @@ const MarketPricesCard = ({ user }) => {
     }, [user]);
 
     return (
-        <div className="bg-[#0b2416]/75 backdrop-blur-md border border-[#1e4d30]/70 rounded-2xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.35)] flex flex-col justify-between h-full">
-            <div>
+        <div className="bg-[#0b2416]/75 backdrop-blur-md border border-[#1e4d30]/70 rounded-2xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.35)] flex flex-col h-full">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-4 shrink-0">
                     <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-400/30 flex items-center justify-center text-amber-400">
                             <TrendingUp className="w-5 h-5" />
@@ -185,7 +174,7 @@ const MarketPricesCard = ({ user }) => {
                 </div>
 
                 {/* Price list */}
-                <div className="space-y-2.5">
+                <div className="space-y-2.5 overflow-y-auto max-h-[260px] pr-1 scrollbar-thin scrollbar-thumb-emerald-500/20 scrollbar-track-transparent">
                     {prices.map((item, idx) => (
                         <div
                             key={idx}
@@ -218,13 +207,6 @@ const MarketPricesCard = ({ user }) => {
                         </div>
                     ))}
                 </div>
-            </div>
-
-            {/* Footer */}
-            <div className="pt-3 mt-3 border-t border-emerald-500/15 flex items-center gap-1.5 text-[11px] text-emerald-300/60">
-                <Clock className="w-3.5 h-3.5 text-emerald-400/80" />
-                <span>Last updated: {lastUpdated}</span>
-            </div>
         </div>
     );
 };

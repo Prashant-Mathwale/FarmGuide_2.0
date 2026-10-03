@@ -32,6 +32,7 @@ const CommunityDiscussionsCard = () => {
                 const res = await api.get('/community/posts?limit=2');
                 if (res.data?.posts && Array.isArray(res.data.posts) && res.data.posts.length > 0 && isMounted) {
                     const mapped = res.data.posts.slice(0, 2).map((post, idx) => {
+                        const fallback = DEFAULT_POSTS[idx] || DEFAULT_POSTS[0];
                         const rawImg = post.images && post.images.length > 0 ? post.images[0] : null;
                         const imgUrl = rawImg ? (rawImg.url || (typeof rawImg === 'string' ? rawImg : fallback.image)) : fallback.image;
                         const author = post.author?.fullName || post.author?.district || fallback.authorName;
