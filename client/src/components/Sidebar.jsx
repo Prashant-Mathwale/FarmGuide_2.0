@@ -1,7 +1,7 @@
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, Sprout, Bug, AlertTriangle, 
-  TrendingUp, Cloud, Landmark, Newspaper, LogOut, User as UserIcon, X
+  TrendingUp, Cloud, Landmark, Newspaper, LogOut, User as UserIcon, X, HelpCircle
 } from 'lucide-react';
 
 const Sidebar = ({ user, setUser, isOpen, onClose }) => {
@@ -24,6 +24,7 @@ const Sidebar = ({ user, setUser, isOpen, onClose }) => {
         { name: 'Market Prices', icon: TrendingUp, path: '/market-prices' },
         { name: 'Weather', icon: Cloud, path: '/weather' },
         { name: 'Govt Schemes', icon: Landmark, path: '/schemes' },
+        { name: 'User Guide', icon: HelpCircle, path: '/guide' },
     ];
 
     const displayName = user?.fullName?.split(' ')[0] || user?.fullName || 'Farmer';

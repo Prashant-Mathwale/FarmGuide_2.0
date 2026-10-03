@@ -11,6 +11,7 @@ import MarketPrices from './pages/MarketPrices';
 import Weather from './pages/Weather';
 import Schemes from './pages/Schemes';
 import PestPrediction from './pages/PestPrediction';
+import Guide from './pages/Guide';
 
 import Profile from './pages/Profile';
 import CommunityFeed from './pages/CommunityFeed';
@@ -55,6 +56,7 @@ function App() {
           <Route path="/weather" element={user ? <Layout user={user} setUser={setUser}><Weather /></Layout> : <Navigate to="/login" replace />} />
           <Route path="/schemes" element={user ? <Layout user={user} setUser={setUser}><Schemes /></Layout> : <Navigate to="/login" replace />} />
           <Route path="/pest-predict" element={user ? <Layout user={user} setUser={setUser}><PestPrediction /></Layout> : <Navigate to="/login" replace />} />
+          <Route path="/guide" element={user ? <Layout user={user} setUser={setUser}><Guide /></Layout> : <Navigate to="/login" replace />} />
 
           <Route path="/community" element={user ? <Layout user={user} setUser={setUser}><CommunityFeed user={user} /></Layout> : <Navigate to="/login" replace />} />
           <Route path="/community/new" element={user ? <Layout user={user} setUser={setUser}><CreatePost user={user} /></Layout> : <Navigate to="/login" replace />} />

@@ -51,38 +51,30 @@ export default function QuickActions() {
   ];
 
   return (
-    <div className="bg-[#0c1b12]/85 backdrop-blur-xl border border-white/10 rounded-3xl p-4 sm:p-5 lg:p-5 xl:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col justify-between text-left h-full">
+    <div className="bg-[#0c1b12]/85 backdrop-blur-xl border border-white/10 rounded-3xl p-4 sm:p-5 lg:p-5 xl:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.6)] flex flex-col text-left h-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-3.5">
+      <div className="flex items-center justify-between mb-4 shrink-0">
         <h3 className="text-base sm:text-lg lg:text-xl font-bold text-white flex items-center gap-2">
           <Zap size={18} className="text-amber-400 fill-amber-400 shrink-0" />
           <span>Quick Actions</span>
         </h3>
-
-        <Link
-          to="/crop-rec"
-          className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors group cursor-pointer"
-        >
-          <span>View All</span>
-          <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
-        </Link>
       </div>
 
       {/* 2x3 Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 flex-1 mt-2">
         {actions.map((act) => {
           const Icon = act.icon;
           return (
             <Link
               key={act.title}
               to={act.to}
-              className={`p-2.5 sm:p-3 rounded-2xl border transition-all duration-200 flex items-center gap-2 sm:gap-2.5 group shadow-md active:scale-97 cursor-pointer overflow-hidden ${act.cardBg}`}
+              className={`p-3 sm:p-4 rounded-2xl border transition-all duration-200 flex items-center gap-3 sm:gap-3 group shadow-md active:scale-97 cursor-pointer overflow-hidden ${act.cardBg} h-full`}
             >
-              <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl border flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform ${act.iconBg}`}>
-                <Icon size={17} />
+              <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl border flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform ${act.iconBg}`}>
+                <Icon size={20} />
               </div>
               <div className="min-w-0 flex-1 overflow-hidden">
-                <span className="text-[11px] sm:text-xs xl:text-[12px] font-bold text-white/90 group-hover:text-white leading-[1.2] block break-words tracking-tight">
+                <span className="text-[12px] sm:text-[13px] xl:text-[14px] font-bold text-white/90 group-hover:text-white leading-[1.2] block break-words tracking-tight">
                   {act.title}
                 </span>
               </div>

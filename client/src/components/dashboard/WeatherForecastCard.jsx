@@ -30,10 +30,10 @@ const WeatherForecastCard = ({ weatherData }) => {
     };
 
     return (
-        <div className="bg-[#0b2416]/75 backdrop-blur-md border border-[#1e4d30]/70 rounded-2xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.35)] flex flex-col justify-between h-full">
+        <div className="bg-[#0b2416]/75 backdrop-blur-md border border-[#1e4d30]/70 rounded-2xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.35)] flex flex-col h-full">
             {/* Header */}
             <div>
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center justify-between mb-3 shrink-0">
                     <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-lg bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-300">
                             <CloudSun className="w-5 h-5" />
@@ -50,13 +50,13 @@ const WeatherForecastCard = ({ weatherData }) => {
                 </div>
 
                 {/* Location subline */}
-                <div className="flex items-center gap-1.5 text-xs text-emerald-200/80 mb-4">
+                <div className="flex items-center gap-1.5 text-xs text-emerald-200/80 mb-4 shrink-0">
                     <MapPin className="w-3.5 h-3.5 text-emerald-400" />
                     <span>{location}</span>
                 </div>
 
                 {/* Main Weather Display */}
-                <div className="flex items-center justify-between gap-4 mb-5">
+                <div className="flex items-center justify-between gap-4 mb-4 shrink-0">
                     {/* Left: Temp & Condition */}
                     <div className="flex items-center gap-3">
                         <div className="relative">
@@ -95,7 +95,7 @@ const WeatherForecastCard = ({ weatherData }) => {
             </div>
 
             {/* Hourly Forecast strip */}
-            <div className="pt-3 border-t border-emerald-500/15 grid grid-cols-5 gap-1.5 text-center">
+            <div className="pt-3 mt-2 border-t border-emerald-500/15 grid grid-cols-5 gap-1.5 text-center shrink-0">
                 {hourlyForecast.map((hour, idx) => (
                     <div
                         key={idx}

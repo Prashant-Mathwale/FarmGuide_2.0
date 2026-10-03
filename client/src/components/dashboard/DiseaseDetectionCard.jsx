@@ -9,7 +9,7 @@ export default function DiseaseDetectionCard({ recentScan }) {
   const leafImage = recentScan?.imageUrl || '/leaf-early-blight.jpg';
 
   return (
-    <div className="relative overflow-hidden bg-[#0c1b12]/85 backdrop-blur-xl border border-emerald-500/20 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_12px_40px_rgba(0,0,0,0.6)] group text-left">
+    <div id="tour-disease-detect" className="relative overflow-hidden bg-[#0c1b12]/85 backdrop-blur-xl border border-emerald-500/20 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_12px_40px_rgba(0,0,0,0.6)] group text-left">
       {/* Subtle green ambient background glow */}
       <div className="absolute -left-20 -top-20 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 

@@ -153,7 +153,7 @@ const MarketPricesCard = ({ user }) => {
     }, [user]);
 
     return (
-        <div className="bg-[#0b2416]/75 backdrop-blur-md border border-[#1e4d30]/70 rounded-2xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.35)] flex flex-col h-full">
+        <div id="tour-market-prices" className="bg-[#0b2416]/75 backdrop-blur-md border border-[#1e4d30]/70 rounded-2xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.35)] flex flex-col h-full">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-4 shrink-0">
                     <div className="flex items-center gap-2.5">

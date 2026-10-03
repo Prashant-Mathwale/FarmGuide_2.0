@@ -3,6 +3,7 @@ import Sidebar from './Sidebar';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, Sprout } from 'lucide-react';
+import WelcomeTour from './WelcomeTour';
 
 const Layout = ({ children, user, setUser }) => {
     const location = useLocation();
@@ -10,6 +11,7 @@ const Layout = ({ children, user, setUser }) => {
 
     return (
         <div className="min-h-screen bg-transparent text-on-surface font-body selection:bg-primary selection:text-on-primary">
+            <WelcomeTour />
             {/* Mobile Top Header Bar */}
             <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-[#0c1811]/90 backdrop-blur-md border-b border-white/10 z-30 flex items-center justify-between px-4">
                 <div className="flex items-center gap-2.5">

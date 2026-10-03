@@ -55,7 +55,7 @@ sequenceDiagram
 1. **Auto State Detection**: If no state filter is selected by the user, the app automatically pulls the user's profile state (`userInfo.state`) or defaults to `Maharashtra`.
 2. **Metadata Date Discovery**: On initial request, the app calls the API without a fixed date to extract `meta.latest_fetched_at` or `data[0].arrival_date`.
 3. **Mandi Holiday / Weekend Fallback**: Mandis are closed on weekends and public holidays. The system auto-detects the most recent official market trade date and fetches those prices seamlessly, preventing empty screens.
-4. **Data Normalization**: Raw API response fields (`min_price`, `max_price`, `modal_price`, `commodity`, `market`, `district`) are mapped into structured React state variables.
+4. **Data Normalization**: Raw API response fields (  `) are mapped into structured React state variables.
 
 ### 🛡️ Why It Is Trusted
 - Sourced directly from the **Directorate of Marketing & Inspection (DMI)** under the Ministry of Agriculture & Farmers Welfare, Government of India.
