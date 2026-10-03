@@ -102,8 +102,14 @@ const RecentActivityCard = () => {
                     </Link>
                 </div>
 
-                {/* Activity Items */}
-                <div className="space-y-3">
+                {/* Activity Items (shows 4 items, scrollable for more) */}
+                <div
+                    className="space-y-2.5 max-h-[244px] overflow-y-auto pr-1 select-none"
+                    style={{
+                        scrollbarWidth: 'thin',
+                        scrollbarColor: 'rgba(16, 185, 129, 0.4) transparent'
+                    }}
+                >
                     {activities.map((item) => {
                         const IconComponent = item.icon || Camera;
                         return (
@@ -137,6 +143,14 @@ const RecentActivityCard = () => {
                     })}
                 </div>
             </div>
+
+            {/* Scroll indicator footer if more than 4 activities */}
+            {activities.length > 4 && (
+                <div className="pt-2.5 mt-2 border-t border-emerald-500/15 flex items-center justify-between text-[11px] text-emerald-300/60">
+                    <span>{activities.length} activities</span>
+                    <span className="text-[10px] text-emerald-400/80 font-medium">Scroll to view more ↓</span>
+                </div>
+            )}
         </div>
     );
 };

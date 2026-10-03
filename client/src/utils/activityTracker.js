@@ -4,7 +4,7 @@
  */
 
 const STORAGE_KEY = 'farmguide_recent_activity';
-const MAX_ACTIVITIES = 6;
+const MAX_ACTIVITIES = 25;
 
 export const formatRelativeTime = (timestamp) => {
     if (!timestamp) return 'Just now';

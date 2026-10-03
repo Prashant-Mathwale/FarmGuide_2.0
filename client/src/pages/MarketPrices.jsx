@@ -62,11 +62,27 @@ function MarketPrices() {
                 // Show the actual data date in the footer
                 if (latestDate) setLastUpdated(`Data from ${latestDate}`);
 
-                const cropLabel = overrideFilters.cropName ? overrideFilters.cropName : 'commodities';
+                // Cache for dashboard MarketPricesCard
+                try {
+                    localStorage.setItem('farmguide_latest_market_prices', JSON.stringify({
+                        timestamp: Date.now(),
+                        latestDate: latestDate || 'Today',
+                        items: mappedData
+                    }));
+                    window.dispatchEvent(new Event('farmguide_market_prices_updated'));
+                } catch (e) {
+                    // Ignore localStorage quotas
+                }
+
+                const topCrop = mappedData[0];
+                const subtitleText = overrideFilters.cropName
+                    ? `Checked ${overrideFilters.cropName} (₹${topCrop?.modalPrice || '—'}/Qtl)`
+                    : `Checked ${topCrop?.cropName || 'commodities'} (₹${topCrop?.modalPrice || '—'}/Qtl)`;
+
                 addRecentActivity({
                     type: 'market',
                     title: 'Market Prices',
-                    subtitle: `Checked ${cropLabel} prices`,
+                    subtitle: subtitleText,
                     to: '/market-prices'
                 });
             } else {
