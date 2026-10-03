@@ -1,0 +1,8 @@
+Field definitions
+model_supported: whether current FarmGuide disease model is intended to include this disease class.
+risk_level: advisory relevance level, not probability or prevalence.
+temp_min_c/temp_max_c: approximate favorable temperature band for the rule.
+humidity_min_pct/humidity_max_pct: approximate favorable relative-humidity band.
+rainfall_trigger: qualitative trigger; not a measured rainfall threshold unless explicitly numeric.
+leaf_wetness: qualitative leaf-wetness relevance.
+verification_status: tells the application whether the record is production-verified.

@@ -1,17 +1,24 @@
 import { Link } from 'react-router-dom';
 import { 
   Zap, ArrowRight, Sprout, TrendingUp, Cloud, 
-  AlertTriangle, Landmark, Users 
+  AlertTriangle, Landmark, Users, ShieldAlert
 } from 'lucide-react';
 
 export default function QuickActions() {
   const actions = [
     {
+      title: 'Disease Advisor',
+      to: '/disease-advisor',
+      icon: ShieldAlert,
+      iconBg: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+      cardBg: 'bg-[#0b2416]/70 hover:bg-[#123823] border-emerald-500/20'
+    },
+    {
       title: 'Crop Recommendation',
       to: '/crop-rec',
       icon: Sprout,
-      iconBg: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-      cardBg: 'bg-[#0f2316]/70 hover:bg-[#153421] border-emerald-500/20'
+      iconBg: 'bg-green-500/20 text-green-400 border-green-500/30',
+      cardBg: 'bg-[#0f2316]/70 hover:bg-[#153421] border-green-500/20'
     },
     {
       title: 'Market Prices',

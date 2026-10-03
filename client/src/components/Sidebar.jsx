@@ -1,7 +1,7 @@
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, Sprout, Bug, AlertTriangle, 
-  TrendingUp, Cloud, Landmark, Newspaper, LogOut, User as UserIcon, X, HelpCircle
+  TrendingUp, Cloud, Landmark, Newspaper, LogOut, User as UserIcon, X, HelpCircle, ShieldAlert
 } from 'lucide-react';
 
 const Sidebar = ({ user, setUser, isOpen, onClose }) => {
@@ -19,6 +19,7 @@ const Sidebar = ({ user, setUser, isOpen, onClose }) => {
         { name: 'Community', icon: Users, path: '/community' },
         { name: 'Crop Recs', icon: Sprout, path: '/crop-rec' },
         { name: 'Disease Detect', icon: Bug, path: '/disease-detect' },
+        { name: 'Disease Advisor', icon: ShieldAlert, path: '/disease-advisor' },
         { name: 'Pest Predict', icon: AlertTriangle, path: '/pest-predict' },
 
         { name: 'Market Prices', icon: TrendingUp, path: '/market-prices' },

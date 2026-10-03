@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   UploadCloud, CheckCircle2, AlertTriangle, ScanLine, X, Sparkles, 
-  Camera, HelpCircle, ImageOff, ShieldAlert, RefreshCw, Image as ImageIcon, Users
+  Camera, HelpCircle, ImageOff, ShieldAlert, RefreshCw, Image as ImageIcon, Users, ArrowRight
 } from 'lucide-react';
 import api from '../services/api';
 import CameraCapture from '../components/CameraCapture';
@@ -12,6 +12,7 @@ import { addRecentActivity } from '../utils/activityTracker';
 
 function DiseaseDetect() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [selectedImage, setSelectedImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [result, setResult] = useState(null);
@@ -19,6 +20,10 @@ function DiseaseDetect() {
     const [isDragging, setIsDragging] = useState(false);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
     const [isMultiLeaf, setIsMultiLeaf] = useState(false); // New state for Multi-Leaf Mode
+
+    // Context passed from Disease Advisor if user clicked "Scan Leaf"
+    const targetCrop = location.state?.initialCrop || null;
+    const targetDisease = location.state?.targetDisease || null;
 
     const fileInputRef = useRef(null);
     const cameraFallbackInputRef = useRef(null);
@@ -160,7 +165,34 @@ function DiseaseDetect() {
     ];
 
     return (
-        <div className="w-full max-w-5xl mx-auto">
+        <div className="w-full max-w-5xl mx-auto space-y-6">
+            {/* Cross-Link Banner to Disease Advisor */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/80 via-[#0d281a] to-emerald-950/80 border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                        <ShieldAlert size={20} className="text-emerald-400" />
+                    </div>
+                    <div>
+                        <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                            <span>Looking for Weather & Regional Early Warning?</span>
+                            {targetCrop && (
+                                <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                    Target: {targetCrop} {targetDisease ? `(${targetDisease})` : ''}
+                                </span>
+                            )}
+                        </h4>
+                        <p className="text-xs text-emerald-200/80">Check our Maharashtra Disease Advisor to see diseases to watch before symptoms emerge in field.</p>
+                    </div>
+                </div>
+                <button
+                    onClick={() => navigate('/disease-advisor', { state: { crop: targetCrop } })}
+                    className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 shadow-md active:scale-95 cursor-pointer"
+                >
+                    <span>Open Disease Advisor</span>
+                    <ArrowRight size={13} />
+                </button>
+            </div>
+
             <header className="mb-12 text-center">
                 <motion.div
                     initial={{ scale: 0 }}

@@ -4,6 +4,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env.local') });
 const SoilData = require('../models/SoilData');
 const axios = require('axios');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const diseaseAdvisorService = require('../services/diseaseAdvisorService');
 
 // ── Curated Disease Knowledge Base (loaded once at startup) ─────────────────
 const KNOWLEDGE_PATH = path.resolve(__dirname, '../data/disease_knowledge.json');
@@ -349,4 +350,56 @@ const predictRisk = async (req, res) => {
     }
 };
 
-module.exports = { getCropRecommendation, detectDisease, predictPest, predictYield, searchSchemes, predictRisk };
+const getDiseaseAdvisorOptions = async (req, res) => {
+    try {
+        const options = diseaseAdvisorService.getAdvisorOptions();
+        res.json(options);
+    } catch (error) {
+        console.error("Disease Advisor Options Error:", error);
+        res.status(500).json({ success: false, message: 'Failed to retrieve advisor options: ' + error.message });
+    }
+};
+
+const getDiseaseAdvisory = async (req, res) => {
+    try {
+        const payload = {
+            crop: req.body.crop || req.query.crop,
+            district: req.body.district || req.query.district,
+            latitude: parseFloat(req.body.latitude || req.query.latitude),
+            longitude: parseFloat(req.body.longitude || req.query.longitude),
+            temperature: req.body.temperature !== undefined ? parseFloat(req.body.temperature) : (req.query.temperature !== undefined ? parseFloat(req.query.temperature) : undefined),
+            humidity: req.body.humidity !== undefined ? parseFloat(req.body.humidity) : (req.query.humidity !== undefined ? parseFloat(req.query.humidity) : undefined),
+            rainfall: req.body.rainfall !== undefined ? parseFloat(req.body.rainfall) : (req.query.rainfall !== undefined ? parseFloat(req.query.rainfall) : undefined),
+            isRaining: req.body.isRaining !== undefined ? req.body.isRaining : req.query.isRaining,
+            month: parseInt(req.body.month || req.query.month, 10)
+        };
+
+        if (!payload.crop) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide a crop name or alias (e.g., Tomato, Cotton, Tamatar, Kapus).'
+            });
+        }
+
+        const advisory = diseaseAdvisorService.getAdvisory(payload);
+        if (!advisory.success) {
+            return res.status(404).json(advisory);
+        }
+
+        res.json(advisory);
+    } catch (error) {
+        console.error("Disease Advisory Error:", error);
+        res.status(500).json({ success: false, message: 'Disease advisory evaluation failed: ' + error.message });
+    }
+};
+
+module.exports = { 
+    getCropRecommendation, 
+    detectDisease, 
+    predictPest, 
+    predictYield, 
+    searchSchemes, 
+    predictRisk,
+    getDiseaseAdvisorOptions,
+    getDiseaseAdvisory
+};

@@ -12,6 +12,7 @@ import Weather from './pages/Weather';
 import Schemes from './pages/Schemes';
 import PestPrediction from './pages/PestPrediction';
 import Guide from './pages/Guide';
+import DiseaseAdvisor from './pages/DiseaseAdvisor';
 
 import Profile from './pages/Profile';
 import CommunityFeed from './pages/CommunityFeed';
@@ -52,6 +53,7 @@ function App() {
           <Route path="/dashboard" element={user ? <Layout user={user} setUser={setUser}><Dashboard /></Layout> : <Navigate to="/login" replace />} />
           <Route path="/crop-rec" element={user ? <Layout user={user} setUser={setUser}><CropRec /></Layout> : <Navigate to="/login" replace />} />
           <Route path="/disease-detect" element={user ? <Layout user={user} setUser={setUser}><DiseaseDetect /></Layout> : <Navigate to="/login" replace />} />
+          <Route path="/disease-advisor" element={user ? <Layout user={user} setUser={setUser}><DiseaseAdvisor /></Layout> : <Navigate to="/login" replace />} />
           <Route path="/market-prices" element={user ? <Layout user={user} setUser={setUser}><MarketPrices /></Layout> : <Navigate to="/login" replace />} />
           <Route path="/weather" element={user ? <Layout user={user} setUser={setUser}><Weather /></Layout> : <Navigate to="/login" replace />} />
           <Route path="/schemes" element={user ? <Layout user={user} setUser={setUser}><Schemes /></Layout> : <Navigate to="/login" replace />} />
