@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, User, Bot, Loader2, Mic } from 'lucide-react';
+import { MessageSquare, X, Send, User, Bot, Loader2, Mic, Volume2, VolumeX } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
@@ -14,11 +14,31 @@ function Chatbot() {
     const [loading, setLoading] = useState(false);
     const [isListening, setIsListening] = useState(false);
     const [speechLang, setSpeechLang] = useState('hi-IN');
+    const [isMuted, setIsMuted] = useState(false);
     const recognitionRef = useRef(null);
     const initialInputRef = useRef('');
     const inputRef = useRef('');
     const shouldListenRef = useRef(false);
     const silenceTimerRef = useRef(null);
+
+    const speakResponse = (text) => {
+        if (isMuted) return;
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // Stop current speech
+            // Remove markdown syntax for cleaner reading
+            const cleanText = text.replace(/\*\*/g, '').replace(/###/g, '').replace(/[*#_]/g, '');
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = speechLang;
+            window.speechSynthesis.speak(utterance);
+        }
+    };
+
+    // Stop speaking when chat is closed
+    useEffect(() => {
+        if (!isOpen && 'speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
+    }, [isOpen]);
 
     const stopSilenceTimer = () => {
         if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
@@ -184,9 +204,13 @@ function Chatbot() {
             });
 
             if (res.data.success) {
-                setMessages([...newMessages, { role: 'model', text: res.data.response }]);
+                const aiResponse = res.data.response;
+                setMessages([...newMessages, { role: 'model', text: aiResponse }]);
+                speakResponse(aiResponse);
             } else {
-                setMessages([...newMessages, { role: 'model', text: res.data.message || "I'm having trouble thinking right now. Please try again." }]);
+                const errorResponse = res.data.message || "I'm having trouble thinking right now. Please try again.";
+                setMessages([...newMessages, { role: 'model', text: errorResponse }]);
+                speakResponse(errorResponse);
             }
         } catch (error) {
             console.error("Chat Error:", error);
@@ -225,9 +249,21 @@ function Chatbot() {
                                 <Bot size={22} />
                                 <h3 className="font-bold text-lg">FarmGuide AI</h3>
                             </div>
-                            <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white transition-colors">
-                                <X size={22} />
-                            </button>
+                            <div className="flex items-center space-x-3">
+                                <button 
+                                    onClick={() => {
+                                        setIsMuted(!isMuted);
+                                        if (!isMuted && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+                                    }} 
+                                    className="text-white/80 hover:text-white transition-colors"
+                                    title={isMuted ? "Unmute AI Voice" : "Mute AI Voice"}
+                                >
+                                    {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                                </button>
+                                <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white transition-colors">
+                                    <X size={22} />
+                                </button>
+                            </div>
                         </div>
 
                         {/* Messages Area */}
@@ -289,11 +325,14 @@ function Chatbot() {
                                     <button
                                         type="button"
                                         onClick={toggleListening}
-                                        className={`absolute right-2 p-1.5 rounded-full transition-all ${
-                                            isListening ? 'bg-red-500/20 text-red-500 animate-pulse' : 'text-slate-400 hover:text-emerald-400'
+                                        className={`absolute right-2 p-2.5 rounded-full transition-all shadow-md ${
+                                            isListening 
+                                            ? 'bg-red-500 text-white animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.6)]' 
+                                            : 'bg-slate-700 text-emerald-400 hover:bg-slate-600'
                                         }`}
+                                        title="Speak your question"
                                     >
-                                        <Mic size={18} />
+                                        <Mic size={20} />
                                     </button>
                                 </div>
                                 <button

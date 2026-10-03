@@ -3,6 +3,34 @@ const axios = require('axios');
 const handleChat = async (req, res) => {
     try {
         const { message, history } = req.body;
+        const lowerMsg = message.toLowerCase();
+        
+        // --- INTERCEPT: LIVE MARKET PRICE FETCH ---
+        if (lowerMsg.includes('price') || lowerMsg.includes('rate') || lowerMsg.includes('bhav')) {
+            // Extract common crop names
+            const commonCrops = ['tomato', 'potato', 'onion', 'wheat', 'rice', 'cotton', 'soybean', 'maize', 'apple', 'mango', 'banana'];
+            let foundCrop = commonCrops.find(c => lowerMsg.includes(c));
+            
+            if (foundCrop) {
+                try {
+                    const priceRes = await axios.get(`https://mandi-api.onrender.com/v1/prices?commodity=${foundCrop}`);
+                    if (priceRes.data && priceRes.data.data && priceRes.data.data.length > 0) {
+                        const prices = priceRes.data.data.slice(0, 4).map(p => 
+                            `**${p.state}** (${p.market}): ₹${p.modal_price} / quintal`
+                        ).join('\n• ');
+                        
+                        const capCrop = foundCrop.charAt(0).toUpperCase() + foundCrop.slice(1);
+                        return res.json({ 
+                            success: true, 
+                            response: `Here are the latest live Mandi prices for **${capCrop}**:\n\n• ${prices}\n\n*(Note: Prices are per 100kg/quintal. You can check the full list on the Market Prices page.)*` 
+                        });
+                    }
+                } catch (e) {
+                    console.error("Mandi API Error in Chat:", e.message);
+                }
+            }
+        }
+
         
         // --- OpenRouter Integration ---
         if (process.env.OPENROUTER_API_KEY) {
@@ -44,7 +72,6 @@ const handleChat = async (req, res) => {
 
         // --- DEMO MOCK MODE FALLBACK ---
         // If all API calls fail, gracefully respond!
-        const lowerMsg = message.toLowerCase();
         let mockResponse = "🚜 **Demo Mode Active:** The AI server has reached its quota, but FarmGuide is still here for you! Use our main tools (Weather, Market Prices, Disease Scan) for detailed analytics.";
         
         if (lowerMsg.includes('soybean') || lowerMsg.includes('wheat') || lowerMsg.includes('crop') || lowerMsg.includes('फसल')) {
